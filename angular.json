@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "bank-simulator": {
+    "investing-simulator": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "../dev.ngpf.org/public_html/bank-sim",
+            "outputPath": "../dev.ngpf.org/public_html/investing-sim",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -85,10 +85,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "bank-simulator:build:production"
+              "browserTarget": "investing-simulator:build:production"
             },
             "development": {
-              "browserTarget": "bank-simulator:build:development"
+              "browserTarget": "investing-simulator:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -96,7 +96,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bank-simulator:build"
+            "browserTarget": "investing-simulator:build"
           }
         },
         "test": {
@@ -120,5 +120,5 @@
       }
     }
   },
-  "defaultProject": "bank-simulator"
+  "defaultProject": "investing-simulator"
 }
