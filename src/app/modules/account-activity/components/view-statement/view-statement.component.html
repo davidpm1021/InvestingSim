@@ -1,0 +1,56 @@
+<div class="main-container" id="view">
+  <mat-card class="card">
+    <mat-card-content>
+      <div class="heading">
+        <h1>{{accountType.toUpperCase()}} - ACCOUNT SUMMARY FOR {{selectedMonth}}, {{selectedYear}}</h1>
+        <p>Account Number: <span class="value">#{{accountNumbers}}</span> and Routing Number: <span class="value">#{{routingNumbers}}</span></p>
+      </div>
+      <div class="content">
+        <mat-card class="statement-card">
+          <mat-card-content>
+            <div fxLayout="row wrap">
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" class="p-20">
+                <span class="title">BEGINNING BALANCE ON {{selectedMonth?.substring(0,3)?.toUpperCase()}} 01 {{selectedYear}}:</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" fxLayoutAlign.xs="end center" class="p-20">
+                <span>{{lastAmount | currency}}</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" class="p-20">
+                <span class="title">WITHDRAWALS AND OTHER SUBTRACTIONS:</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" fxLayoutAlign.xs="end center" class="p-20">
+                <span>{{withdrawls | currency}}</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" class="p-20">
+                <span class="title">ENDING BALANCE ON {{selectedMonth?.substring(0,3)?.toUpperCase()}} 31 {{selectedYear}}:</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" fxLayoutAlign.xs="end center" class="p-20">
+                <span>{{initialAmount | currency}}</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" class="p-20">
+                <span class="title">DEPOSITS AND OTHER ADDITIONS:</span>
+              </div>
+              <div fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="50%" fxLayoutAlign.xs="end center" class="p-20">
+                <span>{{additions | currency}}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <div fxLayout="row" fxLayout.xs="column" class="pt-50">
+          <div fxFlex="80%" fxFlex.sm="60%" fxFlex.xs="60%">
+            <h3>OTHER ACCOUNT ACTIVITY</h3>
+          </div>
+          <div fxFlex="20%" fxFlex.sm="40%" fxFlex.xs="40%" fxLayoutAlign="end center" data-html2canvas-ignore="true">
+            <button mat-raised-button class="button" (click)='convertToPDF()'>Download</button>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="100%">
+            <app-generic-table [columns]="columns" [dataSource]="dataSource">
+            </app-generic-table>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

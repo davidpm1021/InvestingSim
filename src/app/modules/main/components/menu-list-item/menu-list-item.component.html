@@ -1,0 +1,20 @@
+<a class='sidebar' mat-list-item [ngStyle]="{'padding-left': (depth * 12) + 'px'}" (click)="onItemSelected(item)"
+  [ngClass]="{'active': item.route ? router.isActive(item.route, true): false, 'expanded': expanded}">
+  <img src="assets/images/{{item.iconName}}.svg" alt="">
+  <span fxHide.sm fxHide.xs class="white">{{item.displayName}}</span>
+  <span fxFlex></span>
+  <div class="arrow" *ngIf="!item.children && item.route ? router.isActive(item.route, true): false">
+    <div class="point"></div>
+  </div>
+
+  <span fxFlex *ngIf="item.children && item.children.length">
+    <span fxFlex></span>
+    <mat-icon [@indicatorRotate]="expanded ? 'expanded': 'collapsed'">
+      expand_more
+    </mat-icon>
+  </span>
+</a>
+<div *ngIf="expanded">
+  <app-menu-list-item *ngFor="let child of item.children" [item]="child" [depth]="depth+1">
+  </app-menu-list-item>
+</div>

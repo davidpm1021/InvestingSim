@@ -1,0 +1,24 @@
+
+<form *ngIf='categories?.length' [formGroup]="formGroup">
+  <div fxLayout="column" *ngFor="let category of categories" fxLayoutGap="10px">
+    <div fxLayoutAlign="start center" fxLayoutGap="5px" class="title">
+      <img src="assets/images/{{category.icons}}.svg" alt="">
+      <span>{{category.title}}</span>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxFlex='48%' fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center" *ngFor="let item of category.values">
+        <div fxFlex="50%">
+          <mat-checkbox formControlName="{{item.id}}">{{item.title}}</mat-checkbox>
+        </div>
+        <div fxFlex="50%">
+          <p class="mt-15">${{item.amount}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div fxLayoutAlign="end center" fxLayoutGap="10px">
+  <button mat-raised-button routerLink="../">Cancel</button>
+  <button mat-raised-button color="primary" (click)='save()'>Save</button>
+</div>

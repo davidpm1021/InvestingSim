@@ -1,0 +1,70 @@
+{
+  "checkingTransactions" : [
+    {
+      "day" : -9,
+      "category" : "Check",
+      "type" : "Checking",
+      "frequency" : "SINGLE",
+      "description" : "Account Opening",
+      "amount" : 250.00
+    },
+    {
+      "day" : -5,
+      "category" : "Retail",
+      "type" : "Checking",
+      "frequency" : "SINGLE",
+      "description" : "Cool Clothes Co",
+      "amount" : -18.99
+    },
+    {
+      "day" : -5,
+      "category" : "Dining",
+      "type" : "Checking",
+      "frequency" : "SINGLE",
+      "description" : "Snack Shack",
+      "amount" : -3.99
+    },
+    {
+      "day" : -2,
+      "category" : "Dining",
+      "type" : "Checking",
+      "frequency" : "SINGLE",
+      "description" : "Snack Shack",
+      "amount" : -3.99
+    },
+    {
+      "day" : -1,
+      "category" : "Media",
+      "type" : "bill",
+      "frequency" : "MONTHLY",
+      "description" : "Streamwave Videos",
+      "amount" : -6.99
+    },
+    {
+      "day" : 14,
+      "category" : "Check",
+      "type" : "Checking",
+      "frequency" : "BI-WEEKLY",
+      "description" : "Payroll Direct Deposit",
+      "amount" : 215.00
+    }
+  ],
+  "savingTransactions" : [
+    {
+      "day" : -9,
+      "category" : "Check",
+      "type" : "Saving",
+      "frequency" : "SINGLE",
+      "description" : "Account Opening",
+      "amount" : 250.00
+    },
+    {
+      "day" : -2,
+      "category" : "ATM",
+      "type" : "Saving",
+      "frequency" : "SINGLE",
+      "description" : "Network ATM",
+      "amount" : -20.00
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+@import "variables";
+
+h3 {
+  font-family: 'Montserrat';
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 34px;
+  color: $black;
+}
+
+mat-form-field {
+  border-radius: 4px;
+  mat-icon.close {
+    color: $red;
+    cursor: pointer;
+  }
+}
+
+button {
+  font-family: 'Montserrat';
+  font-weight: normal;
+  font-size: 16px;
+  color: $card-title;
+}
+
+.active {
+  background-color: $light-blue;
+}

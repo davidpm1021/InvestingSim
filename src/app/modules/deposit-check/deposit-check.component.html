@@ -1,0 +1,51 @@
+<div class="main-container prefix">
+ <mat-card class="card">
+  <mat-card-content>
+    <div class="heading">
+      <h1>Deposit Checks</h1>
+      <p>You may deposit checks below by taking a clear picture of the front and back of the check with a solid
+        background.
+        Be sure to endorse (sign) the back of your check first!</p>
+    </div>
+   <div fxLayout="row" class="mt-30">
+    <div fxFlex="100" fxLayoutAlign="center center">
+      <form [formGroup]='depositForm' fxFlex="50%" fxFlex.sm="80%" fxFlex.xs="100%" autocomplete="off">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <mat-form-field appearance="outline">
+            <mat-label>To</mat-label>
+            <mat-select formControlName="fromAccount">
+              <mat-option value="select">PLEASE SELECT AN ACCOUNT</mat-option>
+              <mat-option value="checking">CHECKING (Available Balance is {{checkingBalance | currency}})</mat-option>
+              <mat-option value="saving">SAVING (Available Balance is {{savingBalance | currency}})</mat-option>
+            </mat-select>
+            <mat-error *ngIf="fromAccount?.invalid && fromAccount?.errors?.['required']">
+              Please select any account
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Amount</mat-label>
+            <input matInput placeholder="Placeholder" formControlName='amount'>
+            <span matPrefix class="amount">$</span>
+            <mat-error *ngIf="amount?.invalid && amount?.errors?.['required']">
+              Please select any account
+            </mat-error>
+          </mat-form-field>
+            <div class="check">Upload Check</div>
+               <div fxLayout="row" fxLayoutGap="10px">
+                <button mat-button class="upload" (click)="openDialog('front')">
+                  <img src="assets/images/Camera-icon.svg" alt=""> Front
+                </button>
+                <button mat-button class="upload" (click)="openDialog('back')">
+                  <img src="assets/images/Camera-icon.svg" alt=""> Back </button>
+               </div>
+          <div fxLayout="row" fxLayoutGap="10px">
+            <button mat-raised-button class="button" [disabled]='depositForm.invalid' (click)='depositCheck()'>Submit</button>
+            <button mat-raised-button class="button" routerLink="/">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+   </div>
+  </mat-card-content>
+ </mat-card>
+</div>

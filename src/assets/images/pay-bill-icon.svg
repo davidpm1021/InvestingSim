@@ -1,0 +1,11 @@
+<svg id="Pay-bill-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="22.301" viewBox="0 0 30 22.301">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_262" data-name="Rectangle 262" width="30" height="22.301" fill="#0b1541"/>
+    </clipPath>
+  </defs>
+  <g id="Group_3343" data-name="Group 3343" clip-path="url(#clip-path)">
+    <path id="Path_397" data-name="Path 397" d="M14.983,4.734a2.237,2.237,0,0,0-1.852-1.217V2.744H12v.773c-1.031.125-2.064.659-2.064,1.824,0,1.476,1.244,1.7,2.518,1.842.828.1,1.568.311,1.568.9,0,.694-.74.969-1.541.969a1.943,1.943,0,0,1-1.773-.933l-1.049.445A2.651,2.651,0,0,0,12,10.084v.846h1.129v-.891A2.046,2.046,0,0,0,15.24,8.081c0-1.565-1.386-1.8-2.685-1.957-.746-.089-1.45-.2-1.45-.78,0-.623.675-.837,1.416-.837a1.874,1.874,0,0,1,1.5.674Z" transform="translate(4.906 1.394)" fill="#0b1541"/>
+    <path id="Path_398" data-name="Path 398" d="M30,0H5.734V5.84H0V22.3H24.581V16.459H30ZM21.566,19.285H3.016V8.856H5.734v7.6H21.566Zm5.419-5.841H8.748V3.015H26.984Z" transform="translate(0 0)" fill="#0b1541"/>
+  </g>
+</svg>

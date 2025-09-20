@@ -1,0 +1,38 @@
+<div class="main-container">
+ <mat-card class="card">
+  <mat-card-content>
+    <div class="heading">
+      <h1> Upcoming Transfers</h1>
+    </div>
+    <div fxLayout="row wrap">
+      <div fxFlex='100%' class="mt-30">
+        <app-choose-account (clickHandler)="clickHandler($event)" [isSearch]="true"></app-choose-account>
+      </div>
+
+      <div class="table" fxFlex='100%'>
+        <app-generic-table [columns]="columns" [dataSource]="upcomingDataSource" [pageSize]="10" (infoActionHandler)='openDeleteDialog($event, true)'>
+        </app-generic-table>
+      </div>
+    </div>
+  </mat-card-content>
+ </mat-card>
+</div>
+
+<div class="main-container">
+  <mat-card class="card">
+   <mat-card-content>
+     <div class="heading">
+       <h1> Past Transfers</h1>
+     </div>
+     <div fxLayout="row wrap">
+       <div fxFlex='100%' class="mt-30">
+         <app-choose-account (clickHandler)="clickHandler($event)" [isSearch]="true"></app-choose-account>
+       </div>
+       <div class="table" fxFlex='100%'>
+         <app-generic-table [columns]="columns" [dataSource]="dataSource" [pageSize]="10" (infoActionHandler)='openDeleteDialog($event, false)'>
+         </app-generic-table>
+       </div>
+     </div>
+   </mat-card-content>
+  </mat-card>
+ </div>

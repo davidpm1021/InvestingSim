@@ -1,0 +1,55 @@
+<div fxLayout="column" class="generic-container" fxLayoutGap="10px">
+  <div class="table">
+    <table mat-table [dataSource]="tableDataSource" class="table-container">
+
+      <!-- Generic column -->
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+        <ng-container *ngIf='column.isAction === true'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let element">
+            <span (click)="onClickAction(element, column.actionName)" class="table-link">{{column.actionName}}</span>
+          </td>
+        </ng-container>
+        <ng-container *ngIf='column.icon !=="info" && column.type !== "html" && column.type !== "info" && column.type !== "date" && column.type !=="number"'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="flex"><mat-icon *ngIf='row.frequency === "MONTHLY" && (column.columnDef === "description" || column.columnDef === "recipient")'>refresh</mat-icon>{{ column.cell(row) ? column.cell(row) : ''}}</span>
+          </td>
+        </ng-container>
+        <ng-container *ngIf='column.type ==="date"'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let row">{{ column.cell(row) | date: 'MM/dd/yyyy'}}
+          </td>
+        </ng-container>
+        <ng-container *ngIf='column.type ==="html"'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let row">
+            <span [innerHTML]="column.cell(row)"></span>
+          </td>
+        </ng-container>
+
+        <ng-container *ngIf='column.type ==="number"'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let row">{{ column.cell(row) | currency}}
+          </td>
+        </ng-container>
+
+        <ng-container *ngIf='column.type ==="info"'>
+          <th mat-header-cell *matHeaderCellDef>{{column.header}}</th>
+          <td mat-cell *matCellDef="let row" [ngClass]='{"disabled": row.id === 1200000 || row.id === 1100000}'> <mat-icon (click)='infoActionHandler.emit(row)'>{{column.icon}}</mat-icon>
+          </td>
+        </ng-container>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header"></tr>
+      <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns" class="cursor-pointer"
+        (click)="onRowClick(row, i)">
+      </tr>
+    </table>
+
+    <!-- Paginator for table -->
+    <div class="page-footer" data-html2canvas-ignore="true">
+      <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 15, 25]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

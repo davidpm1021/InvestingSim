@@ -1,0 +1,52 @@
+<div class="dialog-container">
+  <div fxLayout="row">
+    <div fxFlex="90%">
+      <h2 mat-dialog-title>{{data ? 'Edit': 'Add'}} RECIPIENT </h2>
+    </div>
+    <div fxFlex="10%" fxLayoutAlign="end start">
+      <mat-icon [mat-dialog-close] class="icon">close</mat-icon>
+    </div>
+  </div>
+  <div mat-dialog-content>
+    <form [formGroup]='recipientForm' autocomplete="off">
+      <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="10px">
+        <div fxFlex="100%">
+          <mat-form-field appearance="outline">
+            <mat-label>RECIPIENT NAME</mat-label>
+            <input matInput placeholder="Enter name" formControlName='name'>
+          </mat-form-field>
+        </div>
+        <div fxFlex="calc(50% - 10px)">
+          <mat-form-field appearance="outline">
+            <mat-label>ADDRESS</mat-label>
+            <input matInput placeholder="Enter address" formControlName='address1' readonly>
+          </mat-form-field>
+        </div>
+        <div fxFlex="calc(50% - 10px)">
+          <mat-form-field appearance="outline">
+            <mat-label>CITY</mat-label>
+            <input matInput placeholder="Enter city" formControlName='city' readonly>
+          </mat-form-field>
+        </div>
+        <div fxFlex="calc(50% - 10px)">
+          <mat-form-field appearance="outline">
+            <mat-label>STATE</mat-label>
+            <input matInput placeholder="Enter State" formControlName='state' readonly>
+          </mat-form-field>
+        </div>
+        <div fxFlex="calc(50% - 10px)">
+          <mat-form-field appearance="outline">
+            <mat-label>ZIP</mat-label>
+            <input matInput placeholder="Enter zip code" formControlName='zip' readonly>
+          </mat-form-field>
+        </div>
+        <div fxFlex="100%">
+          <div class="dialog-actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
+            <button mat-raised-button class="button" (click)='submit()' [disabled]='recipientForm.invalid'>SUBMIT</button>
+            <button mat-raised-button class="button" [mat-dialog-close] [disabled]='true'>RESET</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

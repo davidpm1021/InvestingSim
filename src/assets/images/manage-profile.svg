@@ -1,0 +1,8 @@
+<svg id="account-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <rect id="background" width="30" height="30" fill="none"/>
+  <g id="Dribbble-Light-Preview">
+    <g id="icons">
+      <path id="profile-_1336_" data-name="profile-[#1336]" d="M339,2017c5.678,0,10.437,3.321,11.676,9H327.324c1.239-5.679,6-9,11.676-9m-6-9a6,6,0,1,1,6,6,6.006,6.006,0,0,1-6-6m11.637,7.01a9,9,0,1,0-11.274,0A14.43,14.43,0,0,0,324,2029h30a14.43,14.43,0,0,0-9.363-13.99" transform="translate(-324 -1999)" fill="#0b1541" fill-rule="evenodd"/>
+    </g>
+  </g>
+</svg>

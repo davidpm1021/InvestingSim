@@ -1,0 +1,17 @@
+@import "variables";
+
+h3 {
+   font-weight: 600;
+  margin-top: 15px;
+}
+
+table {
+  width: 100%;
+}
+
+.add-button {
+  color: $orangered;
+  box-shadow: none;
+  margin-bottom: 15px;
+  cursor: pointer;
+}

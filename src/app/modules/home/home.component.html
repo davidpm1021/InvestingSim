@@ -1,0 +1,41 @@
+<div class="home-container">
+  <div fxLayout="row" class="p-60">
+    <img class="main-title" src="assets/images/welcome-page-logo.svg" alt="">
+  </div>
+  <div fxLayout="row">
+    <div fxFlex="53%" fxFlex.md="63%" fxFlex.sm="100%" fxFlex.xs="100%"  class="p-50">
+      <mat-card class="card">
+        <mat-card-content>
+          <div fxLayout="column" fxLayoutGap="20px" fxLayoutGap.xs="10px">
+            <div class="header">WELCOME TO</div>
+            <div class="title">NGPF Bank Simulator</div>
+            <div class="description mb-0">This Online Banking Simulation allows you to see what it is like to manage your own online
+              bank account. With OnlineBank Sim you can:</div>
+            <mat-list class="list">
+              <mat-list-item role="listitem">
+                <img mat-list-icon class="check-icon" src="assets/images/Orange_checkbox.svg" alt="">
+                <span class="text">View account activity for both checking and savings</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <img mat-list-icon class="check-icon" src="assets/images/Orange_checkbox.svg" alt="">
+                <span class="text">Look at monthly bank statements</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <img mat-list-icon class="check-icon" src="assets/images/Orange_checkbox.svg" alt="">
+                <span class="text">Pay bills, transfer funds, and make check deposits</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <img mat-list-icon class="check-icon" src="assets/images/Orange_checkbox.svg" alt="">
+                <span class="text">and more!</span>
+              </mat-list-item>
+            </mat-list>
+            <div fxLayout="row" fxLayout.xs="column" fxLayoutGap='20px'>
+                <button mat-raised-button class="button" (click)='startNow()'>GET STARTED NOW</button>
+                <button mat-raised-button *ngIf='isSessionAvailable()' class="button button-blue" (click)='continue()'>CONTINUE SESSION</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

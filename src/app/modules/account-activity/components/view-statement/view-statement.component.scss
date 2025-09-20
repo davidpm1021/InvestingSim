@@ -1,0 +1,48 @@
+@import "variables";
+
+.content {
+  margin-top: 20px;
+
+  .statement-card {
+    .p-20 {
+      padding: 20px;
+
+      .title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  h3 {
+    font-size: 20px;
+    color: $primary;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  .pt-50 {
+    padding-top: 50px ;
+  }
+}
+
+.value {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+@media only screen and (max-width: 715px) {
+  h1 {
+    font-size: 21px !important;
+  }
+}
+
+@media only screen and (max-width: 654px) {
+  h3 {
+    font-size: 14px !important;
+  }
+
+  .button {
+    font-size: 12px !important;
+  }
+}

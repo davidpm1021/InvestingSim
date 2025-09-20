@@ -1,0 +1,8 @@
+<svg id="home-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <rect id="background" width="30" height="30" fill="none"/>
+  <g id="Dribbble-Light-Preview" transform="translate(1.5)">
+    <g id="icons">
+      <path id="home-_1392_" data-name="home-[#1392]" d="M348.625,587h-5.062v-6H333.438v6h-5.062V573.19l10.108-8.979,10.142,9.009Zm3.287-14.99L338.453,560,325,571.991V590h11.813v-6h3.375v6H352V572.012Z" transform="translate(-325 -560)" fill="#0b1541" fill-rule="evenodd"/>
+    </g>
+  </g>
+</svg>

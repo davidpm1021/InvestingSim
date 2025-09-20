@@ -1,0 +1,24 @@
+@import 'variables';
+
+p {
+  font-family: "Montserrat";
+  font-size: 18px;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+
+.title {
+  margin-top: 30px;
+  font-family: 'Montserrat';
+  color: $primary;
+  font-weight: 600;
+  font-size: 20px;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
