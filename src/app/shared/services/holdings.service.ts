@@ -187,7 +187,7 @@ export class HoldingsService {
   /**
    * Get current price for an asset on a specific date
    */
-  private getCurrentPrice(asset: Asset, date: string): number {
+  public getCurrentPrice(asset: Asset, date: string): number {
     // Find the closest historical performance point on or before the date
     const performancePoints = asset.historicalPerformance
       .filter(point => point.date <= date)
@@ -202,6 +202,33 @@ export class HoldingsService {
       .sort((a, b) => b.date.localeCompare(a.date));
     
     return allPoints.length > 0 ? allPoints[0].value : 0;
+  }
+
+  /**
+   * Get the number of shares owned for a specific asset up to a given date
+   */
+  public getSharesOwned(assetId: string, asOfDate: string): number {
+    const holdingTransactions = this.holdingTransactionsSubject.value;
+    
+    // Filter transactions for this asset up to the given date
+    const relevantTransactions = holdingTransactions
+      .filter(transaction => 
+        transaction.assetId === assetId && 
+        transaction.date <= asOfDate
+      )
+      .sort((a, b) => a.date.localeCompare(b.date)); // Sort by date ascending
+    
+    // Calculate net shares owned
+    let totalShares = 0;
+    for (const transaction of relevantTransactions) {
+      if (transaction.action === 'buy') {
+        totalShares += transaction.shares;
+      } else if (transaction.action === 'sell') {
+        totalShares -= transaction.shares;
+      }
+    }
+    
+    return Math.max(0, totalShares); // Ensure we don't return negative shares
   }
 
   /**

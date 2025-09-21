@@ -32,7 +32,7 @@ export class TransferDialogComponent {
   ) {}
 
   get dialogTitle(): string {
-    return this.data.transferDirection === 'to-brokerage' ? 'Transfer to Brokerage' : 'Transfer to Banking';
+    return this.data.transferDirection === 'to-brokerage' ? 'Add Funds' : 'Withdraw Funds';
   }
 
   get accountType(): string {
@@ -40,7 +40,7 @@ export class TransferDialogComponent {
   }
 
   get transferDescription(): string {
-    return this.data.transferDirection === 'to-brokerage' ? 'Transfer to brokerage' : 'Transfer to banking';
+    return this.data.transferDirection === 'to-brokerage' ? 'Add funds to brokerage' : 'Withdraw funds to banking';
   }
 
   isValidAmount(): boolean {

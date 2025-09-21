@@ -41,8 +41,10 @@ export interface CategoryOption {
 export class PlaceTradeComponent implements OnInit, OnDestroy {
   @Input() brokerageBalance: number = 0;
   @Input() currentDate: string = '';
+  @Input() holdings: any[] = [];
 
   @Output() tradeSubmitted = new EventEmitter<TradeData>();
+  @Output() tradeCompleted = new EventEmitter<void>();
 
   // Step management
   currentStep: number = 1;
@@ -52,7 +54,6 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
   selectedCategory: string = '';
   selectedAsset: string = '';
   availableAssets: Asset[] = [];
-  currentHoldings: any[] = [];
   
   // Trade calculation
   inputType: 'dollars' | 'shares' = 'dollars';
@@ -74,12 +75,7 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to current holdings
-    this.subscription.add(
-      this.holdingsService.holdings$.subscribe(holdings => {
-        this.currentHoldings = holdings;
-      })
-    );
+    // No longer need to subscribe to holdings service since we get holdings as input
   }
 
   ngOnDestroy(): void {
@@ -111,7 +107,7 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
       }
     } else {
       // For sell, show only assets the user currently holds
-      this.availableAssets = this.currentHoldings.map(holding => 
+      this.availableAssets = this.holdings.map(holding => 
         this.dataService.getAssetById(holding.assetId)
       ).filter(asset => asset !== undefined) as Asset[];
     }
@@ -183,7 +179,7 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
 
   // Get current holding for an asset
   getCurrentHolding(assetId: string): any {
-    return this.currentHoldings.find(h => h.assetId === assetId);
+    return this.holdings.find(h => h.assetId === assetId);
   }
 
   // Validation
@@ -219,6 +215,7 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
       
       this.tradeSubmitted.emit(tradeData);
       this.resetForm();
+      this.tradeCompleted.emit();
     }
   }
 
@@ -236,7 +233,37 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
   // Navigation
   goBack(): void {
     if (this.currentStep > 1) {
-      this.currentStep--;
+      // Handle different flows for buy vs sell
+      if (this.currentStep === 4) {
+        // From trade calculator (step 4)
+        if (this.isBuy) {
+          // Buy flow: step 4 -> step 3 (asset selection)
+          this.currentStep = 3;
+        } else {
+          // Sell flow: step 4 -> step 2 (asset selection)
+          this.currentStep = 2;
+          // Reset asset selection for sell
+          this.selectedAsset = '';
+          this.inputAmount = null;
+          this.currentPrice = 0;
+        }
+      } else if (this.currentStep === 3) {
+        // From asset selection (step 3) - only for buy flow
+        this.currentStep = 2;
+        // Reset asset selection
+        this.selectedAsset = '';
+        this.inputAmount = null;
+        this.currentPrice = 0;
+      } else if (this.currentStep === 2) {
+        // From category/asset selection (step 2) -> step 1
+        this.currentStep = 1;
+        // Reset all state when going back to step 1
+        this.selectedCategory = '';
+        this.selectedAsset = '';
+        this.availableAssets = [];
+        this.inputAmount = null;
+        this.currentPrice = 0;
+      }
     }
   }
 
@@ -262,6 +289,22 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
       if (holding && calculatedShares > holding.shares) {
         return `Insufficient shares. Available: ${holding.shares.toFixed(2)}`;
       }
+    }
+    return '';
+  }
+
+  // Check if sell button should be disabled
+  isSellDisabled(): boolean {
+    return this.holdings.length === 0 || this.holdings.every(h => h.shares <= 0);
+  }
+
+  // Get sell button info message
+  getSellInfoMessage(): string {
+    if (this.holdings.length === 0) {
+      return 'No holdings to sell';
+    }
+    if (this.holdings.every(h => h.shares <= 0)) {
+      return 'No shares available to sell';
     }
     return '';
   }

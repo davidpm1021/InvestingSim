@@ -20,7 +20,7 @@
                   color="accent" 
                   class="action-button sell-button"
                   (click)="onActionChange(false)"
-                  [disabled]="currentHoldings.length === 0">
+                  [disabled]="isSellDisabled()">
             <mat-icon>remove_shopping_cart</mat-icon>
             Sell
           </button>
@@ -30,9 +30,9 @@
             <mat-icon>info</mat-icon>
             <span>No funds available for buying. Current balance: ${{ brokerageBalance | number:'1.2-2' }}</span>
           </div>
-          <div *ngIf="currentHoldings.length === 0" class="info-message warning">
+          <div *ngIf="isSellDisabled()" class="info-message warning">
             <mat-icon>info</mat-icon>
-            <span>No holdings available for selling.</span>
+            <span>{{ getSellInfoMessage() }}</span>
           </div>
         </div>
       </div>
@@ -63,11 +63,11 @@
 
         <!-- Sell: Asset Selection -->
         <div *ngIf="!isBuy" class="asset-selection">
-          <div *ngIf="currentHoldings.length === 0" class="no-holdings">
+          <div *ngIf="holdings.length === 0" class="no-holdings">
             <p>You don't have any holdings to sell.</p>
           </div>
-          <div *ngIf="currentHoldings.length > 0" class="holdings-grid">
-            <mat-card *ngFor="let holding of currentHoldings" 
+          <div *ngIf="holdings.length > 0" class="holdings-grid">
+            <mat-card *ngFor="let holding of holdings" 
                       class="holding-card"
                       [class.selected]="selectedAsset === holding.assetId"
                       (click)="onAssetSelect(holding.assetId)">
@@ -194,6 +194,9 @@
                 <p><strong>Current {{ dataService.getAssetById(selectedAsset)?.type | assetType }} Price:</strong> ${{ currentPrice | number:'1.2-2' }}</p>
                 <div *ngIf="isBuy && getMaxShares() > 0" class="max-shares-info">
                   <p><strong>Max amount:</strong> You can currently purchase a maximum of {{ getMaxShares() | number:'1.2-2' }} shares ({{ brokerageBalance | currency:'USD':'symbol':'1.2-2' }})</p>
+                </div>
+                <div *ngIf="!isBuy && getCurrentHolding(selectedAsset)" class="max-shares-info">
+                  <p><strong>Max amount:</strong> You can currently sell a maximum of {{ getCurrentHolding(selectedAsset).shares | number:'1.2-2' }} shares ({{ (getCurrentHolding(selectedAsset).shares * currentPrice) | currency:'USD':'symbol':'1.2-2' }})</p>
                 </div>
               </div>
 

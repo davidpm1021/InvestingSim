@@ -202,6 +202,47 @@ export class TransactionsService {
   }
 
   /**
+   * Add a trade transaction (buy or sell)
+   */
+  addTradeTransaction(accountId: string, assetId: string, action: 'buy' | 'sell', shares: number, price: number, date: string, assetName?: string, assetType?: string): void {
+    const now = new Date();
+    const timeString = now.toTimeString().split(' ')[0]; // Get HH:MM:SS format
+    
+    // Calculate the dollar amount
+    const dollarAmount = shares * price;
+    
+    // Determine the transaction amount based on action
+    const transactionAmount = action === 'buy' ? -dollarAmount : dollarAmount;
+    
+    // Create description with new format
+    const actionText = action === 'buy' ? 'Purchased' : 'Sold';
+    let description: string;
+    
+    if (assetName && assetType) {
+      // Format: "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
+      const formattedAssetType = assetType.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ).join(' ');
+      description = `${actionText} ${shares.toFixed(2)} shares of ${assetName} (${formattedAssetType}) at $${price.toFixed(2)}`;
+    } else {
+      // Fallback to old format if asset info not provided
+      const actionTextOld = action === 'buy' ? 'Buy' : 'Sell';
+      description = `${actionTextOld} ${shares} shares at $${price.toFixed(2)}`;
+    }
+    
+    const tradeTransaction: Transaction = {
+      type: "trade",
+      account: accountId,
+      amount: transactionAmount,
+      date: date,
+      time: timeString,
+      description: description
+    };
+
+    this.addTransaction(tradeTransaction);
+  }
+
+  /**
    * Get all transactions ordered by date, time ascending (reactive)
    */
   getAllTransactions$(): Observable<Transaction[]> {

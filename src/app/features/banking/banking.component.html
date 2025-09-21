@@ -9,13 +9,6 @@
               <div class="account-card">
                 <h3>Primary Checking</h3>
                 <p class="balance">${{ cashBalance | number:'1.2-2' }}</p>
-                <button mat-raised-button 
-                        color="primary" 
-                        (click)="openTransferDialog()"
-                        [disabled]="cashBalance <= 0"
-                        class="transfer-button">
-                  Transfer to Brokerage
-                </button>
               </div>
             </div>
     

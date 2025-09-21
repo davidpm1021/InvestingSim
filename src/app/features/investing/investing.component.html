@@ -3,7 +3,7 @@
   <p>Build and manage your investment portfolio.</p>
           <p><strong>Current Period:</strong> {{ currentDateService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
   
-  <mat-tab-group>
+  <mat-tab-group #tabGroup>
     <mat-tab label="Dashboard">
       <div class="tab-content">
         <div class="dashboard-grid">
@@ -14,13 +14,21 @@
             </mat-card-header>
             <mat-card-content>
               <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
-              <button mat-raised-button 
-                      color="primary" 
-                      (click)="openTransferDialog()"
-                      [disabled]="brokerageBalance <= 0"
-                      class="transfer-button">
-                Transfer to Banking
-              </button>
+              <div class="button-group">
+                <button mat-raised-button 
+                        color="accent" 
+                        (click)="openAddFundsDialog()"
+                        class="add-funds-button">
+                  Add Funds
+                </button>
+                <button mat-raised-button 
+                        color="primary" 
+                        (click)="openWithdrawDialog()"
+                        [disabled]="brokerageBalance <= 0"
+                        class="withdraw-button">
+                  Withdraw Funds
+                </button>
+              </div>
             </mat-card-content>
           </mat-card>
           
@@ -38,7 +46,7 @@
                 
                 <ng-container matColumnDef="shares">
                   <th mat-header-cell *matHeaderCellDef>Shares</th>
-                  <td mat-cell *matCellDef="let holding">{{ holding.shares }}</td>
+                  <td mat-cell *matCellDef="let holding">{{ holding.shares | number:'1.2-2' }}</td>
                 </ng-container>
                 
                 <ng-container matColumnDef="price">
@@ -51,14 +59,6 @@
                   <td mat-cell *matCellDef="let holding">${{ holding.value | number:'1.2-2' }}</td>
                 </ng-container>
                 
-                <ng-container matColumnDef="gainLoss">
-                  <th mat-header-cell *matHeaderCellDef>Gain/Loss</th>
-                  <td mat-cell *matCellDef="let holding" 
-                      [class.gain-positive]="holding.gainLoss > 0" 
-                      [class.gain-negative]="holding.gainLoss < 0">
-                    ${{ holding.gainLoss | number:'1.2-2' }} ({{ holding.gainLossPercent | number:'1.2-2' }}%)
-                  </td>
-                </ng-container>
                 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -66,14 +66,26 @@
             </mat-card-content>
           </mat-card>
           
-          <!-- Allocation Chart Placeholder -->
+          <!-- Allocation Section -->
           <mat-card class="chart-card">
             <mat-card-header>
-              <mat-card-title>Allocation Chart</mat-card-title>
+              <mat-card-title>Allocation</mat-card-title>
             </mat-card-header>
             <mat-card-content>
+              <!-- Asset Type Allocation List -->
+              <div class="allocation-list" *ngIf="assetTypeAllocation.length > 0">
+                <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
+                  <div class="allocation-type">{{ allocation.type | assetType }}</div>
+                  <div class="allocation-percentage">{{ allocation.percentage | number:'1.1-1' }}%</div>
+                </div>
+              </div>
+              <div class="no-allocation" *ngIf="assetTypeAllocation.length === 0">
+                <p>No holdings to display allocation</p>
+              </div>
+              
+              <!-- Pie Chart Placeholder -->
               <div class="chart-placeholder">
-                <p>Allocation Chart</p>
+                <p>Pie Chart</p>
                 <p class="chart-subtitle">Pie chart visualization will be implemented here</p>
               </div>
             </mat-card-content>
@@ -82,38 +94,103 @@
       </div>
     </mat-tab>
     
-    <mat-tab label="Trade">
+    <mat-tab label="Place Trade">
       <app-place-trade 
         [brokerageBalance]="brokerageBalance" 
-        [currentDate]="currentDate" 
-        (tradeSubmitted)="onSubmitTrade($event)">
+        [currentDate]="currentDate"
+        [holdings]="holdings"
+        (tradeSubmitted)="processTrade($event)"
+        (tradeCompleted)="onTradeCompleted()">
       </app-place-trade>
     </mat-tab>
     
-    <mat-tab label="Transactions">
+    <mat-tab label="Activity">
       <div class="tab-content">
-        <div class="transactions-section">
-          <h2>Recent Transactions</h2>
-          <div *ngIf="transactions.length === 0" class="no-transactions">
-            <p>No transactions yet.</p>
+        <div class="activity-section">
+          <h2>Trading Activity</h2>
+          <div *ngIf="holdingTransactions.length === 0" class="no-transactions">
+            <p>No trading activity yet.</p>
           </div>
-          <div *ngIf="transactions.length > 0" class="transactions-list">
+          <div *ngIf="holdingTransactions.length > 0" class="transactions-list">
             <div class="transaction-header">
-              <div class="header-description">Description</div>
               <div class="header-date">Date</div>
-              <div class="header-amount">Amount</div>
+              <div class="header-action">Action</div>
+              <div class="header-asset">Asset</div>
+              <div class="header-asset-type">Asset Type</div>
+              <div class="header-shares">Shares</div>
+              <div class="header-price">Price</div>
               <div class="header-balance">Balance</div>
             </div>
-            <div *ngFor="let transaction of transactions" class="transaction-item">
-              <div class="transaction-description">{{ transaction.displayDescription }}</div>
+            <div *ngFor="let transaction of holdingTransactions" class="transaction-item">
               <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
-              <div class="transaction-amount" 
-                   [class.positive]="getTransactionAmount(transaction) > 0" 
-                   [class.negative]="getTransactionAmount(transaction) < 0">
-                {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+              <div class="transaction-action" 
+                   [class.buy-action]="transaction.action === 'buy'"
+                   [class.sell-action]="transaction.action === 'sell'">
+                {{ transaction.action | titlecase }}
               </div>
-              <div class="transaction-balance">
-                {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
+              <div class="transaction-asset">{{ getAssetName(transaction.assetId) }}</div>
+              <div class="transaction-asset-type">{{ getAssetType(transaction.assetId) | assetType }}</div>
+              <div class="transaction-shares">{{ transaction.shares | number:'1.2-2' }}</div>
+              <div class="transaction-price">${{ transaction.price | number:'1.2-2' }}</div>
+              <div class="transaction-balance">{{ getRunningBalance(transaction) | number:'1.2-2' }} shares</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Account">
+      <div class="tab-content">
+        <div class="balance-section">
+          <!-- Account Balance Card -->
+          <mat-card class="balance-card">
+            <mat-card-header>
+              <mat-card-title>Brokerage Account Balance</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
+              <div class="button-group">
+                <button mat-raised-button 
+                        color="accent" 
+                        (click)="openAddFundsDialog()"
+                        class="add-funds-button">
+                  Add Funds
+                </button>
+                <button mat-raised-button 
+                        color="primary" 
+                        (click)="openWithdrawDialog()"
+                        [disabled]="brokerageBalance <= 0"
+                        class="withdraw-button">
+                  Withdraw Funds
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <!-- Transactions List -->
+          <div class="transactions-section">
+            <h2>Recent Transactions</h2>
+            <div *ngIf="transactions.length === 0" class="no-transactions">
+              <p>No transactions yet.</p>
+            </div>
+            <div *ngIf="transactions.length > 0" class="transactions-list">
+              <div class="transaction-header">
+                <div class="header-description">Description</div>
+                <div class="header-date">Date</div>
+                <div class="header-amount">Amount</div>
+                <div class="header-balance">Balance</div>
+              </div>
+              <div *ngFor="let transaction of transactions" class="transaction-item">
+                <div class="transaction-description">{{ transaction.displayDescription }}</div>
+                <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
+                <div class="transaction-amount" 
+                     [class.positive]="getTransactionAmount(transaction) > 0" 
+                     [class.negative]="getTransactionAmount(transaction) < 0">
+                  {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+                </div>
+                <div class="transaction-balance">
+                  {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
+                </div>
               </div>
             </div>
           </div>

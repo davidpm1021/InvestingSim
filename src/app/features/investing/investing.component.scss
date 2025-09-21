@@ -65,6 +65,11 @@ p {
   width: 100%;
 }
 
+// Left-align shares column in holdings table
+.holdings-table .mat-column-shares {
+  text-align: left;
+}
+
 .gain-positive {
   color: #28a745;
   font-weight: 600;
@@ -112,7 +117,7 @@ p {
 
 .transaction-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
   gap: 16px;
   padding: 12px 0;
   border-bottom: 2px solid #ddd;
@@ -123,7 +128,7 @@ p {
 
 .transaction-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
   gap: 16px;
   align-items: center;
   padding: 12px 0;
@@ -147,7 +152,7 @@ p {
 .transaction-amount {
   font-weight: 600;
   font-size: 1.1rem;
-  text-align: right;
+  text-align: left;
   
   &.positive {
     color: #28a745;
@@ -161,7 +166,7 @@ p {
 .transaction-balance {
   font-weight: 500;
   font-size: 1rem;
-  text-align: right;
+  text-align: left;
   color: #333;
 }
 
@@ -331,7 +336,7 @@ p {
 }
 
 .trade-shares, .trade-price, .trade-amount {
-  text-align: right;
+  text-align: left;
   font-weight: 500;
 }
 
@@ -435,7 +440,7 @@ h2 {
 
 .transaction-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
   gap: 16px;
   padding: 12px 0;
   border-bottom: 2px solid #ddd;
@@ -446,7 +451,7 @@ h2 {
 
 .transaction-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
   gap: 16px;
   align-items: center;
   padding: 12px 0;
@@ -470,7 +475,7 @@ h2 {
 .transaction-amount {
   font-weight: 600;
   font-size: 1.1rem;
-  text-align: right;
+  text-align: left;
   
   &.positive {
     color: #28a745;
@@ -484,7 +489,7 @@ h2 {
 .transaction-balance {
   font-weight: 500;
   font-size: 1rem;
-  text-align: right;
+  text-align: left;
   color: #333;
 }
 
@@ -498,4 +503,95 @@ h2 {
   .investing-content {
     grid-template-columns: 1fr;
   }
+}
+
+// Activity section styles
+.activity-section {
+  margin-top: 24px;
+}
+
+// Buy/Sell action styles
+.buy-action {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.sell-action {
+  color: #f44336;
+  font-weight: 600;
+}
+
+// Button group styles
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.add-funds-button {
+  flex: 1;
+}
+
+.withdraw-button {
+  flex: 1;
+}
+
+// Trading Activity Column Styles
+.transaction-shares {
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: left;
+  color: #333;
+}
+
+.transaction-asset {
+  font-weight: 500;
+  color: #333;
+}
+
+.transaction-asset-type {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.transaction-price {
+  font-weight: 500;
+  text-align: right;
+  color: #333;
+}
+
+// Allocation Section Styles
+.allocation-list {
+  margin-bottom: 20px;
+}
+
+.allocation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.allocation-item:last-child {
+  border-bottom: none;
+}
+
+.allocation-type {
+  font-weight: 500;
+  color: #333;
+}
+
+.allocation-percentage {
+  font-weight: 600;
+  color: #1976d2;
+  font-size: 1.1rem;
+}
+
+.no-allocation {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+  margin-bottom: 20px;
 }
