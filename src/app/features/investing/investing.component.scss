@@ -94,44 +94,6 @@ p {
   font-style: italic;
 }
 
-// Trade form styles
-.trade-form-card {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.trade-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.buy-sell-toggle {
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.input-type-group {
-  display: flex;
-  gap: 24px;
-}
-
-.submit-button {
-  width: 100%;
-  height: 48px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
 
 // Transactions tab styles
 .transactions-section {
@@ -231,9 +193,6 @@ p {
     grid-row: 3;
   }
   
-  .trade-form-card {
-    margin: 0 16px;
-  }
 }
 
 // Statements tab styles

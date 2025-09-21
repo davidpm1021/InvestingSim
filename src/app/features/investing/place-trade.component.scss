@@ -1,0 +1,435 @@
+.tab-content {
+  padding: 24px 0;
+}
+
+// Trade form styles
+.trade-form-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step-content {
+  padding: 20px 0;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.back-button {
+  margin-right: 8px;
+}
+
+h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+// Step 1: Action Selection
+.action-selection {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 40px 0;
+}
+
+.action-button {
+  min-width: 140px;
+  height: 60px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    font-size: 1.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+}
+
+.buy-button {
+  // Using default Material Design colors
+}
+
+.sell-button {
+  // Using default Material Design colors
+}
+
+.action-info {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+
+  &.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+  }
+
+  mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
+
+// Step 2: Category Selection
+.category-selection {
+  margin-top: 20px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.category-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+  }
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+// Asset Selection
+.asset-selection {
+  margin-top: 20px;
+}
+
+.assets-grid, .holdings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.asset-card, .holding-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+  }
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 4px 0;
+    color: #666;
+    font-size: 0.9rem;
+
+    &.asset-type {
+      color: #1976d2;
+      font-weight: 500;
+    }
+
+    &.asset-sector {
+      color: #666;
+    }
+
+    &.asset-price {
+      color: #28a745;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+  }
+}
+
+.no-holdings {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-style: italic;
+}
+
+// Step 4: Trade Details
+.asset-details {
+  margin-bottom: 24px;
+}
+
+.details-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.asset-info {
+  h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.3rem;
+  }
+
+  .asset-meta {
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .asset-description {
+    margin: 0 0 16px 0;
+    color: #555;
+    line-height: 1.4;
+  }
+}
+
+.asset-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .metric-label {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .metric-value {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+  }
+}
+
+// Trade Calculator
+.trade-calculator {
+  margin-bottom: 24px;
+}
+
+.calculator-card {
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+}
+
+.input-type-selection {
+  margin-bottom: 20px;
+}
+
+.input-type-group {
+  display: flex;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.single-input-container {
+  margin-bottom: 20px;
+}
+
+.conversion-display {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.conversion-info {
+  padding: 12px 16px;
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  border-left: 4px solid #1976d2;
+
+  p {
+    margin: 0;
+    color: #1976d2;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.price-info {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+
+  p {
+    margin: 4px 0;
+    color: #333;
+  }
+}
+
+.max-shares-info {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background-color: #e8f5e8;
+  border-radius: 4px;
+  border-left: 4px solid #28a745;
+
+  p {
+    margin: 0;
+    color: #155724;
+    font-weight: 500;
+  }
+}
+
+.calculation-summary {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  border-left: 4px solid #1976d2;
+
+  p {
+    margin: 0;
+    color: #1976d2;
+    font-weight: 500;
+  }
+}
+
+.validation-message {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: 500;
+
+  &.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+}
+
+.balance-info {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #d4edda;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+
+  p {
+    margin: 4px 0;
+    color: #155724;
+    font-weight: 500;
+  }
+}
+
+// Step Actions
+.step-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.submit-button {
+  min-width: 200px;
+  height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .trade-form-card {
+    margin: 0 16px;
+  }
+
+  .action-selection {
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .action-button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .assets-grid, .holdings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-type-group {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .asset-metrics {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .back-button {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+}

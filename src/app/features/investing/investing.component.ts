@@ -18,6 +18,7 @@ import { TransactionsService, Transaction } from '../../shared/services/transact
 import { HoldingsService } from '../../shared/services/holdings.service';
 import { CurrentDateService } from '../../shared/services/current-date.service';
 import { TransferDialogComponent } from '../banking/transfer-dialog.component';
+import { PlaceTradeComponent, TradeData } from './place-trade.component';
 
 export interface Holding {
   asset: string;
@@ -31,7 +32,7 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })
@@ -44,19 +45,6 @@ export class InvestingComponent implements OnInit, OnDestroy {
   holdings: any[] = [];
   
   displayedColumns: string[] = ['asset', 'shares', 'price', 'value', 'gainLoss'];
-  
-  // Trading form properties
-  selectedAsset: string = '';
-  isBuy: boolean = true;
-  inputType: string = 'shares';
-  tradeAmount: number | null = null;
-  
-  // Mock asset options
-  assetOptions = [
-    { value: 'AAPL', label: 'Apple Inc. (AAPL)' },
-    { value: 'MSFT', label: 'Microsoft Corp. (MSFT)' },
-    { value: 'GOOGL', label: 'Alphabet Inc. (GOOGL)' }
-  ];
 
   // Quarterly statements data
   quarterlyStatements = [
@@ -160,27 +148,8 @@ export class InvestingComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmitTrade(): void {
-    if (this.selectedAsset && this.tradeAmount !== null && this.tradeAmount > 0) {
-      const tradeData = {
-        asset: this.selectedAsset,
-        action: this.isBuy ? 'Buy' : 'Sell',
-        inputType: this.inputType,
-        amount: this.tradeAmount,
-        timestamp: new Date().toISOString()
-      };
-      
-      console.log('Trade submitted:', tradeData);
-      
-      // Reset form
-      this.selectedAsset = '';
-      this.tradeAmount = null;
-    }
-  }
-
-  isTradeFormValid(): boolean {
-    return this.selectedAsset !== '' && 
-           this.tradeAmount !== null && 
-           this.tradeAmount > 0;
+  onSubmitTrade(tradeData: TradeData): void {
+    console.log('Trade submitted:', tradeData);
+    // TODO: Integrate with HoldingsService to process the trade
   }
 }
