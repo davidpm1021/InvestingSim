@@ -12,7 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule, MatTabGroup } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
 import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
 import { HoldingsService } from '../../shared/services/holdings.service';
@@ -53,6 +53,12 @@ export class InvestingComponent implements OnInit, OnDestroy {
   
   // Asset type allocation percentages
   assetTypeAllocation: Array<{type: string, percentage: number, value: number}> = [];
+  
+  // Recent activity for dashboard (last 3 transactions)
+  recentActivity: any[] = [];
+  
+  // All assets for daily movers
+  allAssets: any[] = [];
   
   displayedColumns: string[] = ['asset', 'shares', 'price', 'value'];
 
@@ -96,6 +102,9 @@ export class InvestingComponent implements OnInit, OnDestroy {
   constructor(public dataService: DataService, public transactionsService: TransactionsService, public holdingsService: HoldingsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
+    // Initialize all assets for daily movers
+    this.allAssets = this.dataService.assets;
+    
     // Subscribe to current date
     this.subscription.add(
       this.currentDateService.currentDate$.subscribe(date => {
@@ -132,11 +141,19 @@ export class InvestingComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Subscribe to holding transactions for Activity tab
+    // Subscribe to holding transactions for Activity tab (filtered by current date)
     this.subscription.add(
-      this.holdingsService.holdingTransactions$.subscribe(transactions => {
+      combineLatest([
+        this.holdingsService.holdingTransactions$,
+        this.currentDateService.currentDate$
+      ]).subscribe(([transactions, currentDate]) => {
+        // Filter transactions to only include those on or before current date
+        const filteredTransactions = transactions.filter(transaction => 
+          transaction.date <= currentDate
+        );
+        
         // Sort transactions in descending order by date (most recent first)
-        this.holdingTransactions = transactions.sort((a, b) => {
+        const sortedTransactions = filteredTransactions.sort((a, b) => {
           // Sort by date descending, then by time descending for same date
           const dateComparison = b.date.localeCompare(a.date);
           if (dateComparison !== 0) {
@@ -145,6 +162,12 @@ export class InvestingComponent implements OnInit, OnDestroy {
           // If dates are the same, sort by time descending
           return b.time.localeCompare(a.time);
         });
+        
+        // Update full activity list
+        this.holdingTransactions = sortedTransactions;
+        
+        // Update recent activity (last 3 transactions)
+        this.recentActivity = sortedTransactions.slice(0, 3);
       })
     );
   }
@@ -168,6 +191,7 @@ export class InvestingComponent implements OnInit, OnDestroy {
   openWithdrawDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '400px',
+      maxHeight: '90vh',
       data: { 
         maxAmount: this.brokerageBalance,
         currentDate: this.currentDate,
@@ -185,6 +209,7 @@ export class InvestingComponent implements OnInit, OnDestroy {
   openAddFundsDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '400px',
+      maxHeight: '90vh',
       data: { 
         maxAmount: this.bankingBalance, // Use actual banking balance
         currentDate: this.currentDate,
@@ -327,5 +352,54 @@ export class InvestingComponent implements OnInit, OnDestroy {
   onTradeCompleted(): void {
     // Switch to Activity tab (index 2: Dashboard=0, Place Trade=1, Activity=2)
     this.tabGroup.selectedIndex = 2;
+  }
+
+  // Navigate to Activity tab from dashboard
+  goToActivityTab(): void {
+    // Switch to Activity tab (index 2: Dashboard=0, Place Trade=1, Activity=2)
+    this.tabGroup.selectedIndex = 2;
+  }
+
+  // Get current price for daily movers
+  getCurrentPrice(asset: any): number {
+    return this.holdingsService.getCurrentPrice(asset, this.currentDate);
+  }
+
+  // Get current price for a specific holding
+  getCurrentPriceForHolding(holding: any): number {
+    if (!holding) return 0;
+    const asset = this.dataService.getAssetById(holding.assetId);
+    if (!asset) return 0;
+    return this.holdingsService.getCurrentPrice(asset, this.currentDate);
+  }
+
+  // Get price change percentage for daily movers (mock calculation)
+  getPriceChange(asset: any): number {
+    const currentPrice = this.getCurrentPrice(asset);
+    // Mock price change calculation - in real app this would compare with previous day
+    // For now, return a random change between -5% and +5%
+    const changePercent = (Math.random() - 0.5) * 10; // -5% to +5%
+    return changePercent;
+  }
+
+  // Navigation methods
+  goToAccountTab(): void {
+    this.tabGroup.selectedIndex = 4; // Account tab is index 4
+  }
+
+  goToHoldingsTab(): void {
+    this.tabGroup.selectedIndex = 2; // Holdings tab is index 2
+  }
+
+  // Holdings tab methods
+  selectedHolding: any = null;
+
+  selectHolding(holding: any): void {
+    this.selectedHolding = holding;
+  }
+
+  selectHoldingAndNavigate(holding: any): void {
+    this.selectedHolding = holding;
+    this.goToHoldingsTab();
   }
 }

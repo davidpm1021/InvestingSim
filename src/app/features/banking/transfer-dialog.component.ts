@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 export interface TransferDialogData {
   maxAmount: number;
@@ -28,7 +29,8 @@ export class TransferDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<TransferDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: TransferDialogData
+    @Inject(MAT_DIALOG_DATA) public data: TransferDialogData,
+    private dialog: MatDialog
   ) {}
 
   get dialogTitle(): string {
@@ -53,7 +55,30 @@ export class TransferDialogComponent {
 
   onTransfer(): void {
     if (this.isValidAmount() && this.transferAmount !== null) {
-      this.dialogRef.close({ amount: this.transferAmount });
+      const confirmationData: ConfirmationDialogData = {
+        title: `Confirm ${this.dialogTitle}`,
+        message: `Are you sure you want to ${this.data.transferDirection === 'to-brokerage' ? 'add' : 'withdraw'} these funds?`,
+        confirmText: this.data.transferDirection === 'to-brokerage' ? 'Add Funds' : 'Withdraw Funds',
+        cancelText: 'Cancel',
+        type: 'transfer',
+        transferData: {
+          direction: this.data.transferDirection,
+          amount: this.transferAmount,
+          fromAccount: this.data.transferDirection === 'to-brokerage' ? 'banking001' : 'brokerage001',
+          toAccount: this.data.transferDirection === 'to-brokerage' ? 'brokerage001' : 'banking001'
+        }
+      };
+
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: confirmationData
+      });
+
+      dialogRef.afterClosed().subscribe(confirmed => {
+        if (confirmed) {
+          this.dialogRef.close({ amount: this.transferAmount });
+        }
+      });
     }
   }
 }

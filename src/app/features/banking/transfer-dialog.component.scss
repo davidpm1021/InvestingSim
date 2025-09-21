@@ -3,9 +3,21 @@
 }
 
 mat-dialog-content {
-  padding: 20px 0;
+  padding: 20px 24px;
+  max-height: 400px;
+  overflow: hidden;
 }
 
 mat-dialog-actions {
-  padding: 20px 0 0 0;
+  padding: 16px 24px 24px 24px;
+  margin: 0;
+  min-height: auto;
+}
+
+mat-dialog-actions button {
+  margin-left: 8px;
+}
+
+mat-dialog-actions button:first-child {
+  margin-left: 0;
 }

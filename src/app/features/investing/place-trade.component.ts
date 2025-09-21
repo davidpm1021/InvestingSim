@@ -10,12 +10,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
 import { HoldingsService } from '../../shared/services/holdings.service';
 import { Asset } from '../../shared/data/assets.data';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 export interface TradeData {
   assetId: string;
@@ -71,7 +73,8 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
 
   constructor(
     public dataService: DataService,
-    private holdingsService: HoldingsService
+    private holdingsService: HoldingsService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -204,18 +207,45 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
     if (this.isTradeValid() && this.inputAmount !== null) {
       const calculatedShares = this.getCalculatedShares();
       const calculatedDollars = this.getCalculatedDollars();
+      const asset = this.dataService.getAssetById(this.selectedAsset);
       
-      const tradeData: TradeData = {
-        assetId: this.selectedAsset,
-        action: this.isBuy ? 'Buy' : 'Sell',
-        shares: calculatedShares,
-        dollars: calculatedDollars,
-        timestamp: new Date().toISOString()
-      };
-      
-      this.tradeSubmitted.emit(tradeData);
-      this.resetForm();
-      this.tradeCompleted.emit();
+      if (asset) {
+        const confirmationData: ConfirmationDialogData = {
+          title: `Confirm ${this.isBuy ? 'Buy' : 'Sell'} Order`,
+          message: `Are you sure you want to ${this.isBuy ? 'buy' : 'sell'} this asset?`,
+          confirmText: this.isBuy ? 'Buy' : 'Sell',
+          cancelText: 'Cancel',
+          type: 'trade',
+          tradeData: {
+            action: this.isBuy ? 'buy' : 'sell',
+            assetName: asset.name,
+            shares: calculatedShares,
+            price: this.currentPrice,
+            totalAmount: calculatedDollars
+          }
+        };
+
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          width: '500px',
+          data: confirmationData
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+          if (confirmed) {
+            const tradeData: TradeData = {
+              assetId: this.selectedAsset,
+              action: this.isBuy ? 'Buy' : 'Sell',
+              shares: calculatedShares,
+              dollars: calculatedDollars,
+              timestamp: new Date().toISOString()
+            };
+            
+            this.tradeSubmitted.emit(tradeData);
+            this.resetForm();
+            this.tradeCompleted.emit();
+          }
+        });
+      }
     }
   }
 

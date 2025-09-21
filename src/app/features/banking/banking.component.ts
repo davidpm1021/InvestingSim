@@ -56,6 +56,7 @@ export class BankingComponent implements OnInit, OnDestroy {
   openTransferDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '400px',
+      maxHeight: '90vh',
       data: { 
         maxAmount: this.cashBalance,
         currentDate: this.currentDate,

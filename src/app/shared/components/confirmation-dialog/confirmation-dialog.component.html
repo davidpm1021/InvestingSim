@@ -1,0 +1,68 @@
+<div class="confirmation-dialog">
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+  
+  <mat-dialog-content>
+    <p class="confirmation-message">{{ data.message }}</p>
+    
+    <!-- Trade Confirmation Details -->
+    <div *ngIf="data.type === 'trade' && data.tradeData" class="trade-details">
+      <div class="detail-row">
+        <span class="label">Action:</span>
+        <span class="value" [class.buy-action]="data.tradeData.action === 'buy'" 
+              [class.sell-action]="data.tradeData.action === 'sell'">
+          {{ data.tradeData.action | titlecase }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Asset:</span>
+        <span class="value">{{ data.tradeData.assetName }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Shares:</span>
+        <span class="value">{{ data.tradeData.shares | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Price per Share:</span>
+        <span class="value">${{ data.tradeData.price | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-row total-row">
+        <span class="label">Total Amount:</span>
+        <span class="value total-amount">${{ data.tradeData.totalAmount | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    
+    <!-- Transfer Confirmation Details -->
+    <div *ngIf="data.type === 'transfer' && data.transferData" class="transfer-details">
+      <div class="detail-row">
+        <span class="label">Direction:</span>
+        <span class="value">
+          {{ data.transferData.direction === 'to-banking' ? 'Withdraw Funds' : 'Add Funds' }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Amount:</span>
+        <span class="value">${{ data.transferData.amount | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">From:</span>
+        <span class="value">{{ getAccountName(data.transferData.fromAccount) }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">To:</span>
+        <span class="value">{{ getAccountName(data.transferData.toAccount) }}</span>
+      </div>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      {{ data.cancelText }}
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onConfirm()" 
+            class="confirm-button">
+      {{ data.confirmText }}
+    </button>
+  </mat-dialog-actions>
+</div>

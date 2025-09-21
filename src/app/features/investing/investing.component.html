@@ -6,9 +6,12 @@
   <mat-tab-group #tabGroup>
     <mat-tab label="Dashboard">
       <div class="tab-content">
-        <div class="dashboard-grid">
-          <!-- Account Balance Card -->
-          <mat-card class="balance-card">
+        <div class="container-fluid">
+          <div class="row">
+          <!-- Left Column -->
+          <div class="col-md-4">
+            <!-- Account Balance Card -->
+            <mat-card class="balance-card mb-3">
             <mat-card-header>
               <mat-card-title>Brokerage Account Balance</mat-card-title>
             </mat-card-header>
@@ -29,11 +32,71 @@
                   Withdraw Funds
                 </button>
               </div>
+              <div class="account-activity-link">
+                <button mat-button color="primary" (click)="goToAccountTab()">
+                  View Account Activity
+                </button>
+              </div>
             </mat-card-content>
           </mat-card>
-          
-          <!-- Holdings Table -->
-          <mat-card class="holdings-card">
+
+          <!-- Recent Trade Activity Section -->
+          <mat-card class="recent-activity-card mb-3">
+            <mat-card-header>
+              <mat-card-title>Recent Trade Activity</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="recent-activity-list" *ngIf="recentActivity.length > 0">
+                <div class="recent-activity-item" *ngFor="let activity of recentActivity">
+                  <div class="activity-date">{{ activity.date | date:'M/d/yyyy' }}</div>
+                  <div class="activity-description">
+                    <span *ngIf="activity.action === 'buy'">Purchased </span>
+                    <span *ngIf="activity.action === 'sell'">Sold </span>
+                    <strong>{{ activity.shares | number:'1.2-2' }} shares</strong> of <em>{{ getAssetName(activity.assetId) }}</em>
+                  </div>
+                  <div class="activity-price" 
+                       [class.positive]="activity.action === 'buy'"
+                       [class.negative]="activity.action === 'sell'">
+                    {{ activity.action === 'buy' ? '+' : '-' }}${{ activity.price | number:'1.2-2' }}
+                  </div>
+                </div>
+              </div>
+              <div class="no-recent-activity" *ngIf="recentActivity.length === 0">
+                <p>No recent trading activity</p>
+              </div>
+              <div class="view-all-activity">
+                <button mat-button color="primary" (click)="goToActivityTab()">
+                  View All Trade Activities
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Allocation Section -->
+          <mat-card class="allocation-card">
+            <mat-card-header>
+              <mat-card-title>Allocation</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="allocation-list">
+                <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
+                  <div class="allocation-type">{{ allocation.type | assetType }}</div>
+                  <div class="allocation-percentage" [class.no-allocation]="allocation.percentage === 0">
+                    {{ allocation.percentage | number:'1.1-1' }}%
+                  </div>
+                </div>
+              </div>
+              <div class="allocation-chart-placeholder">
+                <p>Pie chart visualization will be implemented here</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-md-8">
+            <!-- Holdings Table -->
+          <mat-card class="holdings-card mb-3">
             <mat-card-header>
               <mat-card-title>Holdings</mat-card-title>
             </mat-card-header>
@@ -41,7 +104,7 @@
               <table mat-table [dataSource]="holdings" class="holdings-table">
                     <ng-container matColumnDef="asset">
                       <th mat-header-cell *matHeaderCellDef>Asset</th>
-                      <td mat-cell *matCellDef="let holding">{{ holding.name }}</td>
+                      <td mat-cell *matCellDef="let holding" class="asset-name-cell">{{ holding.name }}</td>
                     </ng-container>
                 
                 <ng-container matColumnDef="shares">
@@ -61,35 +124,42 @@
                 
                 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectHoldingAndNavigate(row)" class="clickable-row"></tr>
               </table>
+              <div class="view-all-holdings-link">
+                <button mat-button color="primary" (click)="goToHoldingsTab()">
+                  View All Holdings
+                </button>
+              </div>
             </mat-card-content>
           </mat-card>
           
-          <!-- Allocation Section -->
-          <mat-card class="chart-card">
+          <!-- Daily Movers Section -->
+          <mat-card class="daily-movers-card">
             <mat-card-header>
-              <mat-card-title>Allocation</mat-card-title>
+              <mat-card-title>Daily Movers</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <!-- Asset Type Allocation List -->
-              <div class="allocation-list" *ngIf="assetTypeAllocation.length > 0">
-                <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
-                  <div class="allocation-type">{{ allocation.type | assetType }}</div>
-                  <div class="allocation-percentage">{{ allocation.percentage | number:'1.1-1' }}%</div>
-                </div>
-              </div>
-              <div class="no-allocation" *ngIf="assetTypeAllocation.length === 0">
-                <p>No holdings to display allocation</p>
-              </div>
-              
-              <!-- Pie Chart Placeholder -->
-              <div class="chart-placeholder">
-                <p>Pie Chart</p>
-                <p class="chart-subtitle">Pie chart visualization will be implemented here</p>
+              <div class="daily-movers-grid">
+                <mat-card class="asset-card" *ngFor="let asset of allAssets">
+                  <mat-card-content>
+                    <div class="asset-header">
+                      <div class="asset-name">{{ asset.name }}</div>
+                      <div class="asset-symbol">{{ asset.id }}</div>
+                    </div>
+                    <div class="asset-price-section">
+                      <div class="current-price">${{ getCurrentPrice(asset) | number:'1.2-2' }}</div>
+                      <div class="price-change" [class.positive]="getPriceChange(asset) > 0" [class.negative]="getPriceChange(asset) < 0">
+                        {{ getPriceChange(asset) > 0 ? '+' : '' }}{{ getPriceChange(asset) | number:'1.2-2' }}%
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
               </div>
             </mat-card-content>
           </mat-card>
+          </div>
+        </div>
         </div>
       </div>
     </mat-tab>
@@ -104,9 +174,83 @@
       </app-place-trade>
     </mat-tab>
     
+    <mat-tab label="Holdings">
+      <div class="tab-content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Left Column - Holdings List -->
+            <div class="col-md-4">
+              <mat-card class="holdings-list-card">
+                <mat-card-header>
+                  <mat-card-title>Current Holdings</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="holdings-list" *ngIf="holdings.length > 0; else noHoldings">
+                    <div class="holding-item" 
+                         *ngFor="let holding of holdings" 
+                         (click)="selectHolding(holding)"
+                         [class.selected]="selectedHolding?.assetId === holding.assetId">
+                      <div class="holding-name">{{ holding.name }}</div>
+                      <div class="holding-shares">{{ holding.shares | number:'1.2-2' }} shares</div>
+                      <div class="holding-value">${{ holding.value | number:'1.2-2' }}</div>
+                    </div>
+                  </div>
+                  <ng-template #noHoldings>
+                    <div class="no-holdings">
+                      <p>No holdings yet</p>
+                    </div>
+                  </ng-template>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            
+            <!-- Right Column - Asset Details -->
+            <div class="col-md-8">
+              <mat-card class="asset-details-card">
+                <mat-card-header>
+                  <mat-card-title>Asset Details</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div *ngIf="selectedHolding; else noSelection" class="asset-details">
+                    <h3>{{ selectedHolding.name }}</h3>
+                    <div class="detail-item">
+                      <label>Shares Owned:</label>
+                      <span>{{ selectedHolding.shares | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <label>Current Price:</label>
+                      <span>${{ getCurrentPriceForHolding(selectedHolding) | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <label>Total Value:</label>
+                      <span>${{ (selectedHolding.shares * getCurrentPriceForHolding(selectedHolding)) | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <label>Asset Type:</label>
+                      <span>{{ getAssetType(selectedHolding.assetId) | assetType }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <label>Symbol:</label>
+                      <span>{{ selectedHolding.assetId }}</span>
+                    </div>
+                  </div>
+                  <ng-template #noSelection>
+                    <div class="no-selection">
+                      <p>Select a holding to view details</p>
+                    </div>
+                  </ng-template>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    
     <mat-tab label="Activity">
       <div class="tab-content">
-        <div class="activity-section">
+        <div class="container-fluid">
+          <div class="activity-section">
           <h2>Trading Activity</h2>
           <div *ngIf="holdingTransactions.length === 0" class="no-transactions">
             <p>No trading activity yet.</p>
@@ -131,17 +275,23 @@
               <div class="transaction-asset">{{ getAssetName(transaction.assetId) }}</div>
               <div class="transaction-asset-type">{{ getAssetType(transaction.assetId) | assetType }}</div>
               <div class="transaction-shares">{{ transaction.shares | number:'1.2-2' }}</div>
-              <div class="transaction-price">${{ transaction.price | number:'1.2-2' }}</div>
+              <div class="transaction-price" 
+                   [class.positive]="transaction.action === 'buy'"
+                   [class.negative]="transaction.action === 'sell'">
+                {{ transaction.action === 'buy' ? '+' : '-' }}${{ transaction.price | number:'1.2-2' }}
+              </div>
               <div class="transaction-balance">{{ getRunningBalance(transaction) | number:'1.2-2' }} shares</div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </mat-tab>
     
     <mat-tab label="Account">
       <div class="tab-content">
-        <div class="balance-section">
+        <div class="container-fluid">
+          <div class="balance-section">
           <!-- Account Balance Card -->
           <mat-card class="balance-card">
             <mat-card-header>
@@ -195,12 +345,14 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
     </mat-tab>
     
     <mat-tab label="Statements">
       <div class="tab-content">
-        <div class="statements-section">
+        <div class="container-fluid">
+          <div class="statements-section">
           <h2>Quarterly Statements</h2>
           <mat-accordion>
             <mat-expansion-panel *ngFor="let statement of quarterlyStatements" class="statement-panel">
@@ -293,6 +445,7 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
+        </div>
         </div>
       </div>
     </mat-tab>
