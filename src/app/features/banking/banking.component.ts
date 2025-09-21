@@ -6,7 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DataService, Transaction } from '../../shared/services/data.service';
+import { DataService } from '../../shared/services/data.service';
+import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
+import { CurrentDateService } from '../../shared/services/current-date.service';
 import { TransferDialogComponent } from './transfer-dialog.component';
 
 @Component({
@@ -22,26 +24,26 @@ export class BankingComponent implements OnInit, OnDestroy {
   transactions: Array<Transaction & { runningBalance: number, displayDescription: string }> = [];
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, private dialog: MatDialog) {}
+  constructor(public dataService: DataService, public transactionsService: TransactionsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Subscribe to current date
     this.subscription.add(
-      this.dataService.currentDate$.subscribe(date => {
+      this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
       })
     );
 
     // Subscribe to account balance
     this.subscription.add(
-      this.dataService.getCurrentBalance$('banking001').subscribe(balance => {
+      this.transactionsService.getCurrentBalance$('banking001').subscribe(balance => {
         this.cashBalance = balance;
       })
     );
 
     // Subscribe to transactions with running balances
     this.subscription.add(
-      this.dataService.getTransactionsWithRunningBalance$('banking001').subscribe(transactions => {
+      this.transactionsService.getTransactionsWithRunningBalance$('banking001').subscribe(transactions => {
         this.transactions = transactions;
       })
     );
@@ -63,7 +65,7 @@ export class BankingComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.amount > 0) {
-        this.dataService.addTransferTransaction(result.amount, this.currentDate);
+            this.transactionsService.addTransferTransaction(result.amount, this.currentDate);
       }
     });
   }

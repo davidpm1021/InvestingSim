@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
+import { CurrentDateService } from '../../services/current-date.service';
 
 interface QuarterOption {
   label: string;
@@ -23,15 +24,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   quarterOptions: QuarterOption[] = [];
   private subscription = new Subscription();
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private currentDateService: CurrentDateService) {}
 
   ngOnInit(): void {
-    // Get quarter options from data service
-    this.quarterOptions = this.dataService.getQuarterOptions();
+    // Get quarter options from current date service
+    this.quarterOptions = this.currentDateService.getQuarterOptions();
     
     // Subscribe to current date changes
     this.subscription.add(
-      this.dataService.currentDate$.subscribe(date => {
+      this.currentDateService.currentDate$.subscribe(date => {
         this.selectedQuarter = date;
       })
     );
@@ -42,8 +43,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onQuarterChange(selectedValue: string): void {
-    this.dataService.setCurrentDate(selectedValue);
-    console.log('Selected quarter:', this.dataService.getQuarterLabel(selectedValue), 'Date:', selectedValue);
+    this.currentDateService.setCurrentDate(selectedValue);
+    console.log('Selected quarter:', this.currentDateService.getQuarterLabel(selectedValue), 'Date:', selectedValue);
   }
 
   onReset(): void {

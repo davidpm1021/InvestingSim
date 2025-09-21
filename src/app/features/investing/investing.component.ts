@@ -13,7 +13,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DataService, Transaction } from '../../shared/services/data.service';
+import { DataService } from '../../shared/services/data.service';
+import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
+import { HoldingsService } from '../../shared/services/holdings.service';
+import { CurrentDateService } from '../../shared/services/current-date.service';
 import { TransferDialogComponent } from '../banking/transfer-dialog.component';
 
 export interface Holding {
@@ -37,13 +40,8 @@ export class InvestingComponent implements OnInit, OnDestroy {
   currentDate: string = '2025-01-01';
   transactions: Array<Transaction & { runningBalance: number, displayDescription: string }> = [];
   
-  // Mock holdings data
-  holdings: Holding[] = [
-    { asset: 'AAPL', shares: 10, price: 150.00, value: 1500.00, gainLoss: 150.00, gainLossPercent: 11.11 },
-    { asset: 'MSFT', shares: 5, price: 300.00, value: 1500.00, gainLoss: -50.00, gainLossPercent: -3.23 },
-    { asset: 'GOOGL', shares: 3, price: 2500.00, value: 7500.00, gainLoss: 500.00, gainLossPercent: 7.14 },
-    { asset: 'TSLA', shares: 2, price: 200.00, value: 400.00, gainLoss: -100.00, gainLossPercent: -20.00 }
-  ];
+  // Holdings data from HoldingsService
+  holdings: any[] = [];
   
   displayedColumns: string[] = ['asset', 'shares', 'price', 'value', 'gainLoss'];
   
@@ -97,27 +95,34 @@ export class InvestingComponent implements OnInit, OnDestroy {
   
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, private dialog: MatDialog) {}
+  constructor(public dataService: DataService, public transactionsService: TransactionsService, public holdingsService: HoldingsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Subscribe to current date
     this.subscription.add(
-      this.dataService.currentDate$.subscribe(date => {
+      this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
       })
     );
 
     // Subscribe to account balance
     this.subscription.add(
-      this.dataService.getCurrentBalance$('brokerage001').subscribe(balance => {
+      this.transactionsService.getCurrentBalance$('brokerage001').subscribe(balance => {
         this.brokerageBalance = balance;
       })
     );
 
     // Subscribe to transactions with running balances
     this.subscription.add(
-      this.dataService.getTransactionsWithRunningBalance$('brokerage001').subscribe(transactions => {
+      this.transactionsService.getTransactionsWithRunningBalance$('brokerage001').subscribe(transactions => {
         this.transactions = transactions;
+      })
+    );
+
+    // Subscribe to holdings data
+    this.subscription.add(
+      this.holdingsService.holdings$.subscribe(holdings => {
+        this.holdings = holdings;
       })
     );
   }
@@ -150,7 +155,7 @@ export class InvestingComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.amount > 0) {
-        this.dataService.addTransferToBankingTransaction(result.amount, this.currentDate);
+            this.transactionsService.addTransferToBankingTransaction(result.amount, this.currentDate);
       }
     });
   }

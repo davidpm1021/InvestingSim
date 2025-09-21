@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
+import { CurrentDateService } from '../../shared/services/current-date.service';
 
 @Component({
   selector: 'app-home',
@@ -18,12 +19,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentDate: string = '2025-01-01';
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService) {}
+  constructor(public dataService: DataService, public currentDateService: CurrentDateService) {}
 
   ngOnInit(): void {
     // Subscribe to current date changes
     this.subscription.add(
-      this.dataService.currentDate$.subscribe(date => {
+      this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
       })
     );
