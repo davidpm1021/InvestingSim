@@ -1,0 +1,277 @@
+<div class="investing-container">
+  <h1>Investing</h1>
+  <p>Build and manage your investment portfolio.</p>
+  <p><strong>Current Period:</strong> {{ dataService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
+  
+  <mat-tab-group>
+    <mat-tab label="Dashboard">
+      <div class="tab-content">
+        <div class="dashboard-grid">
+          <!-- Account Balance Card -->
+          <mat-card class="balance-card">
+            <mat-card-header>
+              <mat-card-title>Brokerage Account Balance</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="openTransferDialog()"
+                      [disabled]="brokerageBalance <= 0"
+                      class="transfer-button">
+                Transfer to Banking
+              </button>
+            </mat-card-content>
+          </mat-card>
+          
+          <!-- Holdings Table -->
+          <mat-card class="holdings-card">
+            <mat-card-header>
+              <mat-card-title>Holdings</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="holdings" class="holdings-table">
+                <ng-container matColumnDef="asset">
+                  <th mat-header-cell *matHeaderCellDef>Asset</th>
+                  <td mat-cell *matCellDef="let holding">{{ holding.asset }}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="shares">
+                  <th mat-header-cell *matHeaderCellDef>Shares</th>
+                  <td mat-cell *matCellDef="let holding">{{ holding.shares }}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="price">
+                  <th mat-header-cell *matHeaderCellDef>Price</th>
+                  <td mat-cell *matCellDef="let holding">${{ holding.price | number:'1.2-2' }}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="value">
+                  <th mat-header-cell *matHeaderCellDef>Value</th>
+                  <td mat-cell *matCellDef="let holding">${{ holding.value | number:'1.2-2' }}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="gainLoss">
+                  <th mat-header-cell *matHeaderCellDef>Gain/Loss</th>
+                  <td mat-cell *matCellDef="let holding" 
+                      [class.gain-positive]="holding.gainLoss > 0" 
+                      [class.gain-negative]="holding.gainLoss < 0">
+                    ${{ holding.gainLoss | number:'1.2-2' }} ({{ holding.gainLossPercent | number:'1.2-2' }}%)
+                  </td>
+                </ng-container>
+                
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+          
+          <!-- Allocation Chart Placeholder -->
+          <mat-card class="chart-card">
+            <mat-card-header>
+              <mat-card-title>Allocation Chart</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="chart-placeholder">
+                <p>Allocation Chart</p>
+                <p class="chart-subtitle">Pie chart visualization will be implemented here</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Trade">
+      <div class="tab-content">
+        <mat-card class="trade-form-card">
+          <mat-card-header>
+            <mat-card-title>Place Trade</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form class="trade-form" (ngSubmit)="onSubmitTrade()">
+              <!-- Asset Selection -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Asset</mat-label>
+                <mat-select [(ngModel)]="selectedAsset" name="asset" required>
+                  <mat-option *ngFor="let asset of assetOptions" [value]="asset.value">
+                    {{ asset.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- Buy/Sell Toggle -->
+              <div class="form-row">
+                <mat-slide-toggle [(ngModel)]="isBuy" name="isBuy" class="buy-sell-toggle">
+                  {{ isBuy ? 'Buy' : 'Sell' }}
+                </mat-slide-toggle>
+              </div>
+
+              <!-- Input Type Radio Group -->
+              <div class="form-row">
+                <mat-radio-group [(ngModel)]="inputType" name="inputType" class="input-type-group">
+                  <mat-radio-button value="shares">Shares</mat-radio-button>
+                  <mat-radio-button value="dollars">Dollars</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <!-- Amount Input -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Amount ({{ inputType }})</mat-label>
+                <input matInput 
+                       type="number" 
+                       [(ngModel)]="tradeAmount" 
+                       name="amount"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="Enter amount"
+                       required>
+              </mat-form-field>
+
+              <!-- Submit Button -->
+              <div class="form-row">
+                <button mat-raised-button 
+                        color="primary" 
+                        type="submit"
+                        [disabled]="!isTradeFormValid()"
+                        class="submit-button">
+                  {{ isBuy ? 'Buy' : 'Sell' }} {{ selectedAsset || 'Asset' }}
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Transactions">
+      <div class="tab-content">
+        <div class="transactions-section">
+          <h2>Recent Transactions</h2>
+          <div *ngIf="transactions.length === 0" class="no-transactions">
+            <p>No transactions yet.</p>
+          </div>
+          <div *ngIf="transactions.length > 0" class="transactions-list">
+            <div class="transaction-header">
+              <div class="header-description">Description</div>
+              <div class="header-date">Date</div>
+              <div class="header-amount">Amount</div>
+              <div class="header-balance">Balance</div>
+            </div>
+            <div *ngFor="let transaction of transactions" class="transaction-item">
+              <div class="transaction-description">{{ transaction.displayDescription }}</div>
+              <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
+              <div class="transaction-amount" 
+                   [class.positive]="getTransactionAmount(transaction) > 0" 
+                   [class.negative]="getTransactionAmount(transaction) < 0">
+                {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+              </div>
+              <div class="transaction-balance">
+                {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Statements">
+      <div class="tab-content">
+        <div class="statements-section">
+          <h2>Quarterly Statements</h2>
+          <mat-accordion>
+            <mat-expansion-panel *ngFor="let statement of quarterlyStatements" class="statement-panel">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="panel-title">
+                    <span class="quarter-name">{{ statement.quarter }}</span>
+                    <span class="quarter-period">{{ statement.period }}</span>
+                  </div>
+                </mat-panel-title>
+                <mat-panel-description>
+                  <span class="ending-balance">Ending Balance: ${{ statement.endingBalance | number:'1.2-2' }}</span>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              
+              <div class="statement-content">
+                <!-- Summary Section -->
+                <div class="summary-section">
+                  <h3>Account Summary</h3>
+                  <div class="summary-grid">
+                    <div class="summary-item">
+                      <label>Beginning Balance:</label>
+                      <span>${{ statement.beginningBalance | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="summary-item">
+                      <label>Ending Balance:</label>
+                      <span>${{ statement.endingBalance | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="summary-item">
+                      <label>Net Gain/Loss:</label>
+                      <span [class.positive]="statement.netGainLoss > 0" [class.negative]="statement.netGainLoss < 0">
+                        ${{ statement.netGainLoss | number:'1.2-2' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <label>Total Return:</label>
+                      <span [class.positive]="statement.totalReturn > 0" [class.negative]="statement.totalReturn < 0">
+                        {{ statement.totalReturn > 0 ? '+' : '' }}{{ statement.totalReturn | number:'1.2-2' }}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Trades Section -->
+                <div class="trades-section">
+                  <h3>Trades</h3>
+                  <div *ngIf="statement.trades.length === 0" class="no-data">
+                    <p>No trades this quarter.</p>
+                  </div>
+                  <div *ngIf="statement.trades.length > 0" class="trades-list">
+                    <div class="trade-header">
+                      <div class="trade-date">Date</div>
+                      <div class="trade-action">Action</div>
+                      <div class="trade-asset">Asset</div>
+                      <div class="trade-shares">Shares</div>
+                      <div class="trade-price">Price</div>
+                      <div class="trade-amount">Amount</div>
+                    </div>
+                    <div *ngFor="let trade of statement.trades" class="trade-item">
+                      <div class="trade-date">{{ trade.date | date:'M/d/yyyy' }}</div>
+                      <div class="trade-action" [class.buy]="trade.action === 'Buy'" [class.sell]="trade.action === 'Sell'">
+                        {{ trade.action }}
+                      </div>
+                      <div class="trade-asset">{{ trade.asset }}</div>
+                      <div class="trade-shares">{{ trade.shares }}</div>
+                      <div class="trade-price">${{ trade.price | number:'1.2-2' }}</div>
+                      <div class="trade-amount">${{ trade.amount | number:'1.2-2' }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Activity Section -->
+                <div class="activity-section">
+                  <h3>Account Activity</h3>
+                  <div class="activity-grid">
+                    <div class="activity-item">
+                      <label>Dividends:</label>
+                      <span class="positive">${{ statement.dividends | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="activity-item">
+                      <label>Interest:</label>
+                      <span class="positive">${{ statement.interest | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="activity-item">
+                      <label>Fees:</label>
+                      <span class="negative">-${{ statement.fees | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

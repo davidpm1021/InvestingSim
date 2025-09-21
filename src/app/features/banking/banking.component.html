@@ -1,0 +1,49 @@
+<div class="banking-container">
+  <h1>Banking</h1>
+  <p>Manage your cash accounts and transactions.</p>
+          <p><strong>Current Period:</strong> {{ dataService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
+  
+  <div class="banking-content">
+            <div class="account-summary">
+              <h2>Account Summary</h2>
+              <div class="account-card">
+                <h3>Primary Checking</h3>
+                <p class="balance">${{ cashBalance | number:'1.2-2' }}</p>
+                <button mat-raised-button 
+                        color="primary" 
+                        (click)="openTransferDialog()"
+                        [disabled]="cashBalance <= 0"
+                        class="transfer-button">
+                  Transfer to Brokerage
+                </button>
+              </div>
+            </div>
+    
+            <div class="recent-transactions">
+              <h2>Recent Transactions</h2>
+              <div *ngIf="transactions.length === 0" class="no-transactions">
+                <p>No transactions yet.</p>
+              </div>
+                      <div *ngIf="transactions.length > 0" class="transactions-list">
+                        <div class="transaction-header">
+                          <div class="header-description">Description</div>
+                          <div class="header-date">Date</div>
+                          <div class="header-amount">Amount</div>
+                          <div class="header-balance">Balance</div>
+                        </div>
+                        <div *ngFor="let transaction of transactions" class="transaction-item">
+                          <div class="transaction-description">{{ transaction.displayDescription }}</div>
+                          <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
+                          <div class="transaction-amount" 
+                               [class.positive]="getTransactionAmount(transaction) > 0" 
+                               [class.negative]="getTransactionAmount(transaction) < 0">
+                            {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+                          </div>
+                          <div class="transaction-balance">
+                            {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
+                          </div>
+                        </div>
+                      </div>
+            </div>
+  </div>
+</div>

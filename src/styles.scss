@@ -1,4 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+//Bootstrap
+@use '@angular/material' as mat;
+@use './styles/layout' as *;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Bootstrap grid only */
+@import 'bootstrap/dist/css/bootstrap-grid.min.css';
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Router link active styles
+.router-link-active {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+

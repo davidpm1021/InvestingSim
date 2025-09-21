@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <img src="/images/logo.svg" alt="Investing Sim Logo" class="logo-image">
+      <h2>Investing Sim</h2>
+    </div>
+            <div class="header-controls">
+              <select class="quarter-selector" [(ngModel)]="selectedQuarter" (change)="onQuarterChange($any($event.target).value)">
+                <option *ngFor="let quarter of quarterOptions" [value]="quarter.value">
+                  {{ quarter.label }}
+                </option>
+              </select>
+              <button mat-raised-button color="warn" class="reset-button" (click)="onReset()">
+                <mat-icon>refresh</mat-icon>
+                Reset
+              </button>
+              <button mat-raised-button color="primary" class="account-button">
+                <mat-icon>account_circle</mat-icon>
+                Account
+              </button>
+            </div>
+  </div>
+</header>
