@@ -164,19 +164,27 @@ export class TransactionsService {
     const now = new Date();
     const timeString = now.toTimeString().split(' ')[0]; // Get HH:MM:SS format
     
-    const transferTransaction: Transaction = {
+    // Create two separate transactions - one for each account
+    const bankingTransaction: Transaction = {
       type: "transfer",
-      account_from: "banking001",
-      account_to: "brokerage001",
-      amount: amount,
+      account: "banking001",
+      amount: -amount, // Negative for banking (money going out)
       date: date,
       time: timeString,
-      description: "Transfer to brokerage",
-      description_from: "Transfer to brokerage",
-      description_to: "Transfer from banking"
+      description: "Transfer to brokerage"
     };
 
-    this.addTransaction(transferTransaction);
+    const brokerageTransaction: Transaction = {
+      type: "transfer",
+      account: "brokerage001",
+      amount: amount, // Positive for brokerage (money coming in)
+      date: date,
+      time: timeString,
+      description: "Transfer from banking"
+    };
+
+    this.addTransaction(bankingTransaction);
+    this.addTransaction(brokerageTransaction);
   }
 
   /**
@@ -186,19 +194,27 @@ export class TransactionsService {
     const now = new Date();
     const timeString = now.toTimeString().split(' ')[0]; // Get HH:MM:SS format
     
-    const transferTransaction: Transaction = {
+    // Create two separate transactions - one for each account
+    const brokerageTransaction: Transaction = {
       type: "transfer",
-      account_from: "brokerage001",
-      account_to: "banking001",
-      amount: amount,
+      account: "brokerage001",
+      amount: -amount, // Negative for brokerage (money going out)
       date: date,
       time: timeString,
-      description: "Transfer to banking",
-      description_from: "Transfer to banking",
-      description_to: "Transfer from brokerage"
+      description: "Transfer to banking"
     };
 
-    this.addTransaction(transferTransaction);
+    const bankingTransaction: Transaction = {
+      type: "transfer",
+      account: "banking001",
+      amount: amount, // Positive for banking (money coming in)
+      date: date,
+      time: timeString,
+      description: "Transfer from brokerage"
+    };
+
+    this.addTransaction(brokerageTransaction);
+    this.addTransaction(bankingTransaction);
   }
 
   /**
@@ -380,4 +396,33 @@ export class TransactionsService {
       })
     );
   }
+
+  /**
+   * Get balance for an account at a specific date
+   */
+  getBalanceAtDate(accountId: string, date: string): number {
+    const allTransactions = this.transactionsSubject.value;
+    let balance = 0;
+
+    // Process all transactions up to the specified date
+    const relevantTransactions = allTransactions
+      .filter(tx => tx.date <= date && tx.account === accountId);
+    
+    relevantTransactions.forEach(tx => {
+      balance += tx.amount;
+    });
+
+    // Debug logging (can be removed in production)
+    // console.log(`Balance for ${accountId} at ${date}:`, balance);
+
+    return balance;
+  }
+
+  /**
+   * Get all transactions (for statements)
+   */
+  getAllTransactions(): Transaction[] {
+    return this.transactionsSubject.value;
+  }
+
 }

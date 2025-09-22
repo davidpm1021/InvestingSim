@@ -48,9 +48,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onReset(): void {
-    // Clear localStorage variables
-    localStorage.removeItem('investing_sim__current_date');
-    localStorage.removeItem('investing_sim__transactions');
+    // Clear all localStorage keys
+    localStorage.clear();
     
     // Reload the page
     window.location.reload();

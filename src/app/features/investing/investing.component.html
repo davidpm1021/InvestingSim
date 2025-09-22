@@ -3,7 +3,7 @@
   <p>Build and manage your investment portfolio.</p>
           <p><strong>Current Period:</strong> {{ currentDateService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
   
-  <mat-tab-group #tabGroup>
+  <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Dashboard">
       <div class="tab-content">
         <div class="container-fluid">
@@ -47,6 +47,18 @@
             </mat-card-content>
           </mat-card>
 
+          <!-- Allocation Section -->
+          <mat-card class="allocation-card mb-3">
+            <mat-card-header>
+              <mat-card-title>Allocation</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="allocation-chart-container" *ngIf="isDashboardTab && currentDate">
+                <canvas #chartCanvas></canvas>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
           <!-- Holdings Totals Component -->
           <app-holdings-totals [hideTotalValue]="true"></app-holdings-totals>
 
@@ -82,17 +94,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Allocation Section -->
-          <mat-card class="allocation-card">
-            <mat-card-header>
-              <mat-card-title>Allocation</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="allocation-chart-container">
-                <canvas #chartCanvas></canvas>
-              </div>
-            </mat-card-content>
-          </mat-card>
           </div>
 
           <!-- Right Column -->
@@ -194,7 +195,7 @@
             <!-- Left Column - Holdings Overview and List -->
             <div class="col-md-4">
               <!-- Current Holdings Card -->
-              <mat-card class="holdings-list-card">
+              <mat-card class="holdings-list-card mb-3">
                 <mat-card-header>
                   <mat-card-title>Current Holdings</mat-card-title>
                 </mat-card-header>
@@ -252,12 +253,12 @@
                     </div>
                     
                     <!-- Price History Chart -->
-                    <div class="price-history-section">
-                      <h4>Price History</h4>
-                      <div class="line-chart-container">
-                        <canvas #lineChartCanvas></canvas>
-                      </div>
-                    </div>
+            <div class="price-history-section" *ngIf="selectedHolding">
+              <h4>Price History</h4>
+              <div class="line-chart-container">
+                <canvas #lineChartCanvas></canvas>
+              </div>
+            </div>
                   </div>
                   <ng-template #noSelection>
                     <div class="no-selection">

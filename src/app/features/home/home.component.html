@@ -1,22 +1,12 @@
 <div class="home-container">
-  <h1>Dashboard</h1>
-  <p>Welcome to your investing simulation dashboard. Use the sidebar to navigate between different sections.</p>
-          <p><strong>Current Period:</strong> {{ currentDateService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
-  
-  <div class="quick-stats">
-    <div class="stat-card">
-      <h3>Portfolio Value</h3>
-      <p class="stat-value">${{ portfolioValue | number:'1.2-2' }}</p>
-    </div>
-    <div class="stat-card">
-      <h3>Cash Balance</h3>
-      <p class="stat-value">${{ cashBalance | number:'1.2-2' }}</p>
-    </div>
-    <div class="stat-card">
-      <h3>Total Return</h3>
-      <p class="stat-value" [class.positive]="totalReturn > 0" [class.negative]="totalReturn < 0">
-        {{ totalReturn > 0 ? '+' : '' }}{{ totalReturn | number:'1.2-2' }}%
-      </p>
+  <div class="welcome-section">
+    <h1>Welcome to the NGPF Investing Sim</h1>
+  </div>
+
+  <div class="instructions-section">
+    <div class="instruction-card">
+      <h3>📈 How to use</h3>
+      <p>Text coming soon?</p>
     </div>
   </div>
 </div>

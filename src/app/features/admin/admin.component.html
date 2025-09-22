@@ -1,0 +1,184 @@
+<div class="admin-container">
+  <h1>Admin</h1>
+  <p>Configure application settings and options.</p>
+  
+  <mat-tab-group (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="Options">
+      <div class="tab-content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-8">
+              <mat-card class="options-card">
+                <mat-card-header>
+                  <mat-card-title>Chart Options</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="option-item">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Line Graph Y-Axis</mat-label>
+                      <mat-select 
+                        [(ngModel)]="adminOptions.lineGraphYAxis" 
+                        (selectionChange)="onYAxisChange()">
+                        <mat-option *ngFor="let option of yAxisOptions" [value]="option.value">
+                          {{ option.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <p class="option-description">
+                      Choose how the Y-axis scales on line graphs:
+                      <br>• <strong>Consistent Y-Axis:</strong> All charts use the same scale for easy comparison
+                      <br>• <strong>Dynamic Y-Axis:</strong> Each chart scales to fit its data range
+                    </p>
+                  </div>
+
+                  <div class="option-item">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Layout</mat-label>
+                      <mat-select 
+                        [(ngModel)]="adminOptions.layout" 
+                        (selectionChange)="onLayoutChange()">
+                        <mat-option *ngFor="let option of layoutOptions" [value]="option.value">
+                          {{ option.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <p class="option-description">
+                      Choose the application layout:
+                      <br>• <strong>Default Layout:</strong> Standard application layout
+                      <br>• <strong>Web Browser Layout:</strong> Alternative layout optimized for web browsers
+                    </p>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Assets">
+      <div class="tab-content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Left Column - Asset List -->
+            <div class="col-md-4">
+              <mat-card class="asset-list-card">
+                <mat-card-header>
+                  <mat-card-title>Assets by Type</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="asset-list" *ngIf="allAssets.length > 0; else noAssets">
+                    <div class="asset-group" *ngFor="let group of groupedAssets">
+                      <div class="asset-type-header">{{ group.type | assetType }}</div>
+                      <div class="asset-item" 
+                           *ngFor="let asset of group.assets" 
+                           [class.selected]="selectedAsset?.id === asset.id"
+                           (click)="selectAsset(asset)">
+                        <div class="asset-info">
+                          <div class="asset-name">{{ asset.name }}</div>
+                          <div class="asset-symbol">({{ asset.id }})</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-template #noAssets>
+                    <div class="no-assets">
+                      <p>No assets available</p>
+                    </div>
+                  </ng-template>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            
+            <!-- Right Column - Asset Details -->
+            <div class="col-md-8">
+              <mat-card class="asset-details-card" *ngIf="selectedAsset; else noSelection">
+                <mat-card-header>
+                  <mat-card-title>{{ selectedAsset.name }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="asset-details-grid">
+                    <div class="detail-row">
+                      <span class="detail-label">ID:</span>
+                      <span class="detail-value">{{ selectedAsset.id }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Name:</span>
+                      <span class="detail-value">{{ selectedAsset.name }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Type:</span>
+                      <span class="detail-value">{{ selectedAsset.type | assetType }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Sector:</span>
+                      <span class="detail-value">{{ selectedAsset.sector || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Description:</span>
+                      <span class="detail-value">{{ selectedAsset.description || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Interest Rate:</span>
+                      <span class="detail-value">{{ selectedAsset.interestRate ? (selectedAsset.interestRate * 100).toFixed(2) + '%' : 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Dividend Yield:</span>
+                      <span class="detail-value">{{ selectedAsset.dividendYield ? (selectedAsset.dividendYield * 100).toFixed(2) + '%' : 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Expense Ratio:</span>
+                      <span class="detail-value">{{ selectedAsset.expenseRatio ? (selectedAsset.expenseRatio * 100).toFixed(2) + '%' : 'N/A' }}</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Performance Table -->
+                  <div class="performance-table-section">
+                    <h4>Historical Performance</h4>
+                    <div class="performance-table">
+                      <div class="table-header">
+                        <div class="header-cell">Date</div>
+                        <div class="header-cell">Value</div>
+                        <div class="header-cell">Gain/Loss</div>
+                      </div>
+                      <div class="table-body">
+                        <div class="table-row" *ngFor="let point of selectedAssetPerformanceData; let i = index">
+                          <div class="table-cell date-cell">{{ formatDate(point.date) }}</div>
+                          <div class="table-cell value-cell">${{ point.value | number:'1.2-2' }}</div>
+                          <div class="table-cell gain-cell" 
+                               [class.positive]="point.gainLoss >= 0" 
+                               [class.negative]="point.gainLoss < 0">
+                            <span *ngIf="i > 0">{{ point.gainLoss >= 0 ? '+' : '' }}{{ point.gainLoss | number:'1.2-2' }}%</span>
+                            <span *ngIf="i === 0">-</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Performance Chart -->
+                  <div class="performance-chart-section">
+                    <h4>Price History</h4>
+                    <div class="chart-container">
+                      <canvas #performanceChartCanvas></canvas>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+              
+              <ng-template #noSelection>
+                <mat-card class="no-selection-card">
+                  <mat-card-content>
+                    <div class="no-selection">
+                      <p>Select an asset to view performance details</p>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

@@ -237,4 +237,32 @@ export class HoldingsService {
   getAssetById(id: string): Asset | undefined {
     return this.assets.find(a => a.id === id);
   }
+
+  /**
+   * Get holdings at a specific date
+   */
+  getHoldingsAtDate(date: string): any[] {
+    const allTransactions = this.holdingTransactionsSubject.value;
+    const holdingsMap = new Map<string, any>();
+
+    // Process all transactions up to the specified date
+    allTransactions
+      .filter(tx => tx.date <= date)
+      .forEach(tx => {
+        const key = tx.assetId;
+        if (!holdingsMap.has(key)) {
+          holdingsMap.set(key, { assetId: key, shares: 0 });
+        }
+        
+        const holding = holdingsMap.get(key);
+        if (tx.action === 'buy') {
+          holding.shares += tx.shares;
+        } else if (tx.action === 'sell') {
+          holding.shares -= tx.shares;
+        }
+      });
+
+    // Return only holdings with positive shares
+    return Array.from(holdingsMap.values()).filter(h => h.shares > 0);
+  }
 }

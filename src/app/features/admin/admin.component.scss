@@ -1,0 +1,336 @@
+.admin-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 24px;
+    color: #666;
+  }
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+.options-card {
+  margin-bottom: 24px;
+
+  .mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  .mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.option-item {
+  margin-bottom: 24px;
+
+  mat-form-field {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .option-description {
+    margin-top: 12px;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    strong {
+      color: #333;
+    }
+  }
+}
+
+// Asset Performance Styles
+.asset-list-card {
+  margin-bottom: 24px;
+
+  .mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  .mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.asset-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.asset-group {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.asset-type-header {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+  background-color: #f0f0f0;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.asset-item {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-top: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &.selected {
+    background-color: #e3f2fd;
+  }
+
+  &:last-child {
+    border-bottom: 1px solid #ddd;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .asset-info {
+    .asset-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
+    }
+
+    .asset-symbol {
+      font-size: 0.8rem;
+      color: #666;
+    }
+  }
+}
+
+.no-assets {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+}
+
+.asset-details-card {
+  .mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  .mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .mat-card-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.asset-details-grid {
+  margin-bottom: 24px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #f9f9f9;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 120px;
+  color: #333;
+}
+
+.detail-value {
+  color: #666;
+  flex: 1;
+}
+
+.performance-table-section {
+  margin-bottom: 32px;
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.performance-table {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+
+    .header-cell {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: #333;
+      border-right: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+
+  .table-body {
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .table-cell {
+        padding: 12px 16px;
+        border-right: 1px solid #e0e0e0;
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &.date-cell {
+          font-weight: 500;
+          color: #333;
+        }
+
+        &.value-cell {
+          font-weight: 600;
+          color: #333;
+        }
+
+        &.gain-cell {
+          font-weight: 600;
+
+          &.positive {
+            color: #4caf50;
+          }
+
+          &.negative {
+            color: #f44336;
+          }
+        }
+      }
+    }
+  }
+}
+
+.performance-chart-section {
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.chart-container {
+  height: 400px;
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+
+  canvas {
+    max-height: 100%;
+    max-width: 100%;
+  }
+}
+
+.no-selection-card {
+  .no-selection {
+    text-align: center;
+    padding: 48px 24px;
+    color: #666;
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 16px;
+  }
+
+  .tab-content {
+    padding: 16px 0;
+  }
+
+  .option-item {
+    mat-form-field {
+      max-width: 100%;
+    }
+  }
+
+  .performance-table {
+    .table-header,
+    .table-body .table-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .header-cell,
+    .table-cell {
+      border-right: none;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 8px 12px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .chart-container {
+    height: 300px;
+    padding: 12px;
+  }
+}

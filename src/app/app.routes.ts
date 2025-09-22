@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './shared/layout/main-layout/main-layout.com
 import { HomeComponent } from './features/home/home.component';
 import { BankingComponent } from './features/banking/banking.component';
 import { InvestingComponent } from './features/investing/investing.component';
+import { AdminComponent } from './features/admin/admin.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,10 @@ export const routes: Routes = [
       {
         path: 'investing',
         component: InvestingComponent
+      },
+      {
+        path: 'admin',
+        component: AdminComponent
       }
     ]
   },

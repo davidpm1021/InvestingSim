@@ -72,40 +72,12 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   private chart: Chart | null = null;
   private lineChart: Chart | null = null;
 
-  // Quarterly statements data
-  quarterlyStatements = [
-    {
-      quarter: 'Q1 2025',
-      period: 'January 1 - March 31, 2025',
-      beginningBalance: 0,
-      endingBalance: 5000,
-      trades: [
-        { date: '2025-01-15', action: 'Buy', asset: 'AAPL', shares: 10, price: 150.00, amount: 1500.00 },
-        { date: '2025-02-10', action: 'Buy', asset: 'MSFT', shares: 5, price: 300.00, amount: 1500.00 },
-        { date: '2025-03-05', action: 'Buy', asset: 'GOOGL', shares: 3, price: 2500.00, amount: 7500.00 }
-      ],
-      dividends: 0,
-      interest: 0,
-      fees: 15.00,
-      netGainLoss: 5000,
-      totalReturn: 0
-    },
-    {
-      quarter: 'Q2 2025',
-      period: 'April 1 - June 30, 2025',
-      beginningBalance: 5000,
-      endingBalance: 12000,
-      trades: [
-        { date: '2025-04-20', action: 'Buy', asset: 'TSLA', shares: 2, price: 200.00, amount: 400.00 },
-        { date: '2025-05-15', action: 'Sell', asset: 'AAPL', shares: 5, price: 160.00, amount: 800.00 }
-      ],
-      dividends: 25.00,
-      interest: 0,
-      fees: 10.00,
-      netGainLoss: 7000,
-      totalReturn: 140.00
-    }
-  ];
+  // Tab tracking
+  isDashboardTab: boolean = true;
+  isHoldingsTab: boolean = false;
+
+  // Dynamic quarterly statements
+  quarterlyStatements: any[] = [];
   
   private subscription = new Subscription();
 
@@ -122,6 +94,15 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
+        this.generateQuarterlyStatements();
+        
+        // Re-render line chart if we have a selected holding
+        if (this.selectedHolding) {
+          setTimeout(() => {
+            this.initializeLineChart();
+            this.updateLineChart();
+          }, 100);
+        }
       })
     );
 
@@ -188,6 +169,38 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // Initialize chart after view is ready
     this.initializeChart();
+  }
+
+  onTabChange(event: any): void {
+    console.log('Investing tab change:', event.index);
+    console.log('selectedHolding:', this.selectedHolding);
+    console.log('holdings length:', this.holdings?.length);
+    
+    // Update tab tracking
+    this.isDashboardTab = event.index === 0; // Dashboard is the first tab (index 0)
+    this.isHoldingsTab = event.index === 2; // Holdings is the third tab (index 2)
+    
+    // Re-initialize chart if switching to dashboard
+    if (this.isDashboardTab) {
+      console.log('Switching to Dashboard - initializing pie chart');
+      setTimeout(() => {
+        this.initializeChart();
+      }, 100);
+    }
+    
+    // If switching to Holdings tab and no holding is selected, select the first one
+    if (this.isHoldingsTab && !this.selectedHolding && this.holdings && this.holdings.length > 0) {
+      console.log('Switching to Holdings - auto-selecting first holding');
+      this.selectHolding(this.holdings[0]);
+      // The selectHolding method will handle chart initialization
+    } else if (this.isHoldingsTab && this.selectedHolding) {
+      console.log('Switching to Holdings - re-initializing chart for existing holding');
+      // Re-initialize line chart if switching to holdings and we already have a selected holding
+      setTimeout(() => {
+        this.initializeLineChart();
+        this.updateLineChart();
+      }, 100);
+    }
   }
 
   ngOnDestroy(): void {
@@ -301,13 +314,44 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     ).join(' ');
   }
 
+  private getMaxPriceAcrossAllAssets(): number {
+    let maxPrice = 0;
+    
+    // Iterate through all assets
+    for (const asset of this.dataService.assets) {
+      // Find the maximum price in this asset's historical performance
+      for (const point of asset.historicalPerformance) {
+        if (point.value > maxPrice) {
+          maxPrice = point.value;
+        }
+      }
+    }
+    
+    console.log('Max price across all assets:', maxPrice);
+    return maxPrice;
+  }
+
   private initializeLineChart(): void {
-    if (!this.lineChartCanvas) return;
+    console.log('initializeLineChart called');
+    console.log('lineChartCanvas:', this.lineChartCanvas);
+    console.log('isHoldingsTab:', this.isHoldingsTab);
+    console.log('selectedHolding:', this.selectedHolding);
+    
+    if (!this.lineChartCanvas) {
+      console.log('No lineChartCanvas found - chart will not initialize');
+      return;
+    }
 
     // Destroy existing line chart if it exists
     if (this.lineChart) {
       this.lineChart.destroy();
     }
+
+    // Get admin options for Y-axis scaling
+    const adminOptions = this.dataService.getOptions();
+    const useConsistentYAxis = adminOptions.lineGraphYAxis === 'consistent';
+    console.log('Admin options:', adminOptions);
+    console.log('Use consistent Y-axis:', useConsistentYAxis);
 
     this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
       type: 'line',
@@ -352,7 +396,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
               display: true,
               text: 'Price ($)'
             },
-            beginAtZero: false
+            beginAtZero: useConsistentYAxis,
+            max: useConsistentYAxis ? this.getMaxPriceAcrossAllAssets() : undefined
           }
         }
       }
@@ -360,24 +405,54 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateLineChart(): void {
-    if (!this.lineChart || !this.selectedHolding) return;
+    console.log('updateLineChart called');
+    console.log('lineChart:', this.lineChart);
+    console.log('selectedHolding:', this.selectedHolding);
+    
+    if (!this.lineChart || !this.selectedHolding) {
+      console.log('Missing lineChart or selectedHolding - chart will not update');
+      return;
+    }
 
     const asset = this.dataService.getAssetById(this.selectedHolding.assetId);
-    if (!asset) return;
+    console.log('asset:', asset);
+    if (!asset) {
+      console.log('No asset found for selectedHolding');
+      return;
+    }
 
     // Get historical data up to current date
     const historicalData = asset.historicalPerformance
       .filter((point: any) => point.date <= this.currentDate)
       .sort((a: any, b: any) => a.date.localeCompare(b.date));
+    
+    console.log('currentDate:', this.currentDate);
+    console.log('historicalData:', historicalData);
 
     const labels = historicalData.map((point: any) => {
-      const date = new Date(point.date);
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      // Format date string directly: "2024-10-01" -> "10/1/2024"
+      const [year, month, day] = point.date.split('-');
+      return `${parseInt(month)}/${parseInt(day)}/${year}`;
     });
     const data = historicalData.map((point: any) => point.value);
+    
+    console.log('labels:', labels);
+    console.log('data:', data);
 
+    // Get admin options for Y-axis scaling
+    const adminOptions = this.dataService.getOptions();
+    const useConsistentYAxis = adminOptions.lineGraphYAxis === 'consistent';
+    
     this.lineChart.data.labels = labels;
     this.lineChart.data.datasets[0].data = data;
+    
+    // Update Y-axis settings based on admin options
+    if (this.lineChart.options && this.lineChart.options.scales && this.lineChart.options.scales['y']) {
+      const yAxis = this.lineChart.options.scales['y'] as any;
+      yAxis.beginAtZero = useConsistentYAxis;
+      yAxis.max = useConsistentYAxis ? this.getMaxPriceAcrossAllAssets() : undefined;
+    }
+    
     this.lineChart.update();
   }
 
@@ -555,9 +630,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       }))
       .sort((a, b) => b.value - a.value); // Sort by value descending
     
-    // Update chart if it exists
-    if (this.chart) {
+    // Update chart if it exists and we're on dashboard tab
+    if (this.chart && this.isDashboardTab) {
       this.updateChart();
+    } else if (this.isDashboardTab) {
+      // Re-initialize chart if we're on dashboard but chart doesn't exist
+      setTimeout(() => {
+        this.initializeChart();
+      }, 100);
     }
   }
 
@@ -703,25 +783,169 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   selectHolding(holding: any): void {
     this.selectedHolding = holding;
     
-    // Initialize line chart if it doesn't exist
-    if (!this.lineChart) {
+    // Force re-render line chart when holding is selected
+    setTimeout(() => {
       this.initializeLineChart();
-    }
-    
-    // Update line chart with new data
-    this.updateLineChart();
+      this.updateLineChart();
+    }, 100);
   }
 
   selectHoldingAndNavigate(holding: any): void {
     this.selectedHolding = holding;
     this.goToHoldingsTab();
     
-    // Initialize line chart after navigation
+    // Force re-render line chart after navigation
     setTimeout(() => {
-      if (!this.lineChart) {
-        this.initializeLineChart();
-      }
+      this.initializeLineChart();
       this.updateLineChart();
-    }, 100);
+    }, 200); // Slightly longer delay for navigation
+  }
+
+  private generateQuarterlyStatements(): void {
+    const quarters = [
+      { start: '2024-10-01', end: '2024-12-31', label: 'Q4 2024', period: 'October 1 - December 31, 2024' },
+      { start: '2025-01-01', end: '2025-03-31', label: 'Q1 2025', period: 'January 1 - March 31, 2025' },
+      { start: '2025-04-01', end: '2025-06-30', label: 'Q2 2025', period: 'April 1 - June 30, 2025' },
+      { start: '2025-07-01', end: '2025-09-30', label: 'Q3 2025', period: 'July 1 - September 30, 2025' },
+      { start: '2025-10-01', end: '2025-12-31', label: 'Q4 2025', period: 'October 1 - December 31, 2025' }
+    ];
+
+    this.quarterlyStatements = quarters
+      .filter(quarter => quarter.end <= this.currentDate) // Only show quarters up to current date
+      .slice(1) // Always hide the first quarter (Q4 2024)
+      .map(quarter => this.generateStatementForQuarter(quarter));
+  }
+
+  private generateStatementForQuarter(quarter: any): any {
+    // Get all transactions for this quarter
+    const allTransactions = this.transactionsService.getAllTransactions();
+    const quarterTransactions = allTransactions
+      .filter((tx: any) => tx.date >= quarter.start && tx.date <= quarter.end);
+
+    // Get trading transactions
+    const trades = quarterTransactions
+      .filter((tx: any) => tx.type === 'trade')
+      .map((tx: any) => ({
+        date: tx.date,
+        action: tx.description.includes('Purchased') ? 'Buy' : 'Sold',
+        asset: this.extractAssetName(tx.description),
+        shares: this.extractShares(tx.description),
+        price: this.extractPrice(tx.description),
+        amount: Math.abs(tx.amount)
+      }));
+
+    // Calculate beginning balance (portfolio value at start of quarter)
+    // This includes cash balance + holdings value at the start of the quarter
+    const beginningBalance = this.calculatePortfolioValueAtDate(quarter.start);
+    
+    // Calculate ending balance (portfolio value at end of quarter)
+    // This includes cash balance + holdings value at the end of the quarter
+    const endingBalance = this.calculatePortfolioValueAtDate(quarter.end);
+    
+    // Debug logging (can be removed in production)
+    // console.log(`Statement for ${quarter.label}:`, { beginningBalance, endingBalance });
+
+    // Calculate net gain/loss
+    const netGainLoss = endingBalance - beginningBalance;
+    
+    // Calculate total return percentage
+    const totalReturn = beginningBalance > 0 ? (netGainLoss / beginningBalance) * 100 : 0;
+
+    // Calculate dividends and interest (mock for now - could be enhanced with actual dividend data)
+    const dividends = this.calculateDividendsForQuarter(quarter);
+    const interest = this.calculateInterestForQuarter(quarter);
+    
+    // Calculate fees (mock - could be enhanced with actual fee data)
+    const fees = trades.length * 2.50; // $2.50 per trade
+
+    return {
+      quarter: quarter.label,
+      period: quarter.period,
+      beginningBalance,
+      endingBalance,
+      trades,
+      dividends,
+      interest,
+      fees,
+      netGainLoss,
+      totalReturn
+    };
+  }
+
+  private extractAssetName(description: string): string {
+    // Extract asset name from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
+    const match = description.match(/of ([^(]+)/);
+    return match ? match[1].trim() : 'Unknown Asset';
+  }
+
+  private extractShares(description: string): number {
+    // Extract shares from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
+    const match = description.match(/(\d+\.?\d*)\s+shares/);
+    return match ? parseFloat(match[1]) : 0;
+  }
+
+  private extractPrice(description: string): number {
+    // Extract price from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
+    const match = description.match(/\$(\d+\.?\d*)/);
+    return match ? parseFloat(match[1]) : 0;
+  }
+
+  private calculatePortfolioValueAtDate(date: string): number {
+    // Get holdings at the specified date
+    const holdingsAtDate = this.holdingsService.getHoldingsAtDate(date);
+    
+    // Calculate total holdings value
+    let holdingsValue = 0;
+    holdingsAtDate.forEach(holding => {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (asset) {
+        const price = this.holdingsService.getCurrentPrice(asset, date);
+        holdingsValue += holding.shares * price;
+      }
+    });
+
+    // Get cash balance at that date (includes all deposits, transfers, and trades)
+    const cashBalance = this.transactionsService.getBalanceAtDate('brokerage001', date);
+    
+    const totalPortfolioValue = holdingsValue + cashBalance;
+    
+    // Debug logging (can be removed in production)
+    // console.log(`Portfolio value at ${date}:`, totalPortfolioValue);
+    
+    return totalPortfolioValue;
+  }
+
+  private calculateDividendsForQuarter(quarter: any): number {
+    // Mock dividend calculation - could be enhanced with actual dividend data
+    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
+    let totalDividends = 0;
+    
+    holdingsAtEnd.forEach(holding => {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (asset && asset.dividendYield) {
+        const price = this.holdingsService.getCurrentPrice(asset, quarter.end);
+        const quarterlyDividend = (asset.dividendYield / 4) * holding.shares * price;
+        totalDividends += quarterlyDividend;
+      }
+    });
+    
+    return totalDividends;
+  }
+
+  private calculateInterestForQuarter(quarter: any): number {
+    // Mock interest calculation for bond funds
+    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
+    let totalInterest = 0;
+    
+    holdingsAtEnd.forEach(holding => {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (asset && asset.interestRate) {
+        const price = this.holdingsService.getCurrentPrice(asset, quarter.end);
+        const quarterlyInterest = (asset.interestRate / 4) * holding.shares * price;
+        totalInterest += quarterlyInterest;
+      }
+    });
+    
+    return totalInterest;
   }
 }
