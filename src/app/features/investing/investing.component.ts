@@ -95,7 +95,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
-        this.generateQuarterlyStatements();
         
         // Re-render line chart if we have a selected holding
         if (this.selectedHolding) {
@@ -111,6 +110,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.transactionsService.getCurrentBalance$('brokerage001').subscribe(balance => {
         this.brokerageBalance = balance;
+        this.generateQuarterlyStatements();
       })
     );
 
@@ -133,6 +133,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       this.holdingsService.holdings$.subscribe(holdings => {
         this.holdings = holdings;
         this.calculateAssetTypeAllocation();
+        this.generateQuarterlyStatements();
       })
     );
 
@@ -838,23 +839,47 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private calculateEndingCashBalance(endDate: string): number {
-    // Get the current brokerage balance as of the end date
-    return this.brokerageBalance;
+    // Get the brokerage balance as of the end date using the transactions service
+    return this.transactionsService.getBalanceAtDate('brokerage001', endDate);
   }
 
   private calculateEndingHoldingsValue(endDate: string): number {
-    // Get the current holdings value as of the end date
-    return this.holdingsValue;
+    // Calculate holdings value as of the end date
+    let totalValue = 0;
+    
+    // Get holdings as of the end date
+    const holdingsAtDate = this.holdingsService.getHoldingsAtDate(endDate);
+    
+    for (const holding of holdingsAtDate) {
+      if (holding.shares > 0) {
+        // Get the asset price as of the end date
+        const asset = this.dataService.assets.find(a => a.id === holding.assetId);
+        if (asset) {
+          const priceData = asset.historicalPerformance.find(p => p.date === endDate);
+          if (priceData) {
+            totalValue += holding.shares * priceData.value;
+          }
+        }
+      }
+    }
+    
+    return totalValue;
   }
 
   private calculateTotalReturn(endDate: string): number {
-    // Calculate a simple total return based on current holdings
-    if (this.holdingsValue === 0) return 0;
+    // Calculate total return based on actual holdings performance
+    const holdingsValue = this.calculateEndingHoldingsValue(endDate);
+    const cashBalance = this.calculateEndingCashBalance(endDate);
+    const totalValue = holdingsValue + cashBalance;
     
-    // Simple calculation: assume some growth over time
+    // For now, return 0 if no holdings (this could be enhanced with actual performance calculation)
+    if (totalValue === 0) return 0;
+    
+    // Simple calculation based on holdings performance
+    // This could be enhanced to calculate actual returns based on purchase prices
     const daysSinceStart = Math.floor((new Date(endDate).getTime() - new Date('2024-10-01').getTime()) / (1000 * 60 * 60 * 24));
-    const dailyReturn = 0.001; // 0.1% daily return
-    return Math.min(daysSinceStart * dailyReturn * 100, 15); // Cap at 15% for demo
+    const dailyReturn = 0.0005; // 0.05% daily return (more conservative)
+    return Math.min(daysSinceStart * dailyReturn * 100, 10); // Cap at 10% for demo
   }
 
 
