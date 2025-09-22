@@ -28,6 +28,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     // Get initial layout setting
     this.updateLayout();
     
+    // Set initial route on page load/refresh
+    this.currentRoute = this.router.url;
+    
     // Listen for route changes to update current route
     this.subscription.add(
       this.router.events
