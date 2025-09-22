@@ -188,7 +188,13 @@ export class HoldingsService {
    * Get current price for an asset on a specific date
    */
   public getCurrentPrice(asset: Asset, date: string): number {
-    // Find the closest historical performance point on or before the date
+    // First, try to find an exact date match
+    const exactMatch = asset.historicalPerformance.find(point => point.date === date);
+    if (exactMatch) {
+      return exactMatch.value;
+    }
+    
+    // If no exact match, find the closest historical performance point on or before the date
     const performancePoints = asset.historicalPerformance
       .filter(point => point.date <= date)
       .sort((a, b) => b.date.localeCompare(a.date)); // Sort descending to get most recent first
@@ -197,7 +203,16 @@ export class HoldingsService {
       return performancePoints[0].value;
     }
     
-    // Fallback to most recent price if no historical data for the date
+    // If no historical data before the date, find the closest point after the date
+    const futurePoints = asset.historicalPerformance
+      .filter(point => point.date > date)
+      .sort((a, b) => a.date.localeCompare(b.date)); // Sort ascending to get earliest first
+    
+    if (futurePoints.length > 0) {
+      return futurePoints[0].value;
+    }
+    
+    // Fallback to most recent price if no historical data
     const allPoints = asset.historicalPerformance
       .sort((a, b) => b.date.localeCompare(a.date));
     

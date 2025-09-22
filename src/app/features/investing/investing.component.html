@@ -418,7 +418,7 @@
                   </div>
                 </mat-panel-title>
                 <mat-panel-description>
-                  <span class="ending-balance">Ending Balance: ${{ statement.endingBalance | number:'1.2-2' }}</span>
+                  <span class="ending-balance">Ending Balance: ${{ (statement.endingCashBalance + statement.endingHoldingsValue) | number:'1.2-2' }}</span>
                 </mat-panel-description>
               </mat-expansion-panel-header>
               
@@ -426,26 +426,83 @@
                 <!-- Summary Section -->
                 <div class="summary-section">
                   <h3>Account Summary</h3>
-                  <div class="summary-grid">
-                    <div class="summary-item">
-                      <label>Beginning Balance:</label>
-                      <span>${{ statement.beginningBalance | number:'1.2-2' }}</span>
+                  
+                  <!-- Cash Balance Section -->
+                  <div class="summary-subsection">
+                    <h4>Cash Balance</h4>
+                    <div class="summary-grid">
+                      <div class="summary-item">
+                        <label>Beginning Balance:</label>
+                        <span>${{ statement.beginningCashBalance | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="summary-item">
+                        <label>Ending Balance:</label>
+                        <span>${{ statement.endingCashBalance | number:'1.2-2' }}</span>
+                      </div>
                     </div>
-                    <div class="summary-item">
-                      <label>Ending Balance:</label>
-                      <span>${{ statement.endingBalance | number:'1.2-2' }}</span>
+                  </div>
+
+                  <!-- Holdings Section -->
+                  <div class="summary-subsection">
+                    <h4>Holdings</h4>
+                    <div class="summary-grid">
+                      <div class="summary-item">
+                        <label>Beginning Value:</label>
+                        <span>${{ statement.beginningHoldingsValue | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="summary-item">
+                        <label>Ending Value:</label>
+                        <span>${{ statement.endingHoldingsValue | number:'1.2-2' }}</span>
+                      </div>
                     </div>
-                    <div class="summary-item">
-                      <label>Net Gain/Loss:</label>
-                      <span [class.positive]="statement.netGainLoss > 0" [class.negative]="statement.netGainLoss < 0">
-                        ${{ statement.netGainLoss | number:'1.2-2' }}
-                      </span>
+                  </div>
+
+                  <!-- Gain/Loss Section -->
+                  <div class="summary-subsection">
+                    <h4>Gain/Loss</h4>
+                    <div class="summary-grid">
+                      <div class="summary-item">
+                        <label>Amount:</label>
+                        <span [class.positive]="statement.holdingsGainLoss > 0" [class.negative]="statement.holdingsGainLoss < 0">
+                          ${{ statement.holdingsGainLoss | number:'1.2-2' }}
+                        </span>
+                      </div>
+                      <div class="summary-item">
+                        <label>Percent:</label>
+                        <span [class.positive]="statement.totalReturn > 0" [class.negative]="statement.totalReturn < 0">
+                          {{ statement.totalReturn > 0 ? '+' : '' }}{{ statement.totalReturn | number:'1.2-2' }}%
+                        </span>
+                      </div>
                     </div>
-                    <div class="summary-item">
-                      <label>Total Return:</label>
-                      <span [class.positive]="statement.totalReturn > 0" [class.negative]="statement.totalReturn < 0">
-                        {{ statement.totalReturn > 0 ? '+' : '' }}{{ statement.totalReturn | number:'1.2-2' }}%
-                      </span>
+                  </div>
+                </div>
+
+                <!-- Assets Section -->
+                <div class="assets-section">
+                  <h3>Assets</h3>
+                  <div *ngIf="statement.assets.length === 0" class="no-data">
+                    No assets held during this quarter.
+                  </div>
+                  <div *ngIf="statement.assets.length > 0" class="assets-list">
+                    <div class="asset-header">
+                      <div class="header-cell">Asset</div>
+                      <div class="header-cell">Shares</div>
+                      <div class="header-cell">Start Price</div>
+                      <div class="header-cell">End Price</div>
+                      <div class="header-cell">Gain/Loss</div>
+                      <div class="header-cell">Gain/Loss %</div>
+                    </div>
+                    <div *ngFor="let asset of statement.assets" class="asset-item">
+                      <div class="asset-name">{{ asset.assetName }}</div>
+                      <div class="asset-shares">{{ asset.shares | number:'1.2-2' }}</div>
+                      <div class="asset-start-price">${{ asset.startPrice | number:'1.2-2' }}</div>
+                      <div class="asset-end-price">${{ asset.endPrice | number:'1.2-2' }}</div>
+                      <div class="asset-gain-loss" [class.positive]="asset.gainLoss > 0" [class.negative]="asset.gainLoss < 0">
+                        ${{ asset.gainLoss | number:'1.2-2' }}
+                      </div>
+                      <div class="asset-gain-loss-percent" [class.positive]="asset.gainLossPercent > 0" [class.negative]="asset.gainLossPercent < 0">
+                        {{ asset.gainLossPercent > 0 ? '+' : '' }}{{ asset.gainLossPercent | number:'1.2-2' }}%
+                      </div>
                     </div>
                   </div>
                 </div>

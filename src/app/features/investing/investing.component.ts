@@ -834,22 +834,13 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         amount: Math.abs(tx.amount)
       }));
 
-    // Calculate beginning balance (portfolio value at start of quarter)
-    // This includes cash balance + holdings value at the start of the quarter
-    const beginningBalance = this.calculatePortfolioValueAtDate(quarter.start);
+    // Calculate beginning balances (at start of quarter)
+    const beginningCashBalance = this.transactionsService.getBalanceAtDate('brokerage001', quarter.start);
+    const beginningHoldingsValue = this.calculateHoldingsValueAtDate(quarter.start);
     
-    // Calculate ending balance (portfolio value at end of quarter)
-    // This includes cash balance + holdings value at the end of the quarter
-    const endingBalance = this.calculatePortfolioValueAtDate(quarter.end);
-    
-    // Debug logging (can be removed in production)
-    // console.log(`Statement for ${quarter.label}:`, { beginningBalance, endingBalance });
-
-    // Calculate net gain/loss
-    const netGainLoss = endingBalance - beginningBalance;
-    
-    // Calculate total return percentage
-    const totalReturn = beginningBalance > 0 ? (netGainLoss / beginningBalance) * 100 : 0;
+    // Calculate ending balances (at end of quarter)
+    const endingCashBalance = this.transactionsService.getBalanceAtDate('brokerage001', quarter.end);
+    const endingHoldingsValue = this.calculateHoldingsValueAtDate(quarter.end);
 
     // Calculate dividends and interest (mock for now - could be enhanced with actual dividend data)
     const dividends = this.calculateDividendsForQuarter(quarter);
@@ -858,17 +849,29 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // Calculate fees (mock - could be enhanced with actual fee data)
     const fees = trades.length * 2.50; // $2.50 per trade
 
+    // Calculate assets performance for the quarter
+    const assets = this.calculateAssetsPerformance(quarter);
+
+    // Calculate total gain/loss from individual assets
+    const totalAssetsGainLoss = assets.reduce((sum, asset) => sum + asset.gainLoss, 0);
+    
+    // Calculate total return percentage based on beginning holdings value
+    const totalAssetsReturn = beginningHoldingsValue > 0 ? (totalAssetsGainLoss / beginningHoldingsValue) * 100 : 0;
+
     return {
       quarter: quarter.label,
       period: quarter.period,
-      beginningBalance,
-      endingBalance,
+      beginningCashBalance,
+      beginningHoldingsValue,
+      endingCashBalance,
+      endingHoldingsValue,
+      assets,
       trades,
       dividends,
       interest,
       fees,
-      netGainLoss,
-      totalReturn
+      holdingsGainLoss: totalAssetsGainLoss,
+      totalReturn: totalAssetsReturn
     };
   }
 
@@ -915,6 +918,23 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     return totalPortfolioValue;
   }
 
+  private calculateHoldingsValueAtDate(date: string): number {
+    // Get holdings at the specified date
+    const holdingsAtDate = this.holdingsService.getHoldingsAtDate(date);
+    
+    // Calculate total holdings value
+    let holdingsValue = 0;
+    holdingsAtDate.forEach(holding => {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (asset) {
+        const price = this.holdingsService.getCurrentPrice(asset, date);
+        holdingsValue += holding.shares * price;
+      }
+    });
+    
+    return holdingsValue;
+  }
+
   private calculateDividendsForQuarter(quarter: any): number {
     // Mock dividend calculation - could be enhanced with actual dividend data
     const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
@@ -948,4 +968,73 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     
     return totalInterest;
   }
+
+  private calculateAssetsPerformance(quarter: any): any[] {
+    // Get holdings at start and end of quarter
+    const holdingsAtStart = this.holdingsService.getHoldingsAtDate(quarter.start);
+    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
+    
+    // Calculate the first day of the next quarter for end price
+    const nextQuarterStart = this.getNextQuarterStart(quarter.end);
+    
+    // Create a map of holdings at end for easy lookup
+    const endHoldingsMap = new Map();
+    holdingsAtEnd.forEach(holding => {
+      endHoldingsMap.set(holding.assetId, holding);
+    });
+    
+    // Calculate performance for each asset that was held at the end of the quarter
+    const assetsPerformance = holdingsAtEnd.map(holding => {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (!asset) return null;
+      
+      // Get price at start of quarter and first day of next quarter
+      const startPrice = this.holdingsService.getCurrentPrice(asset, quarter.start);
+      const endPrice = this.holdingsService.getCurrentPrice(asset, nextQuarterStart);
+      
+      
+      // Calculate gain/loss
+      const gainLoss = (endPrice - startPrice) * holding.shares;
+      const gainLossPercent = startPrice > 0 ? ((endPrice - startPrice) / startPrice) * 100 : 0;
+      
+      return {
+        assetId: holding.assetId,
+        assetName: asset.name,
+        shares: holding.shares,
+        startPrice: startPrice,
+        endPrice: endPrice,
+        gainLoss: gainLoss,
+        gainLossPercent: gainLossPercent
+      };
+    }).filter(asset => asset !== null);
+    
+    return assetsPerformance;
+  }
+
+  private getNextQuarterStart(dateString: string): string {
+    // Convert date string to Date object, add one day, and return as string
+    const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
+    date.setDate(date.getDate() + 1);
+    
+    // Format back to YYYY-MM-DD string
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  }
+
+  private getDayBefore(dateString: string): string {
+    // Convert date string to Date object, subtract one day, and return as string
+    const date = new Date(dateString);
+    date.setDate(date.getDate() - 1);
+    
+    // Format back to YYYY-MM-DD string
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  }
+
 }
