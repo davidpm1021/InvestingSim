@@ -20,6 +20,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   currentInvestingTab: string = '';
   isMaximized: boolean = false;
+  isMinimized: boolean = false;
+  isClosing: boolean = false;
   private subscription = new Subscription();
 
   constructor(
@@ -114,21 +116,32 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   // Browser window control methods
   minimizeWindow(): void {
-    // Placeholder for minimize functionality
-    console.log('Minimize window clicked');
+    this.isMinimized = true;
+    this.isMaximized = false; // Can't be both maximized and minimized
   }
 
   maximizeWindow(): void {
     this.isMaximized = true;
+    this.isMinimized = false; // Can't be both maximized and minimized
   }
 
   restoreWindow(): void {
     this.isMaximized = false;
+    this.isMinimized = false;
+  }
+
+  restoreFromMinimized(): void {
+    this.isMinimized = false;
   }
 
   closeWindow(): void {
-    // Placeholder for close functionality
-    console.log('Close window clicked');
+    // Trigger the shake animation
+    this.isClosing = true;
+    
+    // After animation completes, restore to original state
+    setTimeout(() => {
+      this.isClosing = false;
+    }, 800); // Animation duration
   }
 
 }

@@ -12,53 +12,57 @@
 <!-- Web Browser Layout -->
 <div class="browser-layout" *ngIf="currentLayout === 'web_browser'">
   <app-header></app-header>
-  <div class="browser-window" [class.maximized]="isMaximized">
+  <div class="browser-window" 
+       [class.maximized]="isMaximized" 
+       [class.minimized]="isMinimized"
+       [class.closing]="isClosing"
+       (click)="isMinimized ? restoreFromMinimized() : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
       <div class="tab tab-home" 
            [class.active]="currentRoute === '/home'"
-           (click)="navigateTo('/home')">
+           (click)="navigateTo('/home'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">school</mat-icon>
         <span class="tab-text">Investing Sim</span>
       </div>
       <div class="tab tab-banking" 
            [class.active]="currentRoute === '/banking'"
-           (click)="navigateTo('/banking')">
+           (click)="navigateTo('/banking'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">account_balance</mat-icon>
         <span class="tab-text">My Bank</span>
       </div>
       <div class="tab tab-investing" 
            [class.active]="currentRoute === '/investing'"
-           (click)="navigateTo('/investing')">
+           (click)="navigateTo('/investing'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">trending_up</mat-icon>
         <span class="tab-text">My Investing</span>
       </div>
       <div class="tab tab-admin" 
            *ngIf="currentRoute === '/admin'"
            [class.active]="currentRoute === '/admin'"
-           (click)="navigateTo('/admin')">
+           (click)="navigateTo('/admin'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
       </div>
       
       <!-- Browser Window Controls -->
       <div class="browser-controls">
-        <button class="control-btn minimize-btn" (click)="minimizeWindow()" title="Minimize">
+        <button class="control-btn minimize-btn" (click)="minimizeWindow(); $event.stopPropagation()" title="Minimize">
           <mat-icon>remove</mat-icon>
         </button>
         <button class="control-btn restore-btn" 
                 *ngIf="isMaximized" 
-                (click)="restoreWindow()" 
+                (click)="restoreWindow(); $event.stopPropagation()" 
                 title="Restore">
           <mat-icon>fullscreen_exit</mat-icon>
         </button>
         <button class="control-btn maximize-btn" 
                 *ngIf="!isMaximized" 
-                (click)="maximizeWindow()" 
+                (click)="maximizeWindow(); $event.stopPropagation()" 
                 title="Maximize">
           <mat-icon>fullscreen</mat-icon>
         </button>
-        <button class="control-btn close-btn" (click)="closeWindow()" title="Close">
+        <button class="control-btn close-btn" (click)="closeWindow(); $event.stopPropagation()" title="Close">
           <mat-icon>close</mat-icon>
         </button>
       </div>
