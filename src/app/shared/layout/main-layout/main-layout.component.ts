@@ -23,6 +23,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   isMinimized: boolean = false;
   isClosing: boolean = false;
   hasAccessedAdmin: boolean = false;
+  hasAccessedBankSim: boolean = false;
   private subscription = new Subscription();
 
   constructor(
@@ -40,6 +41,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     if (this.currentRoute === '/admin') {
       this.hasAccessedAdmin = true;
     }
+    // Set hasAccessedBankSim to true if already on bank-sim page
+    if (this.currentRoute === '/bank-sim') {
+      this.hasAccessedBankSim = true;
+    }
     
     // Listen for route changes to update current route
     this.subscription.add(
@@ -50,6 +55,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           // Set hasAccessedAdmin to true when navigating to admin page
           if (event.url === '/admin') {
             this.hasAccessedAdmin = true;
+          }
+          // Set hasAccessedBankSim to true when navigating to bank-sim page
+          if (event.url === '/bank-sim') {
+            this.hasAccessedBankSim = true;
           }
           // Clear investing tab when navigating away from investing page
           if (event.url !== '/investing') {
@@ -83,6 +92,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         return this.currentInvestingTab ? `${baseUrl}/${this.currentInvestingTab}` : baseUrl;
       case '/admin':
         return 'https://investing-sim.example/admin';
+      case '/bank-sim':
+        return 'https://investing-sim.example/bank-sim';
       default:
         return 'https://investing-sim.example';
     }
@@ -92,6 +103,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   navigateTo(route: string): void {
     if (route === '/admin') {
       this.hasAccessedAdmin = true;
+    }
+    if (route === '/bank-sim') {
+      this.hasAccessedBankSim = true;
     }
     this.router.navigate([route]);
   }

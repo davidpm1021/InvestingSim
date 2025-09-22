@@ -5,6 +5,7 @@ import { HomeComponent } from './features/home/home.component';
 import { BankingComponent } from './features/banking/banking.component';
 import { InvestingComponent } from './features/investing/investing.component';
 import { AdminComponent } from './features/admin/admin.component';
+import { BankSimComponent } from './features/bank-sim/bank-sim.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,10 @@ export const routes: Routes = [
       {
         path: 'admin',
         component: AdminComponent
+      },
+      {
+        path: 'bank-sim',
+        component: BankSimComponent
       }
     ]
   },

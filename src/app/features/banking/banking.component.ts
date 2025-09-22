@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
 import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
@@ -25,7 +26,7 @@ export class BankingComponent implements OnInit, OnDestroy {
   transactions: Array<Transaction & { runningBalance: number, displayDescription: string }> = [];
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, public transactionsService: TransactionsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {}
+  constructor(public dataService: DataService, public transactionsService: TransactionsService, public currentDateService: CurrentDateService, private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     // Subscribe to current date
@@ -82,5 +83,9 @@ export class BankingComponent implements OnInit, OnDestroy {
       }
     }
     return transaction.amount;
+  }
+
+  navigateToBankSim(): void {
+    this.router.navigate(['/bank-sim']);
   }
 }

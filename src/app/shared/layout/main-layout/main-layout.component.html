@@ -44,6 +44,13 @@
         <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
       </div>
+      <div class="tab tab-bank-sim" 
+           [class.active]="currentRoute === '/bank-sim'"
+           [class.hidden]="!hasAccessedBankSim"
+           (click)="navigateTo('/bank-sim'); $event.stopPropagation()">
+        <mat-icon class="tab-favicon">account_balance</mat-icon>
+        <span class="tab-text">Bank Sim</span>
+      </div>
       
       <!-- Browser Window Controls -->
       <div class="browser-controls">
