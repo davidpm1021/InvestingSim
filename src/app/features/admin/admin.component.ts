@@ -104,14 +104,14 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onYAxisChange(): void {
     this.saveOptions();
+    // Force a full browser refresh to apply the Y-axis change
+    window.location.href = window.location.href;
   }
 
   onLayoutChange(): void {
     this.saveOptions();
-    // Redirect to home route when layout changes with a small delay
-    setTimeout(() => {
-      this.router.navigate(['/home']);
-    }, 500); // 500ms delay to show the change was saved
+    // Redirect to home and force a full browser refresh
+    window.location.href = '/home';
   }
 
   getOptions(): AdminOptions {

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { DataService } from '../../services/data.service';
-import { filter, interval, Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
@@ -36,13 +36,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           this.simulatePageLoad();
           this.currentRoute = event.url;
         })
-    );
-
-    // Poll for admin options changes (since there's no observable for localStorage changes)
-    this.subscription.add(
-      interval(500).subscribe(() => {
-        this.updateLayout();
-      })
     );
   }
 
