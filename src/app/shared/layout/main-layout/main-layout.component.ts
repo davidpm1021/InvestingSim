@@ -19,6 +19,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   currentRoute: string = '';
   isLoading: boolean = false;
   currentInvestingTab: string = '';
+  isMaximized: boolean = false;
   private subscription = new Subscription();
 
   constructor(
@@ -109,6 +110,25 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   // Method to check if URL is secure (HTTPS)
   isSecureUrl(): boolean {
     return this.getCurrentUrl().startsWith('https://');
+  }
+
+  // Browser window control methods
+  minimizeWindow(): void {
+    // Placeholder for minimize functionality
+    console.log('Minimize window clicked');
+  }
+
+  maximizeWindow(): void {
+    this.isMaximized = true;
+  }
+
+  restoreWindow(): void {
+    this.isMaximized = false;
+  }
+
+  closeWindow(): void {
+    // Placeholder for close functionality
+    console.log('Close window clicked');
   }
 
 }

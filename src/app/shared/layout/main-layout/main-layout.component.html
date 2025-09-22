@@ -12,7 +12,7 @@
 <!-- Web Browser Layout -->
 <div class="browser-layout" *ngIf="currentLayout === 'web_browser'">
   <app-header></app-header>
-  <div class="browser-window">
+  <div class="browser-window" [class.maximized]="isMaximized">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
       <div class="tab tab-home" 
@@ -39,6 +39,28 @@
            (click)="navigateTo('/admin')">
         <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
+      </div>
+      
+      <!-- Browser Window Controls -->
+      <div class="browser-controls">
+        <button class="control-btn minimize-btn" (click)="minimizeWindow()" title="Minimize">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <button class="control-btn restore-btn" 
+                *ngIf="isMaximized" 
+                (click)="restoreWindow()" 
+                title="Restore">
+          <mat-icon>fullscreen_exit</mat-icon>
+        </button>
+        <button class="control-btn maximize-btn" 
+                *ngIf="!isMaximized" 
+                (click)="maximizeWindow()" 
+                title="Maximize">
+          <mat-icon>fullscreen</mat-icon>
+        </button>
+        <button class="control-btn close-btn" (click)="closeWindow()" title="Close">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
     </div>
 
