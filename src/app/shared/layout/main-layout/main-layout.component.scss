@@ -39,8 +39,10 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  margin: 20px; // Add margin on all sides around the browser window
+  margin: 8px auto; // Center the browser window and add margin
   min-width: 0; // Prevent flex item from growing beyond container
+  max-width: 1200px; // Match the content max-width
+  width: 100%; // Take full width up to max-width
 }
 
 // Browser Tabs
@@ -279,7 +281,7 @@
   overflow-y: auto;
   overflow-x: hidden; // Prevent horizontal scrolling
   background-color: #fff;
-  padding: 20px;
+  padding: 12px; // Reduced padding to better match content width
   position: relative;
   
   &.loading {
