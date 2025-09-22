@@ -169,10 +169,10 @@
 .asset-type-header {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #333;
-  background-color: #f0f0f0;
+  color: #fff;
+  background-color: #424242;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-bottom: none;
   margin-bottom: 0;
 }
@@ -377,6 +377,77 @@
       margin: 0;
       font-size: 1.1rem;
     }
+  }
+}
+
+.coming-soon {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+// Inner tabs styling
+.inner-tabs {
+  margin-top: 16px;
+
+  .mat-mdc-tab-group {
+    --mdc-secondary-navigation-tab-container-height: 48px;
+  }
+
+  .mat-mdc-tab-header {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .mat-mdc-tab {
+    min-width: 120px;
+  }
+
+  .mat-mdc-tab-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.inner-tab-content {
+  padding: 24px 0;
+  min-height: 400px;
+}
+
+.coming-soon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.json-container {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  overflow-x: auto;
+}
+
+.json-code {
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #333;
+  white-space: pre;
+  overflow-x: auto;
+  
+  code {
+    background: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
   }
 }
 
