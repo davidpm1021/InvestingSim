@@ -1,9 +1,73 @@
-<div class="main-layout">
+<!-- Default Layout -->
+<div class="main-layout" *ngIf="currentLayout === 'default'">
   <app-header></app-header>
   <div class="layout-body">
     <app-sidebar></app-sidebar>
     <main class="main-content">
       <router-outlet></router-outlet>
     </main>
+  </div>
+</div>
+
+<!-- Web Browser Layout -->
+<div class="browser-layout" *ngIf="currentLayout === 'web_browser'">
+  <app-header></app-header>
+  <div class="browser-window">
+    <!-- Browser Tabs -->
+    <div class="browser-tabs">
+      <div class="tab tab-home" 
+           [class.active]="currentRoute === '/home'"
+           (click)="navigateTo('/home')">
+        <span class="tab-favicon">📚</span>
+        <span class="tab-text">NGPF Simulator</span>
+      </div>
+      <div class="tab tab-banking" 
+           [class.active]="currentRoute === '/banking'"
+           (click)="navigateTo('/banking')">
+        <span class="tab-favicon">🏦</span>
+        <span class="tab-text">Wells Fargo</span>
+      </div>
+      <div class="tab tab-investing" 
+           [class.active]="currentRoute === '/investing'"
+           (click)="navigateTo('/investing')">
+        <span class="tab-favicon">📈</span>
+        <span class="tab-text">Fidelity</span>
+      </div>
+      <div class="tab tab-admin" 
+           [class.active]="currentRoute === '/admin'"
+           (click)="navigateTo('/admin')">
+        <span class="tab-favicon">⚙️</span>
+        <span class="tab-text">Admin Panel</span>
+      </div>
+    </div>
+
+    <!-- Browser Navigation Bar -->
+    <div class="browser-nav">
+      <div class="nav-buttons">
+        <button class="nav-btn" (click)="goBack()" title="Back">
+          <span>←</span>
+        </button>
+        <button class="nav-btn" (click)="goForward()" title="Forward">
+          <span>→</span>
+        </button>
+        <button class="nav-btn" (click)="refresh()" title="Refresh">
+          <span>↻</span>
+        </button>
+        <button class="nav-btn" (click)="goHome()" title="Home">
+          <span>🏠</span>
+        </button>
+      </div>
+      
+      <div class="address-bar">
+        <span class="security-icon" *ngIf="isSecureUrl()">🔒</span>
+        <span class="address-text">{{ getCurrentUrl() }}</span>
+        <span class="loading-indicator" *ngIf="isLoading">⟳</span>
+      </div>
+    </div>
+
+    <!-- Browser Content -->
+    <div class="browser-content" [class.loading]="isLoading">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

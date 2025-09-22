@@ -234,8 +234,103 @@ p {
 
 .statements-section h2 {
   color: #495057;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   font-size: 1.5rem;
+}
+
+.statements-section p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.statements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.statement-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #1976d2;
+  }
+}
+
+.statement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.statement-info {
+  flex: 1;
+  
+  .quarter-name {
+    margin: 0 0 4px 0;
+    color: #1976d2;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+  
+  .quarter-period {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.statement-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+  
+  .ending-balance,
+  .total-return {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    
+    .label {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .amount {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+  
+  .total-return.positive .amount {
+    color: #28a745;
+  }
+  
+  .total-return.negative .amount {
+    color: #dc3545;
+  }
+}
+
+.open-icon {
+  color: #1976d2;
+  margin-left: 8px;
+}
+
+.no-statements {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .statement-panel {

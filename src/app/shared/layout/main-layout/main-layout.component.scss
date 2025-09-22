@@ -1,3 +1,4 @@
+// Default Layout Styles
 .main-layout {
   height: 100vh;
   display: flex;
@@ -16,3 +17,276 @@
   overflow-y: auto;
   background-color: #fff;
 }
+
+// Browser Layout Styles
+.browser-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0; // No padding at all, header should be full width
+}
+
+.browser-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 20px; // Add margin on all sides around the browser window
+  min-width: 0; // Prevent flex item from growing beyond container
+}
+
+// Browser Tabs
+.browser-tabs {
+  display: flex;
+  background: linear-gradient(to bottom, #f1f3f4 0%, #e8eaed 100%);
+  border-bottom: 1px solid #dadce0;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #f1f3f4 0%, #e8eaed 100%);
+  transition: all 0.3s ease;
+  min-width: 140px;
+  position: relative;
+  border-radius: 8px 8px 0 0;
+  margin-right: 2px;
+  border: 1px solid #dadce0;
+  border-bottom: none;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: linear-gradient(to bottom, #e8eaed 0%, #dadce0 100%);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: linear-gradient(to bottom, #fff 0%, #f8f9fa 100%);
+    border-color: #1976d2;
+    border-bottom: 2px solid #1976d2;
+    z-index: 2;
+    box-shadow: 
+      0 -2px 8px rgba(0, 0, 0, 0.15),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .tab-text {
+      color: #1976d2;
+      font-weight: 600;
+    }
+    
+    .tab-favicon {
+      filter: hue-rotate(200deg);
+    }
+  }
+
+  .tab-favicon {
+    margin-right: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    width: 16px;
+    text-align: center;
+  }
+
+  .tab-text {
+    font-size: 14px;
+    color: #5f6368;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  // Tab-specific styling to represent different institutions
+  &.tab-home {
+    &.active {
+      border-color: #1976d2;
+      .tab-text {
+        color: #1976d2;
+      }
+    }
+  }
+
+  &.tab-banking {
+    &.active {
+      border-color: #d32f2f;
+      .tab-text {
+        color: #d32f2f;
+      }
+    }
+    .tab-favicon {
+      color: #d32f2f;
+    }
+  }
+
+  &.tab-investing {
+    &.active {
+      border-color: #2e7d32;
+      .tab-text {
+        color: #2e7d32;
+      }
+    }
+    .tab-favicon {
+      color: #2e7d32;
+    }
+  }
+
+  &.tab-admin {
+    &.active {
+      border-color: #7b1fa2;
+      .tab-text {
+        color: #7b1fa2;
+      }
+    }
+    .tab-favicon {
+      color: #7b1fa2;
+    }
+  }
+}
+
+// Browser Navigation Bar
+.browser-nav {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(to bottom, #fff 0%, #f8f9fa 100%);
+  border-bottom: 1px solid #dadce0;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dadce0;
+  background: linear-gradient(to bottom, #fff 0%, #f8f9fa 100%);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+  color: #5f6368;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: linear-gradient(to bottom, #f8f9fa 0%, #e8eaed 100%);
+    border-color: #1976d2;
+    color: #1976d2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    background: linear-gradient(to bottom, #e8eaed 0%, #dadce0 100%);
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f5f5f5;
+    color: #ccc;
+  }
+}
+
+.address-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background: linear-gradient(to bottom, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #dadce0;
+  border-radius: 20px;
+  padding: 0 20px;
+  margin-left: 12px;
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: #1976d2;
+  }
+
+  &:focus-within {
+    border-color: #1976d2;
+    box-shadow: 
+      inset 0 1px 3px rgba(0, 0, 0, 0.1),
+      0 0 0 3px rgba(25, 118, 210, 0.1);
+  }
+}
+
+.address-text {
+  font-size: 14px;
+  color: #5f6368;
+  font-family: 'Roboto', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  flex: 1;
+}
+
+.security-icon {
+  margin-right: 8px;
+  font-size: 12px;
+  color: #2e7d32;
+}
+
+.loading-indicator {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #1976d2;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Browser Content
+.browser-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden; // Prevent horizontal scrolling
+  background-color: #fff;
+  padding: 20px;
+  position: relative;
+  transition: opacity 0.3s ease;
+  
+  &.loading {
+    opacity: 0.7;
+  }
+}
+
+// Removed shimmer animation that was causing horizontal scrollbar issues

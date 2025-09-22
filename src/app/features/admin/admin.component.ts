@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DataService, AdminOptions } from '../../shared/services/data.service';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { Chart, registerables } from 'chart.js';
@@ -54,7 +55,10 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('performanceChartCanvas', { static: false }) performanceChartCanvas!: ElementRef<HTMLCanvasElement>;
   private performanceChart: Chart | null = null;
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private router: Router
+  ) {
     // Register Chart.js components
     Chart.register(...registerables);
   }
@@ -102,6 +106,10 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onLayoutChange(): void {
     this.saveOptions();
+    // Redirect to home route when layout changes with a small delay
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+    }, 500); // 500ms delay to show the change was saved
   }
 
   getOptions(): AdminOptions {

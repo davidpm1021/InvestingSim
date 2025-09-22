@@ -407,169 +407,37 @@
       <div class="tab-content">
         <div class="container-fluid">
           <div class="statements-section">
-          <h2>Quarterly Statements</h2>
-          <mat-accordion>
-            <mat-expansion-panel *ngFor="let statement of quarterlyStatements" class="statement-panel">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="panel-title">
-                    <span class="quarter-name">{{ statement.quarter }}</span>
-                    <span class="quarter-period">{{ statement.period }}</span>
+            <h2>Quarterly Statements</h2>
+            <p>Click on a statement to view detailed quarterly performance and activity.</p>
+            
+            <div *ngIf="quarterlyStatements.length === 0" class="no-statements">
+              <p>No statements available yet. Statements will appear after the first quarter ends.</p>
+            </div>
+            
+            <div class="statements-grid">
+              <mat-card *ngFor="let statement of quarterlyStatements" class="statement-card" (click)="openStatementDialog(statement)">
+                <mat-card-content>
+                  <div class="statement-header">
+                    <div class="statement-info">
+                      <h3 class="quarter-name">{{ statement.quarter }}</h3>
+                      <p class="quarter-period">{{ statement.period }}</p>
+                    </div>
+                    <div class="statement-summary">
+                      <div class="ending-balance">
+                        <span class="label">Ending Balance:</span>
+                        <span class="amount">${{ (statement.endingCashBalance || 0) + (statement.endingHoldingsValue || 0) | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="total-return" [class.positive]="(statement.performance?.totalReturn || 0) > 0" [class.negative]="(statement.performance?.totalReturn || 0) < 0">
+                        <span class="label">Total Return:</span>
+                        <span class="amount">{{ (statement.performance?.totalReturn || 0) > 0 ? '+' : '' }}{{ statement.performance?.totalReturn || 0 | number:'1.2-2' }}%</span>
+                      </div>
+                    </div>
+                    <mat-icon class="open-icon">open_in_new</mat-icon>
                   </div>
-                </mat-panel-title>
-                <mat-panel-description>
-                  <span class="ending-balance">Ending Balance: ${{ (statement.endingCashBalance + statement.endingHoldingsValue) | number:'1.2-2' }}</span>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              
-              <div class="statement-content">
-                <!-- Summary Section -->
-                <div class="summary-section">
-                  <h3>Account Summary</h3>
-                  
-                  <!-- Cash Balance Section -->
-                  <div class="summary-subsection">
-                    <h4>Cash Balance</h4>
-                    <div class="summary-grid">
-                      <div class="summary-item">
-                        <label>Beginning Balance:</label>
-                        <span>${{ statement.beginningCashBalance | number:'1.2-2' }}</span>
-                      </div>
-                      <div class="summary-item">
-                        <label>Ending Balance:</label>
-                        <span>${{ statement.endingCashBalance | number:'1.2-2' }}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Holdings Section -->
-                  <div class="summary-subsection">
-                    <h4>Holdings</h4>
-                    <div class="summary-grid">
-                      <div class="summary-item">
-                        <label>Beginning Value:</label>
-                        <span>${{ statement.beginningHoldingsValue | number:'1.2-2' }}</span>
-                      </div>
-                      <div class="summary-item">
-                        <label>Ending Value:</label>
-                        <span>${{ statement.endingHoldingsValue | number:'1.2-2' }}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <!-- Performance Section -->
-                <div class="performance-section">
-                  <h3>Performance</h3>
-                  <div class="performance-table">
-                    <div class="performance-row">
-                      <div class="performance-label">Holdings</div>
-                      <div class="performance-amount" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
-                        {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
-                      </div>
-                    </div>
-                    <div class="performance-row">
-                      <div class="performance-label">Interest Earned</div>
-                      <div class="performance-amount positive">+${{ statement.performance.interest | number:'1.2-2' }}</div>
-                    </div>
-                    <div class="performance-row">
-                      <div class="performance-label">Dividends Earned</div>
-                      <div class="performance-amount positive">+${{ statement.performance.dividends | number:'1.2-2' }}</div>
-                    </div>
-                    <div class="performance-row subtotal">
-                      <div class="performance-label">Subtotal</div>
-                      <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
-                        {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
-                      </div>
-                    </div>
-                    <div class="performance-row">
-                      <div class="performance-label">Fees Incurred</div>
-                      <div class="performance-amount negative">-${{ statement.performance.fees | number:'1.2-2' }}</div>
-                    </div>
-                    <div class="performance-row total">
-                      <div class="performance-label">Total</div>
-                      <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
-                        {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Assets Section -->
-                <div class="assets-section">
-                  <h3>Assets</h3>
-                  <div *ngIf="statement.assets.length === 0" class="no-data">
-                    No assets held during this quarter.
-                  </div>
-                  <div *ngIf="statement.assets.length > 0" class="assets-list">
-                    <div class="asset-header">
-                      <div class="header-cell">Asset</div>
-                      <div class="header-cell">Shares</div>
-                      <div class="header-cell">Start Price</div>
-                      <div class="header-cell">End Price</div>
-                      <div class="header-cell">Gain/Loss</div>
-                      <div class="header-cell">Gain/Loss %</div>
-                    </div>
-                    <div *ngFor="let asset of statement.assets" class="asset-item">
-                      <div class="asset-name">{{ asset.assetName }}</div>
-                      <div class="asset-shares">{{ asset.shares | number:'1.2-2' }}</div>
-                      <div class="asset-start-price">${{ asset.startPrice | number:'1.2-2' }}</div>
-                      <div class="asset-end-price">${{ asset.endPrice | number:'1.2-2' }}</div>
-                      <div class="asset-gain-loss" [class.positive]="asset.gainLoss > 0" [class.negative]="asset.gainLoss < 0">
-                        {{ asset.gainLoss > 0 ? '+' : '' }}${{ asset.gainLoss | number:'1.2-2' }}
-                      </div>
-                      <div class="asset-gain-loss-percent" [class.positive]="asset.gainLossPercent > 0" [class.negative]="asset.gainLossPercent < 0">
-                        {{ asset.gainLossPercent > 0 ? '+' : '' }}{{ asset.gainLossPercent | number:'1.2-2' }}%
-                      </div>
-                    </div>
-                    <div class="asset-total">
-                      <div class="asset-name">Total</div>
-                      <div class="asset-shares"></div>
-                      <div class="asset-start-price"></div>
-                      <div class="asset-end-price"></div>
-                      <div class="asset-gain-loss" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
-                        {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
-                      </div>
-                      <div class="asset-gain-loss-percent" [class.positive]="statement.performance.totalReturn > 0" [class.negative]="statement.performance.totalReturn < 0">
-                        {{ statement.performance.totalReturn > 0 ? '+' : '' }}{{ statement.performance.totalReturn | number:'1.2-2' }}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Trades Section -->
-                <div class="trades-section">
-                  <h3>Trades</h3>
-                  <div *ngIf="statement.trades.length === 0" class="no-data">
-                    <p>No trades this quarter.</p>
-                  </div>
-                  <div *ngIf="statement.trades.length > 0" class="trades-list">
-                    <div class="trade-header">
-                      <div class="trade-date">Date</div>
-                      <div class="trade-action">Action</div>
-                      <div class="trade-asset">Asset</div>
-                      <div class="trade-shares">Shares</div>
-                      <div class="trade-price">Price</div>
-                      <div class="trade-amount">Amount</div>
-                    </div>
-                    <div *ngFor="let trade of statement.trades" class="trade-item">
-                      <div class="trade-date">{{ trade.date | date:'M/d/yyyy' }}</div>
-                      <div class="trade-action" [class.buy]="trade.action === 'Buy'" [class.sell]="trade.action === 'Sell'">
-                        {{ trade.action }}
-                      </div>
-                      <div class="trade-asset">{{ trade.asset }}</div>
-                      <div class="trade-shares">{{ trade.shares }}</div>
-                      <div class="trade-price">${{ trade.price | number:'1.2-2' }}</div>
-                      <div class="trade-amount">${{ trade.amount | number:'1.2-2' }}</div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
         </div>
       </div>
     </mat-tab>
