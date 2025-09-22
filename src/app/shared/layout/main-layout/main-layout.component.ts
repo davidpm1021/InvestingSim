@@ -22,6 +22,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   isMaximized: boolean = false;
   isMinimized: boolean = false;
   isClosing: boolean = false;
+  hasAccessedAdmin: boolean = false;
   private subscription = new Subscription();
 
   constructor(
@@ -35,6 +36,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     
     // Set initial route on page load/refresh
     this.currentRoute = this.router.url;
+    // Set hasAccessedAdmin to true if already on admin page
+    if (this.currentRoute === '/admin') {
+      this.hasAccessedAdmin = true;
+    }
     
     // Listen for route changes to update current route
     this.subscription.add(
@@ -42,6 +47,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         .pipe(filter(event => event instanceof NavigationEnd))
         .subscribe((event: NavigationEnd) => {
           this.currentRoute = event.url;
+          // Set hasAccessedAdmin to true when navigating to admin page
+          if (event.url === '/admin') {
+            this.hasAccessedAdmin = true;
+          }
           // Clear investing tab when navigating away from investing page
           if (event.url !== '/investing') {
             this.currentInvestingTab = '';
@@ -81,6 +90,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   // Method to navigate to different routes (for browser tabs)
   navigateTo(route: string): void {
+    if (route === '/admin') {
+      this.hasAccessedAdmin = true;
+    }
     this.router.navigate([route]);
   }
 

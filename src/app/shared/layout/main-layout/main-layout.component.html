@@ -39,6 +39,7 @@
       </div>
       <div class="tab tab-admin" 
            [class.active]="currentRoute === '/admin'"
+           [class.hidden]="!hasAccessedAdmin"
            (click)="navigateTo('/admin'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
