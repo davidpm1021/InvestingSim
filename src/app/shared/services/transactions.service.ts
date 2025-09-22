@@ -182,7 +182,7 @@ export class TransactionsService {
     
     // Create two separate transactions - one for each account
     const bankingTransaction: Transaction = {
-      type: "transfer",
+      type: "transaction",
       account: "banking001",
       amount: -amount, // Negative for banking (money going out)
       date: date,
@@ -191,7 +191,7 @@ export class TransactionsService {
     };
 
     const brokerageTransaction: Transaction = {
-      type: "transfer",
+      type: "transaction",
       account: "brokerage001",
       amount: amount, // Positive for brokerage (money coming in)
       date: date,
@@ -212,7 +212,7 @@ export class TransactionsService {
     
     // Create two separate transactions - one for each account
     const brokerageTransaction: Transaction = {
-      type: "transfer",
+      type: "transaction",
       account: "brokerage001",
       amount: -amount, // Negative for brokerage (money going out)
       date: date,
@@ -221,7 +221,7 @@ export class TransactionsService {
     };
 
     const bankingTransaction: Transaction = {
-      type: "transfer",
+      type: "transaction",
       account: "banking001",
       amount: amount, // Positive for banking (money coming in)
       date: date,
