@@ -10,44 +10,62 @@
             <div class="col-md-8">
               <mat-card class="options-card">
                 <mat-card-header>
-                  <mat-card-title>Chart Options</mat-card-title>
+                  <mat-card-title>Configuration Options</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <div class="option-item">
-                    <mat-form-field appearance="outline">
-                      <mat-label>Line Graph Y-Axis</mat-label>
-                      <mat-select 
-                        [(ngModel)]="adminOptions.lineGraphYAxis" 
-                        (selectionChange)="onYAxisChange()">
-                        <mat-option *ngFor="let option of yAxisOptions" [value]="option.value">
-                          {{ option.label }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <p class="option-description">
-                      Choose how the Y-axis scales on line graphs:
-                      <br>• <strong>Consistent Y-Axis:</strong> All charts use the same scale for easy comparison
-                      <br>• <strong>Dynamic Y-Axis:</strong> Each chart scales to fit its data range
-                    </p>
-                  </div>
-
-                  <div class="option-item">
-                    <mat-form-field appearance="outline">
-                      <mat-label>Layout</mat-label>
-                      <mat-select 
-                        [(ngModel)]="adminOptions.layout" 
-                        (selectionChange)="onLayoutChange()">
-                        <mat-option *ngFor="let option of layoutOptions" [value]="option.value">
-                          {{ option.label }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <p class="option-description">
-                      Choose the application layout:
-                      <br>• <strong>Default Layout:</strong> Standard application layout
-                      <br>• <strong>Web Browser Layout:</strong> Alternative layout optimized for web browsers
-                    </p>
-                  </div>
+                  <table class="options-table">
+                    <thead>
+                      <tr>
+                        <th class="option-name">Option</th>
+                        <th class="option-description">Description</th>
+                        <th class="option-control">Setting</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="option-name">
+                          <strong>Line Graph Y-Axis</strong>
+                        </td>
+                        <td class="option-description">
+                          Choose how the Y-axis scales on line graphs:
+                          <br>• <strong>Consistent Y-Axis:</strong> All charts use the same scale for easy comparison
+                          <br>• <strong>Dynamic Y-Axis:</strong> Each chart scales to fit its data range
+                        </td>
+                        <td class="option-control">
+                          <mat-form-field appearance="outline">
+                            <mat-select 
+                              [(ngModel)]="adminOptions.lineGraphYAxis" 
+                              (selectionChange)="onYAxisChange()">
+                              <mat-option *ngFor="let option of yAxisOptions" [value]="option.value">
+                                {{ option.label }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="option-name">
+                          <strong>Layout</strong>
+                        </td>
+                        <td class="option-description">
+                          Choose the application layout:
+                          <br>• <strong>Default Layout:</strong> Standard application layout
+                          <br>• <strong>Web Browser Layout:</strong> Alternative layout optimized for web browsers
+                        </td>
+                        <td class="option-control">
+                          <mat-form-field appearance="outline">
+                            <mat-select 
+                              [(ngModel)]="adminOptions.layout" 
+                              (selectionChange)="onLayoutChange()">
+                              <mat-option *ngFor="let option of layoutOptions" [value]="option.value">
+                                {{ option.label }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </mat-card-content>
               </mat-card>
             </div>

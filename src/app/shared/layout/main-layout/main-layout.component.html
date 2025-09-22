@@ -19,19 +19,19 @@
            [class.active]="currentRoute === '/home'"
            (click)="navigateTo('/home')">
         <span class="tab-favicon">📚</span>
-        <span class="tab-text">NGPF Simulator</span>
+        <span class="tab-text">Investing Sim</span>
       </div>
       <div class="tab tab-banking" 
            [class.active]="currentRoute === '/banking'"
            (click)="navigateTo('/banking')">
         <span class="tab-favicon">🏦</span>
-        <span class="tab-text">Wells Fargo</span>
+        <span class="tab-text">My Bank</span>
       </div>
       <div class="tab tab-investing" 
            [class.active]="currentRoute === '/investing'"
            (click)="navigateTo('/investing')">
         <span class="tab-favicon">📈</span>
-        <span class="tab-text">Fidelity</span>
+        <span class="tab-text">My Investing</span>
       </div>
       <div class="tab tab-admin" 
            *ngIf="currentRoute === '/admin'"

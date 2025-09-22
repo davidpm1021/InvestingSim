@@ -3,7 +3,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: #ffffff;
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.5;
   color: #000000;
   padding: 0;
@@ -47,7 +47,7 @@
 }
 
 .statement-header {
-  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+  background: #f5f5f5;
   border-bottom: 4px solid #000000;
   padding: 25px 40px;
   margin-bottom: 0;
@@ -57,20 +57,6 @@
   box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  
-  // Add subtle pattern overlay
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      linear-gradient(45deg, transparent 25%, rgba(0,0,0,0.02) 25%, rgba(0,0,0,0.02) 50%, transparent 50%, transparent 75%, rgba(0,0,0,0.02) 75%);
-    background-size: 8px 8px;
-    pointer-events: none;
-  }
 }
 
 .header-content {
@@ -89,19 +75,19 @@
 .statement-title {
   margin: 0 0 12px 0;
   color: #000000;
-  font-size: 2.4rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .period {
   margin: 0 0 8px 0;
   color: #2c3e50;
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -173,13 +159,13 @@
 .trades-section h3 {
   margin: 0 0 25px 0;
   color: #000000;
-  font-size: 1.5rem;
-  font-weight: 900;
+  font-size: 1.25rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   border-bottom: 3px solid #000000;
   padding-bottom: 12px;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
   position: relative;
   
@@ -257,13 +243,13 @@
 
 .summary-item label {
   display: block;
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
   margin-bottom: 15px;
-  font-size: 1.2rem;
+    font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -277,13 +263,13 @@
   font-size: 1.1rem;
   color: #000000;
   font-weight: 600;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .summary-values .ending {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -325,14 +311,14 @@
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .performance-amount {
-  font-weight: 900;
-  font-size: 1.2rem;
+  font-weight: 700;
+    font-size: 1rem;
   color: #000000;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -346,27 +332,27 @@
 
 .performance-row.subtotal {
   background: linear-gradient(to bottom, #f0f0f0 0%, #e8e8e8 100%);
-  font-weight: 900;
+  font-weight: 700;
   border-top: 3px solid #000000;
   border-bottom: 3px solid #000000;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .performance-row.subtotal .performance-label {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-size: 1.2rem;
+    font-size: 1rem;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .performance-row.subtotal .performance-amount {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .performance-row.total {
   background: linear-gradient(to bottom, #e0e0e0 0%, #d0d0d0 100%);
-  font-weight: 900;
+  font-weight: 700;
   border-top: 4px solid #000000;
   box-shadow: 
     inset 0 2px 4px rgba(0, 0, 0, 0.1),
@@ -374,16 +360,16 @@
 }
 
 .performance-row.total .performance-label {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   text-transform: uppercase;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .performance-row.total .performance-amount {
-  font-size: 1.4rem;
-  font-weight: 900;
+  font-size: 1.1rem;
+  font-weight: 700;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -403,13 +389,13 @@
   gap: 0;
   padding: 18px 25px;
   border-bottom: 3px solid #000000;
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e8e8e8 100%);
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 1rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -440,7 +426,7 @@
   align-items: center;
   padding: 18px 25px;
   border-top: 4px solid #000000;
-  font-weight: 900;
+  font-weight: 700;
   background: linear-gradient(to bottom, #e0e0e0 0%, #d0d0d0 100%);
   margin-top: 0;
   border-radius: 0;
@@ -454,13 +440,13 @@
   font-weight: 700;
   color: #000000;
   font-size: 1.1rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .asset-total .asset-name {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-size: 1.2rem;
+    font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
@@ -468,9 +454,9 @@
 
 .asset-gain-loss,
 .asset-gain-loss-percent {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -500,13 +486,13 @@
   gap: 0;
   padding: 18px 25px;
   border-bottom: 3px solid #000000;
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e8e8e8 100%);
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 1rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -532,30 +518,30 @@
 
 .trade-action,
 .trade-amount {
-  font-weight: 900;
+  font-weight: 700;
   color: #000000;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .trade-action.buy {
   color: #000000;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .trade-action.sell {
   color: #000000;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .trade-amount.positive {
   color: #000000;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .trade-amount.negative {
   color: #000000;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .no-data {
@@ -566,9 +552,9 @@
   background-color: #ffffff;
   border: 3px solid #000000;
   border-radius: 0;
-  font-size: 1.2rem;
+    font-size: 1rem;
   font-weight: 600;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', sans-serif;
   box-shadow: 
     0 4px 12px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);

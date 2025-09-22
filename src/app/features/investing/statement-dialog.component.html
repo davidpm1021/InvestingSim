@@ -106,8 +106,8 @@
           <div class="asset-gain-loss" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
             {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
           </div>
-          <div class="asset-gain-loss-percent" [class.positive]="statement.performance.totalReturn > 0" [class.negative]="statement.performance.totalReturn < 0">
-            {{ statement.performance.totalReturn > 0 ? '+' : '' }}{{ statement.performance.totalReturn | number:'1.2-2' }}%
+          <div class="asset-gain-loss-percent">
+            -
           </div>
         </div>
       </div>

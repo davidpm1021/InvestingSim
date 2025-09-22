@@ -77,11 +77,7 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('allAssets length:', this.allAssets?.length);
     console.log('selectedAsset:', this.selectedAsset);
     
-    // If switching to Asset Performance tab (index 1) and no asset is selected, select the first one
-    if (event.index === 1 && !this.selectedAsset && this.allAssets && this.allAssets.length > 0) {
-      console.log('Auto-selecting first asset:', this.allAssets[0]);
-      this.selectAsset(this.allAssets[0]);
-    }
+    // No auto-selection - let user manually select an asset
   }
 
   ngOnDestroy(): void {

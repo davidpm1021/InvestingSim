@@ -88,7 +88,8 @@ export class CurrentDateService {
       { label: 'Quarter 1', value: '2025-01-01' },
       { label: 'Quarter 2', value: '2025-04-01' },
       { label: 'Quarter 3', value: '2025-07-01' },
-      { label: 'Quarter 4', value: '2025-10-01' }
+      { label: 'Quarter 4', value: '2025-10-01' },
+      { label: 'Final Review', value: '2026-01-01' }
     ];
   }
 

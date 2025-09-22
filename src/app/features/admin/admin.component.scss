@@ -32,6 +32,92 @@
   }
 }
 
+// Options Table Layout
+.options-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+
+  thead {
+    background-color: #f5f5f5;
+    
+    th {
+      padding: 20px 16px;
+      font-weight: 600;
+      color: #333;
+      border-right: 1px solid #e0e0e0;
+      text-align: left;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      &.option-name {
+        width: 25%;
+      }
+
+      &.option-description {
+        width: 50%;
+      }
+
+      &.option-control {
+        width: 25%;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 20px 16px;
+      border-right: 1px solid #e0e0e0;
+      vertical-align: top;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      &.option-name {
+        font-size: 1rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      &.option-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+
+        strong {
+          color: #333;
+        }
+      }
+
+      &.option-control {
+        text-align: right;
+
+        mat-form-field {
+          width: 100%;
+          max-width: 250px;
+        }
+      }
+    }
+  }
+}
+
+// Legacy option-item styles (kept for compatibility)
 .option-item {
   margin-bottom: 24px;
 
@@ -307,6 +393,57 @@
   .option-item {
     mat-form-field {
       max-width: 100%;
+    }
+  }
+
+  .options-table {
+    thead {
+      display: none;
+    }
+
+    tbody {
+      tr {
+        display: block;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        padding: 16px;
+      }
+
+      td {
+        display: block;
+        border: none;
+        padding: 8px 0;
+
+        &:before {
+          content: attr(data-label) ": ";
+          font-weight: 600;
+          color: #333;
+          text-transform: uppercase;
+          font-size: 0.8rem;
+          letter-spacing: 0.5px;
+        }
+
+        &.option-name:before {
+          content: "Option: ";
+        }
+
+        &.option-description:before {
+          content: "Description: ";
+        }
+
+        &.option-control:before {
+          content: "Setting: ";
+        }
+
+        &.option-control {
+          text-align: left;
+
+          mat-form-field {
+            max-width: 100%;
+          }
+        }
+      }
     }
   }
 

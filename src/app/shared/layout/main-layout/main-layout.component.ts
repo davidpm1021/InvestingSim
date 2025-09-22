@@ -55,15 +55,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   getCurrentUrl(): string {
     switch (this.currentRoute) {
       case '/home':
-        return 'https://ngpf.org/investing-sim';
+        return 'https://investing-sim.example';
       case '/banking':
-        return 'https://www.wellsfargo.com/online-banking';
+        return 'https://my-bank.example/online-banking';
       case '/investing':
-        return 'https://www.fidelity.com/investment-management';
+        return 'https://my-investing.example/investment';
       case '/admin':
-        return 'https://ngpf.org/investing-sim/admin';
+        return 'https://investing-sim.example/admin';
       default:
-        return 'https://ngpf.org/investing-sim';
+        return 'https://investing-sim.example';
     }
   }
 
