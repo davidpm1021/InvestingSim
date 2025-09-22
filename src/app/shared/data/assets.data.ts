@@ -32,10 +32,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 115 },
             { date: "2025-01-01", value: 120 },
-            { date: "2025-04-01", value: 135 },
-            { date: "2025-07-01", value: 128 },
-            { date: "2025-10-01", value: 140 },
-            { date: "2026-01-01", value: 145 }
+            { date: "2025-04-01", value: 128 },
+            { date: "2025-07-01", value: 122 },
+            { date: "2025-10-01", value: 135 },
+            { date: "2026-01-01", value: 142 }
         ],
         dividendYield: 0.006,
         interestRate: null,
@@ -54,10 +54,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 190 },
             { date: "2025-01-01", value: 200 },
-            { date: "2025-04-01", value: 240 },
-            { date: "2025-07-01", value: 210 },
-            { date: "2025-10-01", value: 260 },
-            { date: "2026-01-01", value: 280 }
+            { date: "2025-04-01", value: 185 },
+            { date: "2025-07-01", value: 205 },
+            { date: "2025-10-01", value: 195 },
+            { date: "2026-01-01", value: 185 }
         ],
         dividendYield: null,
         interestRate: null,
@@ -76,10 +76,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 90 },
             { date: "2025-01-01", value: 95 },
-            { date: "2025-04-01", value: 100 },
-            { date: "2025-07-01", value: 92 },
+            { date: "2025-04-01", value: 102 },
+            { date: "2025-07-01", value: 98 },
             { date: "2025-10-01", value: 105 },
-            { date: "2026-01-01", value: 110 }
+            { date: "2026-01-01", value: 108 }
         ],
         dividendYield: 0.025,
         interestRate: null,
@@ -98,10 +98,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 290 },
             { date: "2025-01-01", value: 300 },
-            { date: "2025-04-01", value: 310 },
+            { date: "2025-04-01", value: 285 },
             { date: "2025-07-01", value: 295 },
-            { date: "2025-10-01", value: 320 },
-            { date: "2026-01-01", value: 330 }
+            { date: "2025-10-01", value: 305 },
+            { date: "2026-01-01", value: 298 }
         ],
         dividendYield: 0.012,
         interestRate: null,
@@ -122,8 +122,8 @@ export const ASSETS: Asset[] = [
             { date: "2025-01-01", value: 50 },
             { date: "2025-04-01", value: 52 },
             { date: "2025-07-01", value: 49 },
-            { date: "2025-10-01", value: 54 },
-            { date: "2026-01-01", value: 56 }
+            { date: "2025-10-01", value: 53 },
+            { date: "2026-01-01", value: 51 }
         ],
         dividendYield: 0.010,
         interestRate: null,
@@ -142,10 +142,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 195 },
             { date: "2025-01-01", value: 200 },
-            { date: "2025-04-01", value: 210 },
-            { date: "2025-07-01", value: 205 },
-            { date: "2025-10-01", value: 215 },
-            { date: "2026-01-01", value: 220 }
+            { date: "2025-04-01", value: 205 },
+            { date: "2025-07-01", value: 198 },
+            { date: "2025-10-01", value: 208 },
+            { date: "2026-01-01", value: 202 }
         ],
         dividendYield: 0.013,
         interestRate: null,
@@ -164,10 +164,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 98 },
             { date: "2025-01-01", value: 100 },
-            { date: "2025-04-01", value: 105 },
-            { date: "2025-07-01", value: 102 },
-            { date: "2025-10-01", value: 108 },
-            { date: "2026-01-01", value: 112 }
+            { date: "2025-04-01", value: 96 },
+            { date: "2025-07-01", value: 103 },
+            { date: "2025-10-01", value: 99 },
+            { date: "2026-01-01", value: 105 }
         ],
         dividendYield: 0.011,
         interestRate: null,
@@ -186,10 +186,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 108 },
             { date: "2025-01-01", value: 110 },
-            { date: "2025-04-01", value: 111 },
-            { date: "2025-07-01", value: 109 },
-            { date: "2025-10-01", value: 112 },
-            { date: "2026-01-01", value: 114 }
+            { date: "2025-04-01", value: 112 },
+            { date: "2025-07-01", value: 108 },
+            { date: "2025-10-01", value: 114 },
+            { date: "2026-01-01", value: 111 }
         ],
         dividendYield: null,
         interestRate: 0.02,
@@ -208,10 +208,10 @@ export const ASSETS: Asset[] = [
         historicalPerformance: [
             { date: "2024-10-01", value: 78 },
             { date: "2025-01-01", value: 80 },
-            { date: "2025-04-01", value: 81 },
+            { date: "2025-04-01", value: 82 },
             { date: "2025-07-01", value: 79 },
-            { date: "2025-10-01", value: 82 },
-            { date: "2026-01-01", value: 84 }
+            { date: "2025-10-01", value: 84 },
+            { date: "2026-01-01", value: 81 }
         ],
         dividendYield: null,
         interestRate: 0.022,

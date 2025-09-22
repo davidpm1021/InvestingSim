@@ -76,6 +76,17 @@ p {
   text-align: left;
 }
 
+// Gain/Loss column styling
+.holdings-table .positive {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.holdings-table .negative {
+  color: #dc3545;
+  font-weight: 600;
+}
+
 .gain-positive {
   color: #28a745;
   font-weight: 600;
@@ -651,6 +662,38 @@ h2 {
 }
 
 // Holdings Tab Styles
+.holdings-overview-card {
+  .overview-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    label {
+      font-weight: 500;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: #1976d2;
+      font-size: 1rem;
+    }
+  }
+}
+
 .holdings-list {
   max-height: 400px;
   overflow-y: auto;
@@ -788,12 +831,37 @@ h2 {
   margin-top: 12px;
 }
 
+// Dashboard card headers spacing
+.holdings-card .mat-card-header,
+.daily-movers-card .mat-card-header,
+.allocation-card .mat-card-header {
+  margin-bottom: 20px !important;
+}
+
+.holdings-card .mat-card-content,
+.daily-movers-card .mat-card-content,
+.allocation-card .mat-card-content {
+  margin-top: 20px;
+}
+
 // Daily Movers - Modern Design
 .daily-movers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .daily-movers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .daily-movers-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .mover-card {
@@ -816,11 +884,11 @@ h2 {
 }
 
 .mover-card.positive-trend {
-  border-left: 4px solid #4caf50;
+  border-left: 4px solid #6c757d;
 }
 
 .mover-card.negative-trend {
-  border-left: 4px solid #f44336;
+  border-left: 4px solid #6c757d;
 }
 
 .card-header {
@@ -854,15 +922,15 @@ h2 {
 }
 
 .trend-indicator.up {
-  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  background: linear-gradient(135deg, #28a745, #1e7e34);
   color: white;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
 }
 
 .trend-indicator.down {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
+  background: linear-gradient(135deg, #dc3545, #c82333);
   color: white;
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
 }
 
 .trend-indicator mat-icon {
@@ -915,13 +983,13 @@ h2 {
 }
 
 .price-change.positive {
-  color: #2e7d32;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(46, 125, 50, 0.15));
-  border: 1px solid rgba(76, 175, 80, 0.2);
+  color: #28a745;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(30, 126, 52, 0.15));
+  border: 1px solid rgba(40, 167, 69, 0.2);
 }
 
 .price-change.negative {
-  color: #d32f2f;
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(211, 47, 47, 0.15));
-  border: 1px solid rgba(244, 67, 54, 0.2);
+  color: #dc3545;
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(200, 35, 51, 0.15));
+  border: 1px solid rgba(220, 53, 69, 0.2);
 }

@@ -62,7 +62,7 @@ export class InvestingComponent implements OnInit, OnDestroy {
   // All assets for daily movers
   allAssets: any[] = [];
   
-  displayedColumns: string[] = ['asset', 'shares', 'price', 'value'];
+  displayedColumns: string[] = ['asset', 'shares', 'price', 'value', 'gainLoss'];
 
   // Quarterly statements data
   quarterlyStatements = [
@@ -376,6 +376,30 @@ export class InvestingComponent implements OnInit, OnDestroy {
     const asset = this.dataService.getAssetById(holding.assetId);
     if (!asset) return 0;
     return this.holdingsService.getCurrentPrice(asset, this.currentDate);
+  }
+
+  // Get price change percentage for a holding
+  getHoldingPriceChange(holding: any): number {
+    const asset = this.dataService.getAssetById(holding.assetId);
+    if (!asset) return 0;
+
+    // Find the current price point
+    const currentPerformancePoint = asset.historicalPerformance
+      .filter((point: any) => point.date <= this.currentDate)
+      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+
+    if (!currentPerformancePoint) return 0;
+
+    // Find the previous price point
+    const previousPerformancePoint = asset.historicalPerformance
+      .filter((point: any) => point.date < currentPerformancePoint.date)
+      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+
+    if (!previousPerformancePoint) return 0;
+
+    // Calculate percentage change
+    const changePercent = ((currentPerformancePoint.value - previousPerformancePoint.value) / previousPerformancePoint.value) * 100;
+    return changePercent;
   }
 
   // Get price change percentage for daily movers

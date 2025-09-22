@@ -129,6 +129,14 @@
                   <td mat-cell *matCellDef="let holding">${{ holding.value | number:'1.2-2' }}</td>
                 </ng-container>
                 
+                <ng-container matColumnDef="gainLoss">
+                  <th mat-header-cell *matHeaderCellDef>Gain/Loss</th>
+                  <td mat-cell *matCellDef="let holding" 
+                      [class.positive]="getHoldingPriceChange(holding) > 0" 
+                      [class.negative]="getHoldingPriceChange(holding) < 0">
+                    {{ getHoldingPriceChange(holding) > 0 ? '+' : '' }}{{ getHoldingPriceChange(holding) | number:'1.2-2' }}%
+                  </td>
+                </ng-container>
                 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectHoldingAndNavigate(row)" class="clickable-row"></tr>
@@ -188,8 +196,32 @@
       <div class="tab-content">
         <div class="container-fluid">
           <div class="row">
-            <!-- Left Column - Holdings List -->
+            <!-- Left Column - Holdings Overview and List -->
             <div class="col-md-4">
+              <!-- Holdings Overview Card -->
+              <mat-card class="holdings-overview-card mb-3">
+                <mat-card-header>
+                  <mat-card-title>Holdings Overview</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="overview-stats">
+                    <div class="stat-item">
+                      <label>Total Holdings Value:</label>
+                      <span class="stat-value">${{ holdingsValue | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="stat-item">
+                      <label>Number of Holdings:</label>
+                      <span class="stat-value">{{ holdings.length }}</span>
+                    </div>
+                    <div class="stat-item">
+                      <label>Cash Balance:</label>
+                      <span class="stat-value">${{ brokerageBalance | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Current Holdings Card -->
               <mat-card class="holdings-list-card">
                 <mat-card-header>
                   <mat-card-title>Current Holdings</mat-card-title>
