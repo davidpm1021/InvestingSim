@@ -23,14 +23,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa; // Very light blue-gray background
-  background-image: 
-    linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%), 
-    linear-gradient(-45deg, rgba(0,0,0,0.02) 25%, transparent 25%), 
-    linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.02) 75%), 
-    linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.02) 75%);
-  background-size: 360px 360px;
-  background-position: 0 0, 0 180px, 180px -180px, -180px 0px;
+  background: #E9F1FE; // Light blue background
   padding: 0; // No padding at all, header should be full width
 }
 
@@ -87,9 +80,12 @@
   border-bottom: none;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
+  &:first-child {
+    border-radius: 12px 8px 0 0; // Match browser window top-left radius
+  }
+
   &:hover {
     background: linear-gradient(to bottom, #e8eaed 0%, #dadce0 100%);
-    transform: translateY(-1px);
   }
 
   &.active {
