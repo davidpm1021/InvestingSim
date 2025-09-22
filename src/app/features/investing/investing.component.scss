@@ -245,9 +245,10 @@ p {
 
 .statements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 500px));
   gap: 20px;
   margin-top: 20px;
+  justify-content: start;
 }
 
 .statement-card {

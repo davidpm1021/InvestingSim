@@ -1,17 +1,63 @@
 <h2 mat-dialog-title>{{ dialogTitle }}</h2>
 <mat-dialog-content>
-  <p>Current {{ accountType }} Balance: ${{ data.maxAmount | number:'1.2-2' }}</p>
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>{{ data.transferDirection === 'to-brokerage' ? 'Amount to Add' : 'Amount to Withdraw' }}</mat-label>
-    <input matInput 
-           type="number" 
-           [(ngModel)]="transferAmount" 
-           [max]="data.maxAmount"
-           min="0.01"
-           step="0.01"
-           [placeholder]="data.transferDirection === 'to-brokerage' ? 'Enter amount to add' : 'Enter amount to withdraw'">
-    <mat-hint>Maximum: ${{ data.maxAmount | number:'1.2-2' }}</mat-hint>
-  </mat-form-field>
+  <div class="transfer-info">
+    <div class="account-connection">
+      <!-- Source Account (left side) -->
+      <div class="account-card source-account">
+        <div class="account-header">
+          <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'account_balance' : 'trending_up' }}</mat-icon>
+          <div class="account-details">
+            <h3>{{ data.transferDirection === 'to-brokerage' ? 'My Bank' : 'My Investing' }}</h3>
+            <p>{{ data.transferDirection === 'to-brokerage' ? 'Bank Account' : 'Investment Account' }}</p>
+          </div>
+        </div>
+        <div class="account-balance">
+          <span class="balance-label">Balance:</span>
+          <span class="balance-amount">${{ getSourceBalance() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      
+      <div class="transfer-arrow">
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      
+      <!-- Destination Account (right side) -->
+      <div class="account-card destination-account">
+        <div class="account-header">
+          <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'trending_up' : 'account_balance' }}</mat-icon>
+          <div class="account-details">
+            <h3>{{ data.transferDirection === 'to-brokerage' ? 'My Investing' : 'My Bank' }}</h3>
+            <p>{{ data.transferDirection === 'to-brokerage' ? 'Investment Account' : 'Bank Account' }}</p>
+          </div>
+        </div>
+        <div class="account-balance">
+          <span class="balance-label">Balance:</span>
+          <span class="balance-amount">${{ getDestinationBalance() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="transfer-amount-section">
+      <h4>{{ data.transferDirection === 'to-brokerage' ? 'Add Funds to Investment Account' : 'Withdraw Funds to Bank Account' }}</h4>
+      <p class="transfer-description">
+        {{ data.transferDirection === 'to-brokerage' 
+           ? 'Transfer money from your connected bank account to your investment account to start investing.' 
+           : 'Transfer money from your investment account back to your connected bank account.' }}
+      </p>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Transfer Amount</mat-label>
+        <input matInput 
+               type="number" 
+               [(ngModel)]="transferAmount" 
+               [max]="data.maxAmount"
+               min="0.01"
+               step="0.01"
+               placeholder="Enter amount to transfer">
+        <mat-hint>Maximum: ${{ data.maxAmount | number:'1.2-2' }}</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>

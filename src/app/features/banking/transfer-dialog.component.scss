@@ -4,8 +4,113 @@
 
 mat-dialog-content {
   padding: 20px 24px;
-  max-height: 400px;
+  max-height: 500px;
   overflow: hidden;
+}
+
+.transfer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.account-connection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.account-card {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.account-icon {
+  color: #1976d2;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.account-details h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.account-details p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.account-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #e9ecef;
+}
+
+.balance-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.transfer-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #1976d2;
+  border-radius: 50%;
+  color: white;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.transfer-amount-section {
+  h4 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .transfer-description {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+  }
 }
 
 mat-dialog-actions {

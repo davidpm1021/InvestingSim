@@ -472,12 +472,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openWithdrawDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
-      width: '400px',
+      width: '600px',
       maxHeight: '90vh',
       data: { 
         maxAmount: this.brokerageBalance,
         currentDate: this.currentDate,
-        transferDirection: 'to-banking' as const
+        transferDirection: 'to-banking' as const,
+        sourceBalance: this.brokerageBalance, // Investment account balance
+        destinationBalance: this.bankingBalance // Bank account balance
       }
     });
 
@@ -490,12 +492,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openAddFundsDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
-      width: '400px',
+      width: '600px',
       maxHeight: '90vh',
       data: { 
         maxAmount: this.bankingBalance, // Use actual banking balance
         currentDate: this.currentDate,
-        transferDirection: 'to-brokerage' as const
+        transferDirection: 'to-brokerage' as const,
+        sourceBalance: this.bankingBalance, // Bank account balance
+        destinationBalance: this.brokerageBalance // Investment account balance
       }
     });
 
@@ -875,11 +879,12 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // For now, return 0 if no holdings (this could be enhanced with actual performance calculation)
     if (totalValue === 0) return 0;
     
-    // Simple calculation based on holdings performance
+    // Simple calculation based on holdings performance - return dollar amount
     // This could be enhanced to calculate actual returns based on purchase prices
     const daysSinceStart = Math.floor((new Date(endDate).getTime() - new Date('2024-10-01').getTime()) / (1000 * 60 * 60 * 24));
     const dailyReturn = 0.0005; // 0.05% daily return (more conservative)
-    return Math.min(daysSinceStart * dailyReturn * 100, 10); // Cap at 10% for demo
+    const returnPercentage = Math.min(daysSinceStart * dailyReturn, 0.10); // Cap at 10% for demo
+    return totalValue * returnPercentage; // Return dollar amount instead of percentage
   }
 
 

@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angu
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
@@ -11,6 +12,8 @@ export interface TransferDialogData {
   maxAmount: number;
   currentDate: string;
   transferDirection: 'to-brokerage' | 'to-banking';
+  sourceBalance?: number;
+  destinationBalance?: number;
 }
 
 export interface TransferDialogResult {
@@ -20,7 +23,7 @@ export interface TransferDialogResult {
 @Component({
   selector: 'app-transfer-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule, FormsModule],
   templateUrl: './transfer-dialog.component.html',
   styleUrl: './transfer-dialog.component.scss'
 })
@@ -43,6 +46,22 @@ export class TransferDialogComponent {
 
   get transferDescription(): string {
     return this.data.transferDirection === 'to-brokerage' ? 'Add funds to brokerage' : 'Withdraw funds to banking';
+  }
+
+  getDestinationBalance(): number {
+    // Use the passed destination balance if available, otherwise use a default
+    if (this.data.destinationBalance !== undefined) {
+      return this.data.destinationBalance;
+    }
+    return this.data.transferDirection === 'to-brokerage' ? 0 : this.data.maxAmount;
+  }
+
+  getSourceBalance(): number {
+    // Use the passed source balance if available, otherwise use maxAmount
+    if (this.data.sourceBalance !== undefined) {
+      return this.data.sourceBalance;
+    }
+    return this.data.maxAmount;
   }
 
   isValidAmount(): boolean {

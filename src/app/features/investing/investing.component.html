@@ -428,7 +428,7 @@
                       </div>
                       <div class="total-return" [class.positive]="(statement.performance?.totalReturn || 0) > 0" [class.negative]="(statement.performance?.totalReturn || 0) < 0">
                         <span class="label">Total Return:</span>
-                        <span class="amount">{{ (statement.performance?.totalReturn || 0) > 0 ? '+' : '' }}{{ statement.performance?.totalReturn || 0 | number:'1.2-2' }}%</span>
+                        <span class="amount">{{ (statement.performance?.totalReturn || 0) > 0 ? '+' : '' }}${{ statement.performance?.totalReturn || 0 | number:'1.2-2' }}</span>
                       </div>
                     </div>
                     <mat-icon class="open-icon">open_in_new</mat-icon>
