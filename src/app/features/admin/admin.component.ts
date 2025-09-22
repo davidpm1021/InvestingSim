@@ -97,6 +97,8 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private saveOptions(): void {
+    // Save directly to localStorage without updating the DataService
+    // This prevents immediate layout changes and avoids flicker
     localStorage.setItem(this.OPTIONS_KEY, JSON.stringify(this.adminOptions));
   }
 
