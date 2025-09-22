@@ -35,6 +35,33 @@ p {
   margin: 16px 0;
 }
 
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.balance-label {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.balance-row .balance-amount {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1976d2;
+  margin: 0;
+  text-align: right;
+}
+
 .balance-card .transfer-button {
   width: 100%;
   margin-top: 16px;
@@ -589,7 +616,6 @@ h2 {
 .no-allocation {
   text-align: center;
   color: #666;
-  padding: 4px 0;
   margin-bottom: 0;
 }
 
@@ -762,71 +788,140 @@ h2 {
   margin-top: 12px;
 }
 
-// Daily Movers Styles
+// Daily Movers - Modern Design
 .daily-movers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: stretch;
 }
 
-.asset-card {
-  transition: box-shadow 0.2s ease;
-}
-
-.asset-card:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-}
-
-.asset-header {
-  margin-bottom: 12px;
-  height: 50px;
+.mover-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  min-height: 140px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+}
+
+.mover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.mover-card.positive-trend {
+  border-left: 4px solid #4caf50;
+}
+
+.mover-card.negative-trend {
+  border-left: 4px solid #f44336;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 8px 20px;
+  position: relative;
+}
+
+.asset-symbol-badge {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.trend-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.trend-indicator.up {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.trend-indicator.down {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.trend-indicator mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.asset-info {
+  padding: 8px 20px 20px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .asset-name {
+  font-size: 1rem;
   font-weight: 600;
-  color: #333;
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-  line-height: 1.2;
-  min-height: 22px;
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 2.6em;
 }
 
-.asset-symbol {
-  font-size: 0.8rem;
-  color: #666;
-  text-transform: uppercase;
-  font-weight: 500;
-  margin-top: auto;
-}
-
-.asset-price-section {
-  text-align: center;
+.price-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .current-price {
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #333;
-  font-size: 1.1rem;
-  margin-bottom: 4px;
+  color: #1a1a1a;
+  margin: 0;
 }
 
 .price-change {
   font-size: 0.9rem;
   font-weight: 600;
-  
-  &.positive {
-    color: #28a745;
-  }
-  
-  &.negative {
-    color: #dc3545;
-  }
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.price-change.positive {
+  color: #2e7d32;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(46, 125, 50, 0.15));
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.price-change.negative {
+  color: #d32f2f;
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(211, 47, 47, 0.15));
+  border: 1px solid rgba(244, 67, 54, 0.2);
 }

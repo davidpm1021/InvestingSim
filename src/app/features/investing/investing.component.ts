@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,7 +34,7 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent, AssetTypePipe],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent, AssetTypePipe],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })
@@ -42,6 +43,7 @@ export class InvestingComponent implements OnInit, OnDestroy {
   
   brokerageBalance: number = 0;
   bankingBalance: number = 0;
+  holdingsValue: number = 0;
   currentDate: string = '2025-01-01';
   transactions: Array<Transaction & { runningBalance: number, displayDescription: string }> = [];
   
@@ -338,6 +340,9 @@ export class InvestingComponent implements OnInit, OnDestroy {
       }
     }
 
+    // Set the total holdings value
+    this.holdingsValue = totalValue;
+
     // Calculate percentages and create allocation array for all types
     this.assetTypeAllocation = allAssetTypes
       .map(type => ({
@@ -373,18 +378,36 @@ export class InvestingComponent implements OnInit, OnDestroy {
     return this.holdingsService.getCurrentPrice(asset, this.currentDate);
   }
 
-  // Get price change percentage for daily movers (mock calculation)
+  // Get price change percentage for daily movers
   getPriceChange(asset: any): number {
     const currentPrice = this.getCurrentPrice(asset);
-    // Mock price change calculation - in real app this would compare with previous day
-    // For now, return a random change between -5% and +5%
-    const changePercent = (Math.random() - 0.5) * 10; // -5% to +5%
+    
+    // Find the current date's performance point
+    const currentPerformancePoint = asset.historicalPerformance
+      .filter((point: any) => point.date <= this.currentDate)
+      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+    
+    if (!currentPerformancePoint) {
+      return 0; // No data available
+    }
+    
+    // Find the previous performance point (before current date)
+    const previousPerformancePoint = asset.historicalPerformance
+      .filter((point: any) => point.date < currentPerformancePoint.date)
+      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+    
+    if (!previousPerformancePoint) {
+      return 0; // No previous data available
+    }
+    
+    // Calculate percentage change
+    const changePercent = ((currentPerformancePoint.value - previousPerformancePoint.value) / previousPerformancePoint.value) * 100;
     return changePercent;
   }
 
   // Navigation methods
-  goToAccountTab(): void {
-    this.tabGroup.selectedIndex = 4; // Account tab is index 4
+  goToProfileTab(): void {
+    this.tabGroup.selectedIndex = 4; // Profile tab is index 4
   }
 
   goToHoldingsTab(): void {

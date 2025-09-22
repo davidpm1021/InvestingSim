@@ -13,10 +13,17 @@
             <!-- Account Balance Card -->
             <mat-card class="balance-card mb-3">
             <mat-card-header>
-              <mat-card-title>Brokerage Account Balance</mat-card-title>
+              <mat-card-title>Portfolio Summary</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
+              <div class="balance-row">
+                <div class="balance-label">Holdings Value:</div>
+                <div class="balance-amount">${{ holdingsValue | number:'1.2-2' }}</div>
+              </div>
+              <div class="balance-row">
+                <div class="balance-label">Cash Balance:</div>
+                <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
+              </div>
               <div class="button-group">
                 <button mat-raised-button 
                         color="accent" 
@@ -33,8 +40,8 @@
                 </button>
               </div>
               <div class="account-activity-link">
-                <button mat-button color="primary" (click)="goToAccountTab()">
-                  View Account Activity
+                <button mat-button color="primary" (click)="goToProfileTab()">
+                  View Profile
                 </button>
               </div>
             </mat-card-content>
@@ -141,20 +148,23 @@
             </mat-card-header>
             <mat-card-content>
               <div class="daily-movers-grid">
-                <mat-card class="asset-card" *ngFor="let asset of allAssets">
-                  <mat-card-content>
-                    <div class="asset-header">
-                      <div class="asset-name">{{ asset.name }}</div>
-                      <div class="asset-symbol">{{ asset.id }}</div>
+                <div class="mover-card" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0">
+                  <div class="card-header">
+                    <div class="asset-symbol-badge">{{ asset.id }}</div>
+                    <div class="trend-indicator" [class.up]="getPriceChange(asset) > 0" [class.down]="getPriceChange(asset) < 0">
+                      <mat-icon>{{ getPriceChange(asset) > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
                     </div>
-                    <div class="asset-price-section">
+                  </div>
+                  <div class="asset-info">
+                    <h3 class="asset-name">{{ asset.name }}</h3>
+                    <div class="price-info">
                       <div class="current-price">${{ getCurrentPrice(asset) | number:'1.2-2' }}</div>
                       <div class="price-change" [class.positive]="getPriceChange(asset) > 0" [class.negative]="getPriceChange(asset) < 0">
                         {{ getPriceChange(asset) > 0 ? '+' : '' }}{{ getPriceChange(asset) | number:'1.2-2' }}%
                       </div>
                     </div>
-                  </mat-card-content>
-                </mat-card>
+                  </div>
+                </div>
               </div>
             </mat-card-content>
           </mat-card>
@@ -288,37 +298,59 @@
       </div>
     </mat-tab>
     
-    <mat-tab label="Account">
+    <mat-tab label="Profile">
       <div class="tab-content">
         <div class="container-fluid">
-          <div class="balance-section">
-          <!-- Account Balance Card -->
-          <mat-card class="balance-card">
-            <mat-card-header>
-              <mat-card-title>Brokerage Account Balance</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
-              <div class="button-group">
-                <button mat-raised-button 
-                        color="accent" 
-                        (click)="openAddFundsDialog()"
-                        class="add-funds-button">
-                  Add Funds
-                </button>
-                <button mat-raised-button 
-                        color="primary" 
-                        (click)="openWithdrawDialog()"
-                        [disabled]="brokerageBalance <= 0"
-                        class="withdraw-button">
-                  Withdraw Funds
-                </button>
-              </div>
-            </mat-card-content>
-          </mat-card>
+          <div class="row">
+            <!-- Profile Summary Card -->
+            <div class="col-md-6">
+              <mat-card class="balance-card">
+                <mat-card-header>
+                  <mat-card-title>Profile Summary</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="balance-row">
+                    <div class="balance-label">Holdings Value:</div>
+                    <div class="balance-amount">${{ holdingsValue | number:'1.2-2' }}</div>
+                  </div>
+                  <div class="balance-row">
+                    <div class="balance-label">Cash Balance:</div>
+                    <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
+                  </div>
+                  <div class="button-group">
+                    <button mat-raised-button 
+                            color="accent" 
+                            (click)="openAddFundsDialog()"
+                            class="add-funds-button">
+                      Add Funds
+                    </button>
+                    <button mat-raised-button 
+                            color="primary" 
+                            (click)="openWithdrawDialog()"
+                            [disabled]="brokerageBalance <= 0"
+                            class="withdraw-button">
+                      Withdraw Funds
+                    </button>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            
+            <!-- Overview Card -->
+            <div class="col-md-6">
+              <mat-card class="balance-card">
+                <mat-card-header>
+                  <mat-card-title>Overview</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>Placeholder content for overview section.</p>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
           
           <!-- Transactions List -->
-          <div class="transactions-section">
+          <div class="transactions-section mt-4">
             <h2>Recent Transactions</h2>
             <div *ngIf="transactions.length === 0" class="no-transactions">
               <p>No transactions yet.</p>
@@ -344,7 +376,6 @@
               </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </mat-tab>
