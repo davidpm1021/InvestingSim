@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +21,8 @@ import { CurrentDateService } from '../../shared/services/current-date.service';
 import { TransferDialogComponent } from '../banking/transfer-dialog.component';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { PlaceTradeComponent, TradeData } from './place-trade.component';
+import { HoldingsTotalsComponent } from '../../shared/components/holdings-totals/holdings-totals.component';
+import { Chart, registerables } from 'chart.js';
 
 export interface Holding {
   asset: string;
@@ -34,12 +36,14 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent, AssetTypePipe],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent, AssetTypePipe, HoldingsTotalsComponent],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })
-export class InvestingComponent implements OnInit, OnDestroy {
+export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('lineChartCanvas', { static: false }) lineChartCanvas!: ElementRef<HTMLCanvasElement>;
   
   brokerageBalance: number = 0;
   bankingBalance: number = 0;
@@ -63,6 +67,10 @@ export class InvestingComponent implements OnInit, OnDestroy {
   allAssets: any[] = [];
   
   displayedColumns: string[] = ['asset', 'shares', 'price', 'value', 'gainLoss'];
+
+  // Chart.js instances
+  private chart: Chart | null = null;
+  private lineChart: Chart | null = null;
 
   // Quarterly statements data
   quarterlyStatements = [
@@ -101,7 +109,10 @@ export class InvestingComponent implements OnInit, OnDestroy {
   
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, public transactionsService: TransactionsService, public holdingsService: HoldingsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {}
+  constructor(public dataService: DataService, public transactionsService: TransactionsService, public holdingsService: HoldingsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {
+    // Register Chart.js components
+    Chart.register(...registerables);
+  }
 
   ngOnInit(): void {
     // Initialize all assets for daily movers
@@ -174,8 +185,200 @@ export class InvestingComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngAfterViewInit(): void {
+    // Initialize chart after view is ready
+    this.initializeChart();
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    // Destroy charts to prevent memory leaks
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    if (this.lineChart) {
+      this.lineChart.destroy();
+      this.lineChart = null;
+    }
+  }
+
+  private initializeChart(): void {
+    if (!this.chartCanvas) return;
+
+    // Destroy existing chart if it exists
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    // Prepare chart data from asset type allocation
+    const labels = this.assetTypeAllocation.map(item => 
+      `${this.formatAssetType(item.type)} (${item.percentage.toFixed(1)}%)`
+    );
+    const data = this.assetTypeAllocation.map(item => item.percentage);
+    const backgroundColors = [
+      '#FF6384', // Red
+      '#36A2EB', // Blue
+      '#FFCE56', // Yellow
+      '#4BC0C0', // Teal
+      '#9966FF', // Purple
+      '#FF9F40', // Orange
+      '#FF6384', // Pink
+      '#C9CBCF'  // Gray
+    ];
+
+    this.chart = new Chart(this.chartCanvas.nativeElement, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: backgroundColors.slice(0, labels.length),
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true
+            }
+          },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              title: function() {
+                return '';
+              },
+              label: function(context) {
+                // Get the original asset type without percentage
+                const originalLabel = context.label || '';
+                // Extract just the asset type name (remove the percentage part)
+                const assetTypeName = originalLabel.split(' (')[0];
+                const percentage = context.parsed;
+                return `${assetTypeName}: ${percentage.toFixed(1)}%`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private updateChart(): void {
+    if (!this.chart) return;
+
+    // Update chart data
+    const labels = this.assetTypeAllocation.map(item => 
+      `${this.formatAssetType(item.type)} (${item.percentage.toFixed(1)}%)`
+    );
+    const data = this.assetTypeAllocation.map(item => item.percentage);
+    const backgroundColors = [
+      '#FF6384', // Red
+      '#36A2EB', // Blue
+      '#FFCE56', // Yellow
+      '#4BC0C0', // Teal
+      '#9966FF', // Purple
+      '#FF9F40', // Orange
+      '#FF6384', // Pink
+      '#C9CBCF'  // Gray
+    ];
+
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = data;
+    this.chart.data.datasets[0].backgroundColor = backgroundColors.slice(0, labels.length);
+    this.chart.update();
+  }
+
+  private formatAssetType(type: string): string {
+    return type.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  private initializeLineChart(): void {
+    if (!this.lineChartCanvas) return;
+
+    // Destroy existing line chart if it exists
+    if (this.lineChart) {
+      this.lineChart.destroy();
+    }
+
+    this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Price',
+          data: [],
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Price: $${context.parsed.y.toFixed(2)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Price ($)'
+            },
+            beginAtZero: false
+          }
+        }
+      }
+    });
+  }
+
+  private updateLineChart(): void {
+    if (!this.lineChart || !this.selectedHolding) return;
+
+    const asset = this.dataService.getAssetById(this.selectedHolding.assetId);
+    if (!asset) return;
+
+    // Get historical data up to current date
+    const historicalData = asset.historicalPerformance
+      .filter((point: any) => point.date <= this.currentDate)
+      .sort((a: any, b: any) => a.date.localeCompare(b.date));
+
+    const labels = historicalData.map((point: any) => {
+      const date = new Date(point.date);
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    });
+    const data = historicalData.map((point: any) => point.value);
+
+    this.lineChart.data.labels = labels;
+    this.lineChart.data.datasets[0].data = data;
+    this.lineChart.update();
   }
 
   getTransactionAmount(transaction: Transaction & { runningBalance: number, displayDescription: string }): number {
@@ -351,6 +554,11 @@ export class InvestingComponent implements OnInit, OnDestroy {
         percentage: totalValue > 0 ? (typeTotals[type] / totalValue) * 100 : 0
       }))
       .sort((a, b) => b.value - a.value); // Sort by value descending
+    
+    // Update chart if it exists
+    if (this.chart) {
+      this.updateChart();
+    }
   }
 
   // Handle trade completion - navigate to Activity tab
@@ -402,6 +610,57 @@ export class InvestingComponent implements OnInit, OnDestroy {
     return changePercent;
   }
 
+  // Get 90-day performance for holdings overview
+  get90DayPerformance(): { percentage: number, amount: number } {
+    if (this.holdings.length === 0) {
+      return { percentage: 0, amount: 0 };
+    }
+
+    let totalCurrentValue = 0;
+    let totalPreviousValue = 0;
+
+    for (const holding of this.holdings) {
+      const asset = this.dataService.getAssetById(holding.assetId);
+      if (!asset) continue;
+
+      // Get current price
+      const currentPrice = this.holdingsService.getCurrentPrice(asset, this.currentDate);
+      const currentValue = holding.shares * currentPrice;
+      totalCurrentValue += currentValue;
+
+      // Get price from 90 days ago (approximately 3 months)
+      const currentDate = new Date(this.currentDate);
+      const ninetyDaysAgo = new Date(currentDate);
+      ninetyDaysAgo.setDate(currentDate.getDate() - 90);
+      const ninetyDaysAgoString = ninetyDaysAgo.toISOString().split('T')[0];
+
+      // Find the closest price point to 90 days ago
+      const previousPerformancePoint = asset.historicalPerformance
+        .filter((point: any) => point.date <= ninetyDaysAgoString)
+        .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+
+      if (previousPerformancePoint) {
+        const previousValue = holding.shares * previousPerformancePoint.value;
+        totalPreviousValue += previousValue;
+      } else {
+        // If no historical data for 90 days ago, use current value (no change)
+        totalPreviousValue += currentValue;
+      }
+    }
+
+    if (totalPreviousValue === 0) {
+      return { percentage: 0, amount: 0 };
+    }
+
+    const percentageChange = ((totalCurrentValue - totalPreviousValue) / totalPreviousValue) * 100;
+    const amountChange = totalCurrentValue - totalPreviousValue;
+
+    return {
+      percentage: percentageChange,
+      amount: amountChange
+    };
+  }
+
   // Get price change percentage for daily movers
   getPriceChange(asset: any): number {
     const currentPrice = this.getCurrentPrice(asset);
@@ -443,10 +702,26 @@ export class InvestingComponent implements OnInit, OnDestroy {
 
   selectHolding(holding: any): void {
     this.selectedHolding = holding;
+    
+    // Initialize line chart if it doesn't exist
+    if (!this.lineChart) {
+      this.initializeLineChart();
+    }
+    
+    // Update line chart with new data
+    this.updateLineChart();
   }
 
   selectHoldingAndNavigate(holding: any): void {
     this.selectedHolding = holding;
     this.goToHoldingsTab();
+    
+    // Initialize line chart after navigation
+    setTimeout(() => {
+      if (!this.lineChart) {
+        this.initializeLineChart();
+      }
+      this.updateLineChart();
+    }, 100);
   }
 }

@@ -47,6 +47,9 @@
             </mat-card-content>
           </mat-card>
 
+          <!-- Holdings Totals Component -->
+          <app-holdings-totals [hideTotalValue]="true"></app-holdings-totals>
+
           <!-- Recent Trade Activity Section -->
           <mat-card class="recent-activity-card mb-3">
             <mat-card-header>
@@ -85,16 +88,8 @@
               <mat-card-title>Allocation</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <div class="allocation-list">
-                <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
-                  <div class="allocation-type">{{ allocation.type | assetType }}</div>
-                  <div class="allocation-percentage" [class.no-allocation]="allocation.percentage === 0">
-                    {{ allocation.percentage | number:'1.1-1' }}%
-                  </div>
-                </div>
-              </div>
-              <div class="allocation-chart-placeholder">
-                <p>Pie chart visualization will be implemented here</p>
+              <div class="allocation-chart-container">
+                <canvas #chartCanvas></canvas>
               </div>
             </mat-card-content>
           </mat-card>
@@ -198,29 +193,6 @@
           <div class="row">
             <!-- Left Column - Holdings Overview and List -->
             <div class="col-md-4">
-              <!-- Holdings Overview Card -->
-              <mat-card class="holdings-overview-card mb-3">
-                <mat-card-header>
-                  <mat-card-title>Holdings Overview</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="overview-stats">
-                    <div class="stat-item">
-                      <label>Total Holdings Value:</label>
-                      <span class="stat-value">${{ holdingsValue | number:'1.2-2' }}</span>
-                    </div>
-                    <div class="stat-item">
-                      <label>Number of Holdings:</label>
-                      <span class="stat-value">{{ holdings.length }}</span>
-                    </div>
-                    <div class="stat-item">
-                      <label>Cash Balance:</label>
-                      <span class="stat-value">${{ brokerageBalance | number:'1.2-2' }}</span>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-
               <!-- Current Holdings Card -->
               <mat-card class="holdings-list-card">
                 <mat-card-header>
@@ -244,6 +216,9 @@
                   </ng-template>
                 </mat-card-content>
               </mat-card>
+
+              <!-- Holdings Totals Component -->
+              <app-holdings-totals [hideTotalValue]="false"></app-holdings-totals>
             </div>
             
             <!-- Right Column - Asset Details -->
@@ -274,6 +249,14 @@
                     <div class="detail-item">
                       <label>Symbol:</label>
                       <span>{{ selectedHolding.assetId }}</span>
+                    </div>
+                    
+                    <!-- Price History Chart -->
+                    <div class="price-history-section">
+                      <h4>Price History</h4>
+                      <div class="line-chart-container">
+                        <canvas #lineChartCanvas></canvas>
+                      </div>
                     </div>
                   </div>
                   <ng-template #noSelection>
@@ -372,10 +355,17 @@
             <div class="col-md-6">
               <mat-card class="balance-card">
                 <mat-card-header>
-                  <mat-card-title>Overview</mat-card-title>
+                  <mat-card-title>Asset Allocation</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <p>Placeholder content for overview section.</p>
+                  <div class="allocation-list">
+                    <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
+                      <div class="allocation-type">{{ allocation.type | assetType }}</div>
+                      <div class="allocation-percentage" [class.no-allocation]="allocation.percentage === 0">
+                        {{ allocation.percentage | number:'1.1-1' }}%
+                      </div>
+                    </div>
+                  </div>
                 </mat-card-content>
               </mat-card>
             </div>

@@ -25,6 +25,13 @@ export class CurrentDateService {
   }
 
   /**
+   * Get the current date value
+   */
+  getCurrentDate(): string {
+    return this.currentDateSubject.value;
+  }
+
+  /**
    * Initialize current date from local storage or default
    */
   private initializeCurrentDate(): void {

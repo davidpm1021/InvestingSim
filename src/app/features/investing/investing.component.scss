@@ -630,6 +630,17 @@ h2 {
   margin-bottom: 0;
 }
 
+.allocation-chart-container {
+  height: 300px;
+  margin-top: 16px;
+  position: relative;
+
+  canvas {
+    max-height: 100%;
+    max-width: 100%;
+  }
+}
+
 // Account Activity Link
 .account-activity-link {
   text-align: center;
@@ -662,34 +673,96 @@ h2 {
 }
 
 // Holdings Tab Styles
-.holdings-overview-card {
-  .overview-stats {
+.holdings-totals-card {
+  .totals-stats {
     display: flex;
     flex-direction: column;
     gap: 12px;
-  }
 
-  .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
 
-    &:last-child {
-      border-bottom: none;
+      &:last-child {
+        border-bottom: none;
+      }
+
+      label {
+        font-weight: 500;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .stat-value {
+        font-weight: 600;
+        color: #1976d2;
+        font-size: 1rem;
+      }
     }
 
-    label {
-      font-weight: 500;
-      color: #666;
-      font-size: 0.9rem;
-    }
+    .performance-section {
+      margin-top: 8px;
 
-    .stat-value {
-      font-weight: 600;
-      color: #1976d2;
-      font-size: 1rem;
+      .performance-heading {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 12px 0;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .performance-cards {
+        display: flex;
+        gap: 8px;
+
+        .performance-card {
+          flex: 1;
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid #e0e0e0;
+          background-color: #fafafa;
+          text-align: center;
+          transition: all 0.2s ease;
+
+          &.positive {
+            border-color: #28a745;
+            background-color: #f8fff9;
+          }
+
+          &.negative {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+          }
+
+          .performance-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .performance-value {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+
+            &.positive {
+              color: #28a745;
+            }
+
+            &.negative {
+              color: #dc3545;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -768,6 +841,29 @@ h2 {
   text-align: center;
   padding: 40px 0;
   color: #666;
+}
+
+.price-history-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .line-chart-container {
+    height: 300px;
+    position: relative;
+
+    canvas {
+      max-height: 100%;
+      max-width: 100%;
+    }
+  }
 }
 
 .no-holdings {

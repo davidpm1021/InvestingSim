@@ -1,0 +1,93 @@
+.holdings-totals-card {
+  .totals-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      label {
+        font-weight: 500;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .stat-value {
+        font-weight: 600;
+        color: #1976d2;
+        font-size: 1rem;
+      }
+    }
+
+    .performance-section {
+      margin-top: 8px;
+
+      .performance-heading {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 12px 0;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .performance-cards {
+        display: flex;
+        gap: 8px;
+
+        .performance-card {
+          flex: 1;
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid #e0e0e0;
+          background-color: #fafafa;
+          text-align: center;
+          transition: all 0.2s ease;
+
+          &.positive {
+            border-color: #28a745;
+            background-color: #f8fff9;
+          }
+
+          &.negative {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+          }
+
+          .performance-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .performance-value {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+
+            &.positive {
+              color: #28a745;
+            }
+
+            &.negative {
+              color: #dc3545;
+            }
+          }
+        }
+      }
+    }
+  }
+}

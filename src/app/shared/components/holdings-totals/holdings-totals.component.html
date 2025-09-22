@@ -1,0 +1,38 @@
+<mat-card class="holdings-totals-card mb-3">
+  <mat-card-header>
+    <mat-card-title>Holdings Totals</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="totals-stats">
+      <div class="stat-item" *ngIf="!hideTotalValue">
+        <label>Total Holdings Value:</label>
+        <span class="stat-value">${{ holdingsValue | number:'1.2-2' }}</span>
+      </div>
+      <div class="stat-item">
+        <label>Number of Holdings:</label>
+        <span class="stat-value">{{ holdings.length }}</span>
+      </div>
+      <div class="performance-section">
+        <h4 class="performance-heading">90-Day Performance</h4>
+        <div class="performance-cards">
+          <div class="performance-card amount-card" 
+               [class.positive]="get90DayPerformance().amount > 0" 
+               [class.negative]="get90DayPerformance().amount < 0">
+            <span class="performance-label">Amount</span>
+            <span class="performance-value">
+              {{ get90DayPerformance().amount > 0 ? '+' : '' }}${{ get90DayPerformance().amount | number:'1.2-2' }}
+            </span>
+          </div>
+          <div class="performance-card percentage-card" 
+               [class.positive]="get90DayPerformance().percentage > 0" 
+               [class.negative]="get90DayPerformance().percentage < 0">
+            <span class="performance-label">Percentage</span>
+            <span class="performance-value">
+              {{ get90DayPerformance().percentage > 0 ? '+' : '' }}{{ get90DayPerformance().percentage | number:'1.2-2' }}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
