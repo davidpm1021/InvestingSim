@@ -15,6 +15,7 @@
   <div class="browser-window" 
        [class.maximized]="isMaximized" 
        [class.minimized]="isMinimized"
+       [class.closing]="isClosing"
        (click)="isMinimized ? restoreFromMinimized() : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
@@ -37,7 +38,6 @@
         <span class="tab-text">My Investing</span>
       </div>
       <div class="tab tab-admin" 
-           *ngIf="currentRoute === '/admin'"
            [class.active]="currentRoute === '/admin'"
            (click)="navigateTo('/admin'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">settings</mat-icon>
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Browser Content -->
-    <div class="browser-content" [class.loading]="isLoading" [class.closing]="isClosing">
+    <div class="browser-content" [class.loading]="isLoading">
       <router-outlet></router-outlet>
     </div>
   </div>
