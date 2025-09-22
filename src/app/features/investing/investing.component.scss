@@ -2,23 +2,28 @@
   max-width: 1200px;
 }
 
-.page-logo {
+.page-header {
   display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+  padding: 24px;
+  background: url('/images/InvestingPage_background.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 16px;
+  border: 1px solid #dee2e6;
 }
 
 .logo-container {
   background: white;
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: 24px 28px;
   border: 2px solid #e9ecef;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 8px;
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .account-logo {
@@ -29,14 +34,14 @@
 
 .account-icon {
   color: #1976d2;
-  font-size: 28px;
-  width: 28px;
-  height: 28px;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
 }
 
 .account-name {
   margin: 0;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: #333;
 }
@@ -46,6 +51,18 @@
   font-size: 14px;
   color: #666;
   font-weight: 500;
+}
+
+.page-description {
+  margin-bottom: 32px;
+  padding: 0 8px;
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+  }
 }
 
 h1 {

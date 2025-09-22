@@ -18,26 +18,26 @@
       <div class="tab tab-home" 
            [class.active]="currentRoute === '/home'"
            (click)="navigateTo('/home')">
-        <span class="tab-favicon">📚</span>
+        <mat-icon class="tab-favicon">school</mat-icon>
         <span class="tab-text">Investing Sim</span>
       </div>
       <div class="tab tab-banking" 
            [class.active]="currentRoute === '/banking'"
            (click)="navigateTo('/banking')">
-        <span class="tab-favicon">🏦</span>
+        <mat-icon class="tab-favicon">account_balance</mat-icon>
         <span class="tab-text">My Bank</span>
       </div>
       <div class="tab tab-investing" 
            [class.active]="currentRoute === '/investing'"
            (click)="navigateTo('/investing')">
-        <span class="tab-favicon">📈</span>
+        <mat-icon class="tab-favicon">trending_up</mat-icon>
         <span class="tab-text">My Investing</span>
       </div>
       <div class="tab tab-admin" 
            *ngIf="currentRoute === '/admin'"
            [class.active]="currentRoute === '/admin'"
            (click)="navigateTo('/admin')">
-        <span class="tab-favicon">⚙️</span>
+        <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
       </div>
     </div>
@@ -46,16 +46,16 @@
     <div class="browser-nav">
       <div class="nav-buttons">
         <button class="nav-btn" (click)="goBack()" title="Back">
-          <span>←</span>
+          <mat-icon>arrow_back</mat-icon>
         </button>
         <button class="nav-btn" (click)="goForward()" title="Forward">
-          <span>→</span>
+          <mat-icon>arrow_forward</mat-icon>
         </button>
         <button class="nav-btn" (click)="refresh()" title="Refresh">
-          <span>↻</span>
+          <mat-icon>refresh</mat-icon>
         </button>
         <button class="nav-btn" (click)="goHome()" title="Home">
-          <span>🏠</span>
+          <mat-icon>home</mat-icon>
         </button>
       </div>
       
