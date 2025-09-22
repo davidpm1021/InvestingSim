@@ -684,6 +684,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   goToActivityTab(): void {
     // Switch to Activity tab (index 2: Dashboard=0, Place Trade=1, Activity=2)
     this.tabGroup.selectedIndex = 2;
+    // Scroll to top of the container
+    this.scrollToTop();
   }
 
   // Get current price for daily movers
@@ -804,10 +806,22 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   // Navigation methods
   goToProfileTab(): void {
     this.tabGroup.selectedIndex = 4; // Profile tab is index 4
+    // Scroll to top of the container
+    this.scrollToTop();
   }
 
   goToHoldingsTab(): void {
     this.tabGroup.selectedIndex = 2; // Holdings tab is index 2
+    // Scroll to top of the container
+    this.scrollToTop();
+  }
+
+  // Scroll to top of the investing container
+  scrollToTop(): void {
+    const container = document.querySelector('.investing-container');
+    if (container) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   // Holdings tab methods

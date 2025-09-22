@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
+import { TransactionsService } from '../../services/transactions.service';
 
 interface QuarterOption {
   label: string;
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private dataService: DataService, 
     private currentDateService: CurrentDateService,
+    private transactionsService: TransactionsService,
     private router: Router
   ) {}
 
@@ -54,8 +56,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onReset(): void {
-    // Clear all localStorage keys
-    localStorage.clear();
+    // Clear all transactions first
+    this.transactionsService.clearAllTransactions();
+    
+    // Clear only investing_sim__ localStorage keys
+    const keysToRemove = [
+      'investing_sim__admin_options',
+      'investing_sim__current_date', 
+      'investing_sim__holding_transactions',
+      'investing_sim__transactions'
+    ];
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+    });
     
     // Reload the page
     window.location.reload();

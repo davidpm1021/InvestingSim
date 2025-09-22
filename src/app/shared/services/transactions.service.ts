@@ -102,9 +102,34 @@ export class TransactionsService {
    * Ensure localStorage is properly initialized with default values
    */
   private ensureLocalStorageInitialized(): void {
-    // Ensure transactions are saved
+    // Only initialize with default data if there are no transactions at all
     const currentTransactions = this.transactionsSubject.value;
-    this.saveTransactionsToStorage(currentTransactions);
+    if (currentTransactions.length === 0) {
+      // Initialize with default transaction only if completely empty
+      const defaultTransactions = [
+        {
+          type: "transaction",
+          account: "banking001",
+          amount: 5000,
+          date: "2024-12-01",
+          time: "00:00:00",
+          description: "Initial deposit"
+        }
+      ];
+      this.transactionsSubject.next(defaultTransactions);
+      this.saveTransactionsToStorage(defaultTransactions);
+    } else {
+      // Just save current transactions
+      this.saveTransactionsToStorage(currentTransactions);
+    }
+  }
+
+  /**
+   * Clear all transactions (for reset functionality)
+   */
+  public clearAllTransactions(): void {
+    this.transactionsSubject.next([]);
+    this.saveTransactionsToStorage([]);
   }
 
   /**
@@ -123,17 +148,8 @@ export class TransactionsService {
       console.warn('Error reading transactions from localStorage:', error);
     }
     
-    // Default initial transaction
-    return [
-      {
-        type: "transaction",
-        account: "banking001",
-        amount: 5000,
-        date: "2024-12-01",
-        time: "00:00:00",
-        description: "Initial deposit"
-      }
-    ];
+    // Return empty array if no stored transactions (after reset)
+    return [];
   }
 
   /**
