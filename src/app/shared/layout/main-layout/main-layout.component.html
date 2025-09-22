@@ -15,7 +15,6 @@
   <div class="browser-window" 
        [class.maximized]="isMaximized" 
        [class.minimized]="isMinimized"
-       [class.closing]="isClosing"
        (click)="isMinimized ? restoreFromMinimized() : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
@@ -93,7 +92,7 @@
     </div>
 
     <!-- Browser Content -->
-    <div class="browser-content" [class.loading]="isLoading">
+    <div class="browser-content" [class.loading]="isLoading" [class.closing]="isClosing">
       <router-outlet></router-outlet>
     </div>
   </div>
