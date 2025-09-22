@@ -14,10 +14,17 @@
                 <mat-icon>refresh</mat-icon>
                 Reset
               </button>
-              <button mat-raised-button color="primary" class="account-button">
+              <button mat-raised-button color="primary" class="account-button" [matMenuTriggerFor]="accountMenu">
                 <mat-icon>account_circle</mat-icon>
                 Account
+                <mat-icon>arrow_drop_down</mat-icon>
               </button>
+              <mat-menu #accountMenu="matMenu">
+                <button mat-menu-item (click)="goToAdmin()">
+                  <mat-icon>settings</mat-icon>
+                  <span>Admin Panel</span>
+                </button>
+              </mat-menu>
             </div>
   </div>
 </header>
