@@ -18,6 +18,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   currentLayout: 'default' | 'web_browser' = 'default';
   currentRoute: string = '';
   isLoading: boolean = false;
+  currentInvestingTab: string = '';
   private subscription = new Subscription();
 
   constructor(
@@ -38,6 +39,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         .pipe(filter(event => event instanceof NavigationEnd))
         .subscribe((event: NavigationEnd) => {
           this.currentRoute = event.url;
+          // Clear investing tab when navigating away from investing page
+          if (event.url !== '/investing') {
+            this.currentInvestingTab = '';
+          }
         })
     );
   }
@@ -62,7 +67,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       case '/banking':
         return 'https://my-bank.example/online-banking';
       case '/investing':
-        return 'https://my-investing.example/investment';
+        const baseUrl = 'https://my-investing.example/investment';
+        return this.currentInvestingTab ? `${baseUrl}/${this.currentInvestingTab}` : baseUrl;
       case '/admin':
         return 'https://investing-sim.example/admin';
       default:
@@ -73,6 +79,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   // Method to navigate to different routes (for browser tabs)
   navigateTo(route: string): void {
     this.router.navigate([route]);
+  }
+
+  // Method to update the current investing tab (called by investing component)
+  updateInvestingTab(tabName: string): void {
+    this.currentInvestingTab = tabName;
   }
 
   // Browser navigation methods (placeholder for now)

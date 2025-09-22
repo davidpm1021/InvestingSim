@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, Inject, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -24,6 +24,7 @@ import { PlaceTradeComponent, TradeData } from './place-trade.component';
 import { HoldingsTotalsComponent } from '../../shared/components/holdings-totals/holdings-totals.component';
 import { StatementDialogComponent, StatementDialogData } from './statement-dialog.component';
 import { Chart, registerables } from 'chart.js';
+import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout.component';
 
 export interface Holding {
   asset: string;
@@ -82,7 +83,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, public transactionsService: TransactionsService, public holdingsService: HoldingsService, public currentDateService: CurrentDateService, private dialog: MatDialog) {
+  constructor(
+    public dataService: DataService, 
+    public transactionsService: TransactionsService, 
+    public holdingsService: HoldingsService, 
+    public currentDateService: CurrentDateService, 
+    private dialog: MatDialog,
+    @Optional() private mainLayout: MainLayoutComponent
+  ) {
     // Register Chart.js components
     Chart.register(...registerables);
   }
@@ -181,6 +189,13 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // Update tab tracking
     this.isDashboardTab = event.index === 0; // Dashboard is the first tab (index 0)
     this.isHoldingsTab = event.index === 2; // Holdings is the third tab (index 2)
+    
+    // Update the fake URL in web browser layout
+    if (this.mainLayout) {
+      const tabNames = ['dashboard', 'place-trade', 'holdings', 'activity', 'profile', 'statements'];
+      const tabName = tabNames[event.index] || '';
+      this.mainLayout.updateInvestingTab(tabName);
+    }
     
     // Re-initialize chart if switching to dashboard
     if (this.isDashboardTab) {
