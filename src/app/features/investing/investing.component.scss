@@ -268,11 +268,11 @@ p {
   padding: 16px 0;
 }
 
-.summary-section, .assets-section, .trades-section, .activity-section {
+.summary-section, .performance-section, .assets-section, .trades-section, .activity-section {
   margin-bottom: 32px;
 }
 
-.summary-section h3, .assets-section h3, .trades-section h3, .activity-section h3 {
+.summary-section h3, .performance-section h3, .assets-section h3, .trades-section h3, .activity-section h3 {
   color: #495057;
   margin-bottom: 20px;
   font-size: 1.2rem;
@@ -327,6 +327,67 @@ p {
   }
 }
 
+// Performance section styles
+.performance-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.performance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  
+  .performance-label {
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .performance-amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+    
+    &.positive {
+      color: #28a745;
+    }
+    
+    &.negative {
+      color: #dc3545;
+    }
+  }
+  
+  &.subtotal {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    font-weight: 600;
+    
+    .performance-label {
+      font-weight: 600;
+      color: #495057;
+    }
+  }
+  
+  &.total {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    font-weight: 700;
+    
+    .performance-label {
+      font-weight: 700;
+      color: #0c5460;
+    }
+    
+    .performance-amount {
+      font-size: 1.2rem;
+    }
+  }
+}
+
 // Assets section styles
 .assets-list {
   margin-top: 16px;
@@ -354,6 +415,25 @@ p {
 
 .asset-item:last-child {
   border-bottom: none;
+}
+
+.asset-total {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 2px solid #ddd;
+  font-weight: 600;
+  background-color: #f8f9fa;
+  margin-top: 8px;
+  border-radius: 4px;
+  
+  .asset-name {
+    font-weight: 700;
+    color: #333;
+    padding-left: 12px;
+  }
 }
 
 .asset-name {

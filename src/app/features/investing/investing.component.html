@@ -457,21 +457,40 @@
                     </div>
                   </div>
 
-                  <!-- Gain/Loss Section -->
-                  <div class="summary-subsection">
-                    <h4>Gain/Loss</h4>
-                    <div class="summary-grid">
-                      <div class="summary-item">
-                        <label>Amount:</label>
-                        <span [class.positive]="statement.holdingsGainLoss > 0" [class.negative]="statement.holdingsGainLoss < 0">
-                          ${{ statement.holdingsGainLoss | number:'1.2-2' }}
-                        </span>
+                </div>
+
+                <!-- Performance Section -->
+                <div class="performance-section">
+                  <h3>Performance</h3>
+                  <div class="performance-table">
+                    <div class="performance-row">
+                      <div class="performance-label">Holdings</div>
+                      <div class="performance-amount" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
+                        {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
                       </div>
-                      <div class="summary-item">
-                        <label>Percent:</label>
-                        <span [class.positive]="statement.totalReturn > 0" [class.negative]="statement.totalReturn < 0">
-                          {{ statement.totalReturn > 0 ? '+' : '' }}{{ statement.totalReturn | number:'1.2-2' }}%
-                        </span>
+                    </div>
+                    <div class="performance-row">
+                      <div class="performance-label">Interest Earned</div>
+                      <div class="performance-amount positive">+${{ statement.performance.interest | number:'1.2-2' }}</div>
+                    </div>
+                    <div class="performance-row">
+                      <div class="performance-label">Dividends Earned</div>
+                      <div class="performance-amount positive">+${{ statement.performance.dividends | number:'1.2-2' }}</div>
+                    </div>
+                    <div class="performance-row subtotal">
+                      <div class="performance-label">Subtotal</div>
+                      <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
+                        {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
+                      </div>
+                    </div>
+                    <div class="performance-row">
+                      <div class="performance-label">Fees Incurred</div>
+                      <div class="performance-amount negative">-${{ statement.performance.fees | number:'1.2-2' }}</div>
+                    </div>
+                    <div class="performance-row total">
+                      <div class="performance-label">Total</div>
+                      <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
+                        {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
                       </div>
                     </div>
                   </div>
@@ -498,10 +517,22 @@
                       <div class="asset-start-price">${{ asset.startPrice | number:'1.2-2' }}</div>
                       <div class="asset-end-price">${{ asset.endPrice | number:'1.2-2' }}</div>
                       <div class="asset-gain-loss" [class.positive]="asset.gainLoss > 0" [class.negative]="asset.gainLoss < 0">
-                        ${{ asset.gainLoss | number:'1.2-2' }}
+                        {{ asset.gainLoss > 0 ? '+' : '' }}${{ asset.gainLoss | number:'1.2-2' }}
                       </div>
                       <div class="asset-gain-loss-percent" [class.positive]="asset.gainLossPercent > 0" [class.negative]="asset.gainLossPercent < 0">
                         {{ asset.gainLossPercent > 0 ? '+' : '' }}{{ asset.gainLossPercent | number:'1.2-2' }}%
+                      </div>
+                    </div>
+                    <div class="asset-total">
+                      <div class="asset-name">Total</div>
+                      <div class="asset-shares"></div>
+                      <div class="asset-start-price"></div>
+                      <div class="asset-end-price"></div>
+                      <div class="asset-gain-loss" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
+                        {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
+                      </div>
+                      <div class="asset-gain-loss-percent" [class.positive]="statement.performance.totalReturn > 0" [class.negative]="statement.performance.totalReturn < 0">
+                        {{ statement.performance.totalReturn > 0 ? '+' : '' }}{{ statement.performance.totalReturn | number:'1.2-2' }}%
                       </div>
                     </div>
                   </div>
@@ -535,24 +566,6 @@
                   </div>
                 </div>
 
-                <!-- Activity Section -->
-                <div class="activity-section">
-                  <h3>Account Activity</h3>
-                  <div class="activity-grid">
-                    <div class="activity-item">
-                      <label>Dividends:</label>
-                      <span class="positive">${{ statement.dividends | number:'1.2-2' }}</span>
-                    </div>
-                    <div class="activity-item">
-                      <label>Interest:</label>
-                      <span class="positive">${{ statement.interest | number:'1.2-2' }}</span>
-                    </div>
-                    <div class="activity-item">
-                      <label>Fees:</label>
-                      <span class="negative">-${{ statement.fees | number:'1.2-2' }}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </mat-expansion-panel>
           </mat-accordion>

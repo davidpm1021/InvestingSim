@@ -834,9 +834,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         amount: Math.abs(tx.amount)
       }));
 
-    // Calculate beginning balances (at start of quarter)
-    const beginningCashBalance = this.transactionsService.getBalanceAtDate('brokerage001', quarter.start);
-    const beginningHoldingsValue = this.calculateHoldingsValueAtDate(quarter.start);
+    // Calculate beginning balances (at end of previous quarter)
+    const beginningCashBalance = this.calculateBeginningCashBalance(quarter.start);
+    const beginningHoldingsValue = this.calculateBeginningHoldingsValue(quarter.start);
     
     // Calculate ending balances (at end of quarter)
     const endingCashBalance = this.transactionsService.getBalanceAtDate('brokerage001', quarter.end);
@@ -858,6 +858,16 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // Calculate total return percentage based on beginning holdings value
     const totalAssetsReturn = beginningHoldingsValue > 0 ? (totalAssetsGainLoss / beginningHoldingsValue) * 100 : 0;
 
+    // Calculate performance totals
+    const performance = {
+      holdingsGainLoss: totalAssetsGainLoss,
+      dividends: dividends,
+      interest: interest,
+      fees: fees,
+      subtotal: totalAssetsGainLoss + dividends + interest - fees, // fees are negative
+      totalReturn: totalAssetsReturn
+    };
+
     return {
       quarter: quarter.label,
       period: quarter.period,
@@ -865,13 +875,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       beginningHoldingsValue,
       endingCashBalance,
       endingHoldingsValue,
+      performance,
       assets,
-      trades,
-      dividends,
-      interest,
-      fees,
-      holdingsGainLoss: totalAssetsGainLoss,
-      totalReturn: totalAssetsReturn
+      trades
     };
   }
 
@@ -1022,6 +1028,22 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     const day = String(date.getDate()).padStart(2, '0');
     
     return `${year}-${month}-${day}`;
+  }
+
+  private calculateBeginningCashBalance(quarterStart: string): number {
+    // Get the last day of the previous quarter
+    const lastDayOfPreviousQuarter = this.getDayBefore(quarterStart);
+    
+    // Return the cash balance at the end of the previous quarter
+    return this.transactionsService.getBalanceAtDate('brokerage001', lastDayOfPreviousQuarter);
+  }
+
+  private calculateBeginningHoldingsValue(quarterStart: string): number {
+    // Get the last day of the previous quarter
+    const lastDayOfPreviousQuarter = this.getDayBefore(quarterStart);
+    
+    // Return the holdings value at the end of the previous quarter
+    return this.calculateHoldingsValueAtDate(lastDayOfPreviousQuarter);
   }
 
   private getDayBefore(dateString: string): string {
