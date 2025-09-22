@@ -37,7 +37,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       this.router.events
         .pipe(filter(event => event instanceof NavigationEnd))
         .subscribe((event: NavigationEnd) => {
-          this.simulatePageLoad();
           this.currentRoute = event.url;
         })
     );
@@ -101,29 +100,4 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     return this.getCurrentUrl().startsWith('https://');
   }
 
-  // Method to simulate page loading
-  private simulatePageLoad(): void {
-    if (this.currentLayout === 'web_browser') {
-      this.isLoading = true;
-      // Simulate loading time for different sites
-      const loadingTime = this.getLoadingTime();
-      setTimeout(() => {
-        this.isLoading = false;
-      }, loadingTime);
-    }
-  }
-
-  // Method to get different loading times for different sites
-  private getLoadingTime(): number {
-    switch (this.currentRoute) {
-      case '/banking':
-        return 800; // Wells Fargo might be slower
-      case '/investing':
-        return 600; // Fidelity loads moderately
-      case '/admin':
-        return 400; // Admin panel loads quickly
-      default:
-        return 500; // Default loading time
-    }
-  }
 }
