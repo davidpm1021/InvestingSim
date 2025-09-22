@@ -76,17 +76,7 @@
     
     <mat-tab label="Assets">
       <div class="tab-content">
-        <mat-tab-group class="inner-tabs">
-          <mat-tab label="All Assets">
-            <div class="inner-tab-content">
-              <div class="coming-soon-container">
-                <div class="coming-soon">
-                  <p>Coming soon</p>
-                </div>
-              </div>
-            </div>
-          </mat-tab>
-          
+        <mat-tab-group class="inner-tabs" (selectedTabChange)="onInnerTabChange($event)">
           <mat-tab label="Individual Assets">
             <div class="inner-tab-content">
               <div class="container-fluid">
@@ -209,10 +199,35 @@
             </div>
           </mat-tab>
           
+          <mat-tab label="All Assets">
+            <div class="inner-tab-content">
+              <div class="all-assets-chart-container">
+                <mat-card class="chart-card">
+                  <mat-card-header>
+                    <mat-card-title>All Assets Performance</mat-card-title>
+                    <mat-card-subtitle>Historical performance across all quarters</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="chart-wrapper">
+                      <canvas #allAssetsChart></canvas>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+          
           <mat-tab label="Assets JSON">
             <div class="inner-tab-content">
-              <div class="json-container">
-                <pre class="json-code"><code>{{ '[
+              <div class="json-section">
+                <div class="json-header">
+                  <button mat-raised-button color="primary" (click)="copyJsonToClipboard()" class="copy-button">
+                    <mat-icon>content_copy</mat-icon>
+                    Copy JSON to clipboard
+                  </button>
+                </div>
+                <div class="json-scroll-container">
+                  <pre class="json-code"><code>{{ '[
   {
     "id": "AAPL",
     "name": "Apple Inc.",
@@ -412,6 +427,7 @@
     }
   }
 ]' }}</code></pre>
+                </div>
               </div>
             </div>
           </mat-tab>

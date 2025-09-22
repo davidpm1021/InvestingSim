@@ -1,7 +1,6 @@
 <div class="investing-container">
   <h1>Investing</h1>
   <p>Build and manage your investment portfolio.</p>
-          <p><strong>Current Period:</strong> {{ currentDateService.getQuarterLabel(currentDate) }} ({{ currentDate }})</p>
   
   <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Dashboard">

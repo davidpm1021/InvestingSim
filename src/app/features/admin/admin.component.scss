@@ -425,12 +425,73 @@
   height: 400px;
 }
 
-.json-container {
+.all-assets-chart-container {
   padding: 16px;
+}
+
+.chart-card {
+  margin-bottom: 16px;
+  
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+  
+  mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  mat-card-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  
+  canvas {
+    max-height: 100%;
+    max-width: 100%;
+  }
+}
+
+.json-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.json-header {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.json-scroll-container {
+  flex: 1;
   background-color: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e9ecef;
-  overflow-x: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 500px;
+  padding: 16px;
 }
 
 .json-code {
@@ -440,7 +501,7 @@
   line-height: 1.4;
   color: #333;
   white-space: pre;
-  overflow-x: auto;
+  word-wrap: break-word;
   
   code {
     background: none;
