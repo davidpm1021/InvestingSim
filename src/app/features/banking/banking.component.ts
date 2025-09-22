@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
@@ -14,7 +15,7 @@ import { TransferDialogComponent } from './transfer-dialog.component';
 @Component({
   selector: 'app-banking',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatIconModule, FormsModule],
   templateUrl: './banking.component.html',
   styleUrl: './banking.component.scss'
 })

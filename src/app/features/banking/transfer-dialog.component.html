@@ -5,11 +5,11 @@
       <!-- Source Account (left side) -->
       <div class="account-card source-account">
         <div class="account-header">
-          <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'account_balance' : 'trending_up' }}</mat-icon>
-          <div class="account-details">
-            <h3>{{ data.transferDirection === 'to-brokerage' ? 'My Bank' : 'My Investing' }}</h3>
-            <p>{{ data.transferDirection === 'to-brokerage' ? 'Bank Account' : 'Investment Account' }}</p>
+          <div class="account-logo">
+            <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'account_balance' : 'trending_up' }}</mat-icon>
+            <h3 class="account-name">{{ data.transferDirection === 'to-brokerage' ? 'My Bank' : 'My Investing' }}</h3>
           </div>
+          <p class="account-service">{{ data.transferDirection === 'to-brokerage' ? 'Online Banking' : 'Investment Services' }}</p>
         </div>
         <div class="account-balance">
           <span class="balance-label">Balance:</span>
@@ -24,11 +24,11 @@
       <!-- Destination Account (right side) -->
       <div class="account-card destination-account">
         <div class="account-header">
-          <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'trending_up' : 'account_balance' }}</mat-icon>
-          <div class="account-details">
-            <h3>{{ data.transferDirection === 'to-brokerage' ? 'My Investing' : 'My Bank' }}</h3>
-            <p>{{ data.transferDirection === 'to-brokerage' ? 'Investment Account' : 'Bank Account' }}</p>
+          <div class="account-logo">
+            <mat-icon class="account-icon">{{ data.transferDirection === 'to-brokerage' ? 'trending_up' : 'account_balance' }}</mat-icon>
+            <h3 class="account-name">{{ data.transferDirection === 'to-brokerage' ? 'My Investing' : 'My Bank' }}</h3>
           </div>
+          <p class="account-service">{{ data.transferDirection === 'to-brokerage' ? 'Investment Services' : 'Online Banking' }}</p>
         </div>
         <div class="account-balance">
           <span class="balance-label">Balance:</span>
