@@ -93,7 +93,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       case '/admin':
         return 'https://investing-sim.example/admin';
       case '/bank-sim':
-        return 'https://investing-sim.example/bank-sim';
+        return 'https://www.ngpf.org/bank-sim';
       default:
         return 'https://investing-sim.example';
     }
