@@ -162,7 +162,7 @@
             </mat-card-header>
             <mat-card-content>
               <div class="daily-movers-grid">
-                <div class="mover-card" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0">
+                <div class="mover-card" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0" (click)="openAssetDetailsDialog(asset)">
                   <div class="card-header">
                     <div class="asset-symbol-badge">{{ asset.id }}</div>
                     <div class="trend-indicator" [class.up]="getPriceChange(asset) > 0" [class.down]="getPriceChange(asset) < 0">

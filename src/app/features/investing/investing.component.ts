@@ -23,6 +23,7 @@ import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { PlaceTradeComponent, TradeData } from './place-trade.component';
 import { HoldingsTotalsComponent } from '../../shared/components/holdings-totals/holdings-totals.component';
 import { StatementDialogComponent, StatementDialogData } from './statement-dialog.component';
+import { AssetDetailsDialogComponent, AssetDetailsDialogData } from '../../shared/components/asset-details-dialog/asset-details-dialog.component';
 import { Chart, registerables } from 'chart.js';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout.component';
 
@@ -914,6 +915,19 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     const dailyReturn = 0.0005; // 0.05% daily return (more conservative)
     const returnPercentage = Math.min(daysSinceStart * dailyReturn, 0.10); // Cap at 10% for demo
     return totalValue * returnPercentage; // Return dollar amount instead of percentage
+  }
+
+  openAssetDetailsDialog(asset: any): void {
+    const dialogData: AssetDetailsDialogData = {
+      asset: asset,
+      currentDate: this.currentDate
+    };
+
+    this.dialog.open(AssetDetailsDialogComponent, {
+      width: '700px',
+      maxWidth: '90vw',
+      data: dialogData
+    });
   }
 
 
