@@ -630,8 +630,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Calculate asset type allocation percentages
   calculateAssetTypeAllocation(): void {
-    // Define all possible asset types
-    const allAssetTypes = ['stock', 'mutual_fund', 'index_fund', 'etf', 'target_date_fund', 'bond_fund'];
+    // Get all asset types from the centralized service
+    const allAssetTypes = this.dataService.getAllAssetTypes();
     
     // Initialize all types with 0 values
     const typeTotals: { [type: string]: number } = {};
@@ -655,7 +655,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.holdingsValue = totalValue;
 
     // Calculate percentages and create allocation array for all types
-    this.assetTypeAllocation = allAssetTypes
+    this.assetTypeAllocation = Array.from(allAssetTypes)
       .map(type => ({
         type,
         value: typeTotals[type],

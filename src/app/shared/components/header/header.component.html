@@ -5,11 +5,22 @@
       <h2>Investing Sim</h2>
     </div>
             <div class="header-controls">
+              <div class="quarter-info">
+                <span class="current-quarter-label">Current: {{ currentQuarterLabel }}</span>
+              </div>
               <select class="quarter-selector" [(ngModel)]="selectedQuarter" (change)="onQuarterChange($any($event.target).value)">
                 <option *ngFor="let quarter of quarterOptions" [value]="quarter.value">
                   {{ quarter.label }}
                 </option>
               </select>
+              <button *ngIf="canNavigateToNext" 
+                      mat-raised-button 
+                      color="primary" 
+                      class="jump-quarter-button" 
+                      (click)="onJumpToNextQuarter()">
+                <mat-icon>arrow_forward</mat-icon>
+                Jump to {{ nextQuarterLabel }}
+              </button>
               <button mat-raised-button color="warn" class="reset-button" (click)="onReset()">
                 <mat-icon>refresh</mat-icon>
                 Reset

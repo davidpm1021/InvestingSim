@@ -1,0 +1,42 @@
+.quarter-navigation-dialog {
+  min-width: 400px;
+}
+
+.confirmation-message {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.warning-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  margin-top: 16px;
+  color: #856404;
+  font-size: 14px;
+  line-height: 1.5;
+
+  mat-icon {
+    color: #ff9800;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+// Button spacing (fallback if panelClass styles don't apply)
+mat-dialog-actions {
+  button {
+    margin-left: 8px;
+    
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
+

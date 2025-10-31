@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { AssetType } from '../data/assets.data';
 
 @Pipe({
   name: 'assetType',
@@ -6,8 +7,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class AssetTypePipe implements PipeTransform {
 
-  transform(value: string | undefined): string {
+  transform(value: AssetType | string | undefined): string {
     if (!value) return '';
+    if (value === 'etf') return 'ETF';
 
     // Convert underscores to spaces and title case
     return value

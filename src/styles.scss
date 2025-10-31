@@ -30,3 +30,18 @@ html, body {
   margin-bottom: 10px;
 }
 
+// Quarter Navigation Dialog Styles
+.quarter-navigation-dialog-panel {
+  .mat-mdc-dialog-content {
+    padding: 20px 24px !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 16px 24px 24px 24px !important;
+    margin: 0 !important;
+    min-height: auto;
+  }
+}
+

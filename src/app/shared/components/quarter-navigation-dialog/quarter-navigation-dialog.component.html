@@ -1,0 +1,28 @@
+<div class="quarter-navigation-dialog">
+  <h2 mat-dialog-title>Are you sure you want to go to the next quarter?</h2>
+  
+  <mat-dialog-content>
+    <p class="confirmation-message">
+      You are about to navigate to <strong>{{ data.nextQuarterLabel }}</strong>.
+    </p>
+    <p class="warning-message">
+      <mat-icon>warning</mat-icon>
+      Please ensure all trades are finalized before proceeding to the next quarter. 
+      Once you move forward, you will not be able to go back to previous quarters.
+    </p>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      Cancel
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onConfirm()" 
+            class="confirm-button">
+      Continue to {{ data.nextQuarterLabel }}
+    </button>
+  </mat-dialog-actions>
+</div>
+
+

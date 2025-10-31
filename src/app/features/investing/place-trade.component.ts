@@ -13,9 +13,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DataService } from '../../shared/services/data.service';
+import { DataService, CategoryOption } from '../../shared/services/data.service';
 import { HoldingsService } from '../../shared/services/holdings.service';
-import { Asset } from '../../shared/data/assets.data';
+import { Asset, AssetType } from '../../shared/data/assets.data';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
@@ -25,12 +25,6 @@ export interface TradeData {
   shares: number;
   dollars: number;
   timestamp: string;
-}
-
-export interface CategoryOption {
-  id: string;
-  label: string;
-  assetTypes: string[];
 }
 
 @Component({
@@ -62,12 +56,8 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
   inputAmount: number | null = null;
   currentPrice: number = 0;
   
-  // Category options for Buy
-  buyCategories: CategoryOption[] = [
-    { id: 'individual_stocks', label: 'Individual Stocks', assetTypes: ['stock'] },
-    { id: 'basket_of_stocks', label: 'Basket of Stocks', assetTypes: ['index_fund', 'mutual_fund', 'etf', 'target_date_fund'] },
-    { id: 'bonds', label: 'Bonds', assetTypes: ['bond_fund'] }
-  ];
+  // Category options for Buy - initialized in ngOnInit to use centralized asset types
+  buyCategories: CategoryOption[] = [];
   
   private subscription = new Subscription();
 
@@ -78,7 +68,8 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // No longer need to subscribe to holdings service since we get holdings as input
+    // Get buy categories from the centralized service
+    this.buyCategories = this.dataService.getBuyCategories();
   }
 
   ngOnDestroy(): void {
