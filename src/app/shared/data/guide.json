@@ -1,0 +1,175 @@
+{
+  "default": {
+    "heading": "Welcome to the NGPF Investing Sim",
+    "sections": [
+      {
+        "h2": "Getting Started",
+        "paragraphs": [
+          "Welcome to the Investing Sim! This simulation will help you learn about investing by giving you hands-on experience with managing a portfolio.",
+          "You'll start with $100,000 in your brokerage account and can invest in various assets including stocks, mutual funds, ETFs, and bonds."
+        ]
+      },
+      {
+        "h2": "How It Works",
+        "paragraphs": [
+          "The simulation runs over four quarters, giving you time to make investment decisions and see how your portfolio performs.",
+          "Each quarter, you can buy or sell investments based on the current market prices. Track your portfolio's performance and make strategic decisions.",
+          "Remember: All trades must be finalized before moving to the next quarter."
+        ]
+      },
+      {
+        "h2": "Navigation",
+        "paragraphs": [
+          "Use the tabs at the top to navigate between 'Investing Sim', 'My Bank', and 'My Investing'.",
+          "The header shows your current quarter. You can manually select a different quarter from the dropdown, or use the 'Jump to Quarter X' button to advance.",
+          "Once you move to a new quarter, you cannot go back - so make sure all your trades are finalized!"
+        ]
+      }
+    ]
+  },
+  "quarter": {
+    "2025-01-01": {
+      "heading": "Quarter 1: Building Your Foundation",
+      "sections": [
+        {
+          "h2": "Starting Your Investment Journey",
+          "paragraphs": [
+            "Welcome to Quarter 1! You have $100,000 in your brokerage account ready to invest.",
+            "This is the perfect time to start building your portfolio. Consider diversifying across different asset types like stocks, index funds, and ETFs.",
+            "Take your time to research the available investments and think about your investment strategy."
+          ]
+        },
+        {
+          "h2": "Quarter 1 Goals",
+          "paragraphs": [
+            "Make your first investments and begin building your portfolio.",
+            "Learn about different asset types: stocks, mutual funds, ETFs, index funds, and bond funds.",
+            "Review your portfolio regularly to understand how market movements affect your investments."
+          ]
+        },
+        {
+          "h2": "Tips for Success",
+          "paragraphs": [
+            "Diversification is key - don't put all your money in one asset.",
+            "Consider your risk tolerance when choosing investments.",
+            "Remember, you can always adjust your strategy in later quarters based on performance."
+          ]
+        }
+      ]
+    },
+    "2025-04-01": {
+      "heading": "Quarter 2: Evaluating Your Strategy",
+      "sections": [
+        {
+          "h2": "Review Your Performance",
+          "paragraphs": [
+            "You've completed Quarter 1! Take a moment to review how your portfolio performed.",
+            "Look at which investments gained value and which ones may have declined. Understanding these patterns will help inform your decisions for Quarter 2."
+          ]
+        },
+        {
+          "h2": "Quarter 2 Strategies",
+          "paragraphs": [
+            "Based on your Quarter 1 results, consider rebalancing your portfolio if needed.",
+            "You might want to increase positions in assets that performed well, or adjust your strategy if certain investments didn't meet expectations.",
+            "Continue to monitor your portfolio's diversification and risk level."
+          ]
+        },
+        {
+          "h2": "Learning Opportunity",
+          "paragraphs": [
+            "This quarter, pay attention to how market volatility affects your portfolio.",
+            "Consider experimenting with different asset types if you haven't already diversified.",
+            "Keep track of your investment goals and adjust accordingly."
+          ]
+        }
+      ]
+    },
+    "2025-07-01": {
+      "heading": "Quarter 3: Refining Your Approach",
+      "sections": [
+        {
+          "h2": "Mid-Year Assessment",
+          "paragraphs": [
+            "You're halfway through the simulation! By now, you should have a good understanding of how your investment choices impact your portfolio.",
+            "Review your overall performance and consider what strategies have worked best for you."
+          ]
+        },
+        {
+          "h2": "Quarter 3 Focus",
+          "paragraphs": [
+            "This quarter is a great time to optimize your portfolio. Look for opportunities to improve your asset allocation.",
+            "Consider whether you need to adjust your risk exposure based on your performance so far.",
+            "Think about long-term strategies and how your current investments align with your goals."
+          ]
+        },
+        {
+          "h2": "Advanced Strategies",
+          "paragraphs": [
+            "If you haven't already, explore bond funds as a way to add stability to your portfolio.",
+            "Consider the balance between growth-oriented investments (stocks) and more stable investments (bonds).",
+            "Remember that a well-diversified portfolio often performs better over time."
+          ]
+        }
+      ]
+    },
+    "2025-10-01": {
+      "heading": "Quarter 4: Final Portfolio Optimization",
+      "sections": [
+        {
+          "h2": "The Final Quarter",
+          "paragraphs": [
+            "Welcome to Quarter 4, your last opportunity to make changes to your portfolio!",
+            "After this quarter, you'll move to the Final Review where you can see your complete performance summary."
+          ]
+        },
+        {
+          "h2": "Final Adjustments",
+          "paragraphs": [
+            "Make any final adjustments to your portfolio before the simulation ends.",
+            "Consider whether your current allocation meets your investment objectives.",
+            "Remember: Once you move to Final Review, you cannot make any more changes."
+          ]
+        },
+        {
+          "h2": "Preparing for Review",
+          "paragraphs": [
+            "Take this opportunity to ensure your portfolio is aligned with your investment goals.",
+            "Review your overall strategy and see if there are any final optimizations you'd like to make.",
+            "After this quarter, you'll be able to see your complete performance report and learn from your investment journey."
+          ]
+        }
+      ]
+    },
+    "2026-01-01": {
+      "heading": "Final Review: Reflecting on Your Journey",
+      "sections": [
+        {
+          "h2": "Congratulations!",
+          "paragraphs": [
+            "You've completed all four quarters of the Investing Sim! Take a moment to reflect on your investment journey.",
+            "Review your quarterly statements to see how your portfolio evolved over time."
+          ]
+        },
+        {
+          "h2": "Review Your Performance",
+          "paragraphs": [
+            "Check your final portfolio value and compare it to your starting amount of $100,000.",
+            "Review each quarter's performance to understand how your investment decisions impacted your returns.",
+            "Look at your asset allocation and see how different investments contributed to your overall performance."
+          ]
+        },
+        {
+          "h2": "Key Takeaways",
+          "paragraphs": [
+            "Consider what investment strategies worked best for you and why.",
+            "Think about the importance of diversification and how it helped (or could have helped) your portfolio.",
+            "Reflect on how market movements and timing affected your investments.",
+            "Use these insights to inform your understanding of real-world investing!"
+          ]
+        }
+      ]
+    }
+  }
+}
+

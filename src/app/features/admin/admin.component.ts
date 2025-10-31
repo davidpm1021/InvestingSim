@@ -341,16 +341,50 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // Prepare data for all assets
-    const labels = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Final Review'];
+    // Map historical performance dates to quarter labels
+    const dateToLabelMap: { [key: string]: string } = {
+      '2024-10-01': 'Q4 2024',
+      '2025-01-01': 'Q1 2025',
+      '2025-04-01': 'Q2 2025',
+      '2025-07-01': 'Q3 2025',
+      '2025-10-01': 'Q4 2025',
+      '2026-01-01': 'Final Review'
+    };
+    
+    // Get all unique dates from all assets and sort them
+    const allDates = new Set<string>();
+    this.allAssets.forEach(asset => {
+      asset.historicalPerformance.forEach((perf: any) => {
+        allDates.add(perf.date);
+      });
+    });
+    
+    const sortedDates = Array.from(allDates).sort();
+    const labels = sortedDates.map(date => dateToLabelMap[date] || date);
+    
     const datasets = this.allAssets.map((asset, index) => {
       const colors = [
         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
         '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
       ];
       
+      // Sort historical performance by date and map to values in the same order as labels
+      const sortedPerformance = asset.historicalPerformance
+        .slice()
+        .sort((a: any, b: any) => a.date.localeCompare(b.date));
+      
+      // Create a map of date to value for easy lookup
+      const valueMap = new Map<string, number>();
+      sortedPerformance.forEach((perf: any) => {
+        valueMap.set(perf.date, perf.value);
+      });
+      
+      // Map values in the same order as labels
+      const data = sortedDates.map(date => valueMap.get(date) || null);
+      
       return {
         label: asset.name,
-        data: asset.historicalPerformance.map((perf: any) => perf.value),
+        data: data,
         borderColor: colors[index % colors.length],
         backgroundColor: colors[index % colors.length] + '20',
         borderWidth: 2,

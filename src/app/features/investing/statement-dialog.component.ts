@@ -70,9 +70,6 @@ export class StatementDialogComponent implements OnInit {
     // Calculate dividends and interest (mock for now - could be enhanced with actual dividend data)
     const dividends = this.calculateDividendsForQuarter(quarter);
     const interest = this.calculateInterestForQuarter(quarter);
-    
-    // Calculate fees (mock - could be enhanced with actual fee data)
-    const fees = trades.length * 2.50; // $2.50 per trade
 
     // Calculate assets performance for the quarter
     const assets = this.calculateAssetsPerformance(quarter);
@@ -88,8 +85,7 @@ export class StatementDialogComponent implements OnInit {
       holdingsGainLoss: totalAssetsGainLoss,
       dividends: dividends,
       interest: interest,
-      fees: fees,
-      subtotal: totalAssetsGainLoss + dividends + interest - fees, // fees are negative
+      total: totalAssetsGainLoss + dividends + interest,
       totalReturn: totalAssetsReturn
     };
 

@@ -52,20 +52,10 @@
           <div class="performance-label">Dividends Earned</div>
           <div class="performance-amount positive">+${{ statement.performance.dividends | number:'1.2-2' }}</div>
         </div>
-        <div class="performance-row subtotal">
-          <div class="performance-label">Subtotal</div>
-          <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
-            {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
-          </div>
-        </div>
-        <div class="performance-row">
-          <div class="performance-label">Fees Incurred</div>
-          <div class="performance-amount negative">-${{ statement.performance.fees | number:'1.2-2' }}</div>
-        </div>
         <div class="performance-row total">
           <div class="performance-label">Total</div>
-          <div class="performance-amount" [class.positive]="statement.performance.subtotal > 0" [class.negative]="statement.performance.subtotal < 0">
-            {{ statement.performance.subtotal > 0 ? '+' : '' }}${{ statement.performance.subtotal | number:'1.2-2' }}
+          <div class="performance-amount" [class.positive]="statement.performance.total > 0" [class.negative]="statement.performance.total < 0">
+            {{ statement.performance.total > 0 ? '+' : '' }}${{ statement.performance.total | number:'1.2-2' }}
           </div>
         </div>
       </div>

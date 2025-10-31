@@ -65,8 +65,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (currentIndex >= 0 && currentIndex < this.quarterOptions.length - 1) {
       const nextQuarter = this.quarterOptions[currentIndex + 1];
       this.nextQuarterLabel = nextQuarter.label;
-      // Hide button at Quarter 4 (index 3) or Final Review
-      this.canNavigateToNext = currentIndex < 3; // Quarter 4 is at index 3
+      // Show button for all quarters except Final Review (which is the last option)
+      this.canNavigateToNext = true;
     } else {
       this.nextQuarterLabel = '';
       this.canNavigateToNext = false;
@@ -80,6 +80,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onQuarterChange(selectedValue: string): void {
     this.currentDateService.setCurrentDate(selectedValue);
     console.log('Selected quarter:', this.currentDateService.getQuarterLabel(selectedValue), 'Date:', selectedValue);
+    // Navigate to Investing Sim tab when quarter changes
+    this.router.navigate(['/home']);
   }
 
   onReset(): void {
@@ -128,6 +130,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (currentIndex >= 0 && currentIndex < this.quarterOptions.length - 1) {
           const nextQuarter = this.quarterOptions[currentIndex + 1];
           this.currentDateService.setCurrentDate(nextQuarter.value);
+          // Navigate to Investing Sim tab when quarter changes
+          this.router.navigate(['/home']);
         }
       }
     });
