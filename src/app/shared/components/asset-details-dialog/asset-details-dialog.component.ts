@@ -166,14 +166,21 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
       return;
     }
 
-    // Get historical data up to current date
+    // Get historical data up to current date, limited to last 12 months
+    const currentDateObj = new Date(this.currentDate);
+    const twelveMonthsAgo = new Date(currentDateObj);
+    twelveMonthsAgo.setMonth(currentDateObj.getMonth() - 12);
+    const twelveMonthsAgoString = twelveMonthsAgo.toISOString().split('T')[0];
+    
     const historicalData = this.asset.historicalPerformance
-      .filter((point: any) => point.date <= this.currentDate)
+      .filter((point: any) => point.date <= this.currentDate && point.date >= twelveMonthsAgoString)
       .sort((a: any, b: any) => a.date.localeCompare(b.date));
 
     const labels = historicalData.map((point: any) => {
-      const [year, month, day] = point.date.split('-');
-      return `${parseInt(month)}/${parseInt(day)}/${year}`;
+      // Format date string as "MM/YYYY" for monthly display
+      const [year, month] = point.date.split('-');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[parseInt(month) - 1]} ${year}`;
     });
     const data = historicalData.map((point: any) => point.value);
 

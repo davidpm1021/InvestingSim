@@ -206,9 +206,10 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatDate(dateString: string): string {
-    // Format date string directly: "2024-10-01" -> "10/1/2024"
-    const [year, month, day] = dateString.split('-');
-    return `${parseInt(month)}/${parseInt(day)}/${year}`;
+    // Format date string as "MM/YYYY" for monthly display
+    const [year, month] = dateString.split('-');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${monthNames[parseInt(month) - 1]} ${year}`;
   }
 
   private getMaxPriceAcrossAllAssets(): number {
@@ -341,16 +342,6 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // Prepare data for all assets
-    // Map historical performance dates to quarter labels
-    const dateToLabelMap: { [key: string]: string } = {
-      '2024-10-01': 'Q4 2024',
-      '2025-01-01': 'Q1 2025',
-      '2025-04-01': 'Q2 2025',
-      '2025-07-01': 'Q3 2025',
-      '2025-10-01': 'Q4 2025',
-      '2026-01-01': 'Final Review'
-    };
-    
     // Get all unique dates from all assets and sort them
     const allDates = new Set<string>();
     this.allAssets.forEach(asset => {
@@ -360,7 +351,12 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     
     const sortedDates = Array.from(allDates).sort();
-    const labels = sortedDates.map(date => dateToLabelMap[date] || date);
+    // Format dates as "MM/YYYY" for monthly display
+    const labels = sortedDates.map(date => {
+      const [year, month] = date.split('-');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[parseInt(month) - 1]} ${year}`;
+    });
     
     const datasets = this.allAssets.map((asset, index) => {
       const colors = [

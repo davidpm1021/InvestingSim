@@ -8,45 +8,29 @@
 
   <mat-dialog-content>
     <div class="asset-info-section" *ngIf="asset">
-      <div class="asset-header">
-        <div class="asset-name-row">
-          <h3>{{ asset.name }}</h3>
+      <div class="asset-header-compact">
+        <div class="asset-name-row-compact">
           <div class="asset-symbol">{{ asset.id }}</div>
+          <h3>{{ asset.name }}</h3>
         </div>
-        <div class="price-row">
-          <div class="current-price">${{ currentPrice | number:'1.2-2' }}</div>
-          <div class="price-change" [class.positive]="getPriceChange() > 0" [class.negative]="getPriceChange() < 0">
-            <mat-icon>{{ getPriceChange() > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-            {{ getPriceChange() > 0 ? '+' : '' }}{{ getPriceChange() | number:'1.2-2' }}%
+        <div class="asset-info-row-compact">
+          <div class="asset-details-inline">
+            <span class="detail-inline"><strong>Type:</strong> {{ asset.type | assetType }}</span>
+            <span class="detail-inline"><strong>Sector:</strong> {{ asset.sector }}</span>
+            <div class="detail-block-line" *ngIf="asset.dividendYield || asset.interestRate || asset.expenseRatio">
+              <span class="detail-inline" *ngIf="asset.dividendYield"><strong>Dividend:</strong> {{ (asset.dividendYield * 100) | number:'1.2-2' }}%</span>
+              <span class="detail-inline" *ngIf="asset.interestRate"><strong>Interest:</strong> {{ (asset.interestRate * 100) | number:'1.2-2' }}%</span>
+              <span class="detail-inline" *ngIf="asset.expenseRatio"><strong>Expense Ratio:</strong> {{ (asset.expenseRatio * 100) | number:'1.3-3' }}%</span>
+            </div>
+          </div>
+          <div class="price-row-compact">
+            <div class="current-price">${{ currentPrice | number:'1.2-2' }}</div>
+            <div class="price-change" [class.positive]="getPriceChange() > 0" [class.negative]="getPriceChange() < 0">
+              <mat-icon>{{ getPriceChange() > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              {{ getPriceChange() > 0 ? '+' : '' }}{{ getPriceChange() | number:'1.2-2' }}%
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="asset-details-grid">
-        <div class="detail-item">
-          <label>Asset Type:</label>
-          <span>{{ asset.type | assetType }}</span>
-        </div>
-        <div class="detail-item">
-          <label>Sector:</label>
-          <span>{{ asset.sector }}</span>
-        </div>
-        <div class="detail-item" *ngIf="asset.dividendYield">
-          <label>Dividend Yield:</label>
-          <span>{{ (asset.dividendYield * 100) | number:'1.2-2' }}%</span>
-        </div>
-        <div class="detail-item" *ngIf="asset.interestRate">
-          <label>Interest Rate:</label>
-          <span>{{ (asset.interestRate * 100) | number:'1.2-2' }}%</span>
-        </div>
-        <div class="detail-item" *ngIf="asset.expenseRatio">
-          <label>Expense Ratio:</label>
-          <span>{{ (asset.expenseRatio * 100) | number:'1.3-3' }}%</span>
-        </div>
-      </div>
-
-      <div class="description-section" *ngIf="asset.description">
-        <p>{{ asset.description }}</p>
       </div>
     </div>
 

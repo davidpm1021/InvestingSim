@@ -63,8 +63,14 @@
               <mat-card-title>Allocation</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <div class="allocation-chart-container" *ngIf="isDashboardTab && currentDate">
-                <canvas #chartCanvas></canvas>
+              <div *ngIf="isDashboardTab && currentDate">
+                <div class="allocation-chart-container" *ngIf="holdingsValue > 0">
+                  <canvas #chartCanvas></canvas>
+                </div>
+                <div class="no-holdings-message" *ngIf="holdingsValue === 0">
+                  <p>You haven't purchased any assets yet.</p>
+                  <p class="message-hint">Start building your portfolio by placing your first trade!</p>
+                </div>
               </div>
             </mat-card-content>
           </mat-card>

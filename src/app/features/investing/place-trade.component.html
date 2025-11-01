@@ -93,14 +93,25 @@
         <div class="asset-selection">
           <div class="assets-grid">
             <mat-card *ngFor="let asset of availableAssets" 
-                      class="asset-card"
-                      [class.selected]="selectedAsset === asset.id"
-                      (click)="onAssetSelect(asset.id)">
+                      class="asset-card">
               <mat-card-content>
                 <h4>{{ asset.name }}</h4>
                 <p class="asset-type">{{ asset.type | assetType }}</p>
                 <p class="asset-sector">{{ asset.sector }}</p>
                 <p class="asset-price">${{ getLatestPrice(asset) | number:'1.2-2' }}</p>
+                <div class="asset-card-actions">
+                  <button mat-button 
+                          class="history-button"
+                          (click)="openAssetDetails(asset, $event)">
+                    History
+                  </button>
+                  <button mat-raised-button 
+                          color="primary"
+                          class="select-button"
+                          (click)="onAssetSelect(asset.id)">
+                    Select
+                  </button>
+                </div>
               </mat-card-content>
             </mat-card>
           </div>

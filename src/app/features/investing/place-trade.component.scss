@@ -153,7 +153,6 @@ h3 {
 }
 
 .asset-card, .holding-card {
-  cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
 
@@ -165,6 +164,16 @@ h3 {
   &.selected {
     border-color: #1976d2;
     background-color: #e3f2fd;
+  }
+
+  // For buy flow, remove cursor pointer since clicking doesn't select
+  &:not(.holding-card) {
+    cursor: default;
+  }
+
+  // For sell flow, keep cursor pointer
+  &.holding-card {
+    cursor: pointer;
   }
 
   h4 {
@@ -192,6 +201,30 @@ h3 {
       font-weight: 600;
       font-size: 1rem;
     }
+  }
+}
+
+.asset-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  .history-button {
+    // Secondary button style (mat-button)
+    color: #666;
+    font-weight: 500;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .select-button {
+    // Primary button style (mat-raised-button with color="primary")
+    // Already styled by Material Design
   }
 }
 

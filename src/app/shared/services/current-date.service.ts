@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { QUARTERS } from '../data/quarters.data';
 
 @Injectable({
   providedIn: 'root'
@@ -82,23 +83,23 @@ export class CurrentDateService {
 
   /**
    * Get quarter options for the dropdown
+   * Excludes Q4 2024 since users can't navigate back to it
    */
   getQuarterOptions(): Array<{label: string, value: string}> {
-    return [
-      { label: 'Quarter 1', value: '2025-01-01' },
-      { label: 'Quarter 2', value: '2025-04-01' },
-      { label: 'Quarter 3', value: '2025-07-01' },
-      { label: 'Quarter 4', value: '2025-10-01' },
-      { label: 'Final Review', value: '2026-01-01' }
-    ];
+    return QUARTERS.quarters
+      .filter(quarter => quarter.value !== '2024-10-01') // Exclude Q4 2024 from dropdown
+      .map(quarter => ({
+        label: quarter.label,
+        value: quarter.value
+      }));
   }
 
   /**
    * Get quarter label for a given date string
    */
   getQuarterLabel(date: string): string {
-    const options = this.getQuarterOptions();
-    const matchingOption = options.find(option => option.value === date);
-    return matchingOption ? matchingOption.label : 'Unknown Quarter';
+    // Search full quarters array (not filtered dropdown options) to handle Q4 2024
+    const matchingQuarter = QUARTERS.quarters.find(quarter => quarter.value === date);
+    return matchingQuarter ? matchingQuarter.label : 'Unknown Quarter';
   }
 }

@@ -18,6 +18,7 @@ import { HoldingsService } from '../../shared/services/holdings.service';
 import { Asset, AssetType } from '../../shared/data/assets.data';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { AssetDetailsDialogComponent, AssetDetailsDialogData } from '../../shared/components/asset-details-dialog/asset-details-dialog.component';
 
 export interface TradeData {
   assetId: string;
@@ -118,6 +119,22 @@ export class PlaceTradeComponent implements OnInit, OnDestroy {
       this.inputAmount = null;
       this.currentStep = 4;
     }
+  }
+
+  // Open asset details dialog (History button)
+  openAssetDetails(asset: Asset, event: Event): void {
+    event.stopPropagation(); // Prevent card click
+    
+    const dialogData: AssetDetailsDialogData = {
+      asset: asset,
+      currentDate: this.currentDate
+    };
+
+    this.dialog.open(AssetDetailsDialogComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: dialogData
+    });
   }
 
   // Step 4: Trade amount calculation

@@ -18,6 +18,7 @@ import { DataService } from '../../shared/services/data.service';
 import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
 import { HoldingsService } from '../../shared/services/holdings.service';
 import { CurrentDateService } from '../../shared/services/current-date.service';
+import { getQuarterForDate, getPreviousQuarter } from '../../shared/data/quarters.data';
 import { TransferDialogComponent } from '../banking/transfer-dialog.component';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { PlaceTradeComponent, TradeData } from './place-trade.component';
@@ -178,8 +179,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Initialize chart after view is ready
-    this.initializeChart();
+    // Initialize chart after view is ready (only if there are holdings)
+    if (this.holdingsValue > 0 && this.holdings.length > 0) {
+      this.initializeChart();
+    }
   }
 
   onTabChange(event: any): void {
@@ -198,8 +201,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       this.mainLayout.updateInvestingTab(tabName);
     }
     
-    // Re-initialize chart if switching to dashboard
-    if (this.isDashboardTab) {
+    // Re-initialize chart if switching to dashboard (only if there are holdings)
+    if (this.isDashboardTab && this.holdingsValue > 0 && this.holdings.length > 0) {
       console.log('Switching to Dashboard - initializing pie chart');
       setTimeout(() => {
         this.initializeChart();
@@ -236,6 +239,11 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initializeChart(): void {
     if (!this.chartCanvas) return;
+    
+    // Don't initialize chart if there are no holdings
+    if (this.holdingsValue === 0 || this.holdings.length === 0) {
+      return;
+    }
 
     // Destroy existing chart if it exists
     if (this.chart) {
@@ -439,18 +447,25 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Get historical data up to current date
+    // Get historical data up to current date, limited to last 12 months
+    const currentDateObj = new Date(this.currentDate);
+    const twelveMonthsAgo = new Date(currentDateObj);
+    twelveMonthsAgo.setMonth(currentDateObj.getMonth() - 12);
+    const twelveMonthsAgoString = twelveMonthsAgo.toISOString().split('T')[0];
+    
     const historicalData = asset.historicalPerformance
-      .filter((point: any) => point.date <= this.currentDate)
+      .filter((point: any) => point.date <= this.currentDate && point.date >= twelveMonthsAgoString)
       .sort((a: any, b: any) => a.date.localeCompare(b.date));
     
     console.log('currentDate:', this.currentDate);
+    console.log('twelveMonthsAgoString:', twelveMonthsAgoString);
     console.log('historicalData:', historicalData);
 
     const labels = historicalData.map((point: any) => {
-      // Format date string directly: "2024-10-01" -> "10/1/2024"
-      const [year, month, day] = point.date.split('-');
-      return `${parseInt(month)}/${parseInt(day)}/${year}`;
+      // Format date string as "MM/YYYY" for monthly display
+      const [year, month] = point.date.split('-');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[parseInt(month) - 1]} ${year}`;
     });
     const data = historicalData.map((point: any) => point.value);
     
@@ -664,14 +679,18 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       }))
       .sort((a, b) => b.value - a.value); // Sort by value descending
     
-    // Update chart if it exists and we're on dashboard tab
-    if (this.chart && this.isDashboardTab) {
+    // Update chart if it exists and we're on dashboard tab and there are holdings
+    if (this.chart && this.isDashboardTab && this.holdingsValue > 0) {
       this.updateChart();
-    } else if (this.isDashboardTab) {
-      // Re-initialize chart if we're on dashboard but chart doesn't exist
+    } else if (this.isDashboardTab && this.holdingsValue > 0) {
+      // Re-initialize chart if we're on dashboard but chart doesn't exist and there are holdings
       setTimeout(() => {
         this.initializeChart();
       }, 100);
+    } else if (this.chart && this.holdingsValue === 0) {
+      // Destroy chart if holdings value becomes 0
+      this.chart.destroy();
+      this.chart = null;
     }
   }
 
@@ -777,30 +796,38 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  // Get price change percentage for daily movers
+  // Get price change percentage for daily movers (relative to previous quarter)
   getPriceChange(asset: any): number {
-    const currentPrice = this.getCurrentPrice(asset);
-    
-    // Find the current date's performance point
-    const currentPerformancePoint = asset.historicalPerformance
-      .filter((point: any) => point.date <= this.currentDate)
-      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
-    
-    if (!currentPerformancePoint) {
-      return 0; // No data available
+    // Get the current quarter based on current date
+    const currentQuarter = getQuarterForDate(this.currentDate);
+    if (!currentQuarter) {
+      return 0;
     }
     
-    // Find the previous performance point (before current date)
-    const previousPerformancePoint = asset.historicalPerformance
-      .filter((point: any) => point.date < currentPerformancePoint.date)
-      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
+    // Get the current quarter start date price
+    const currentQuarterPrice = asset.historicalPerformance
+      .find((point: any) => point.date === currentQuarter.value);
     
-    if (!previousPerformancePoint) {
-      return 0; // No previous data available
+    if (!currentQuarterPrice) {
+      return 0;
     }
     
-    // Calculate percentage change
-    const changePercent = ((currentPerformancePoint.value - previousPerformancePoint.value) / previousPerformancePoint.value) * 100;
+    // Get the previous quarter
+    const previousQuarter = getPreviousQuarter(currentQuarter.value);
+    if (!previousQuarter) {
+      return 0; // No previous quarter available
+    }
+    
+    // Get the previous quarter start date price
+    const previousQuarterPrice = asset.historicalPerformance
+      .find((point: any) => point.date === previousQuarter.value);
+    
+    if (!previousQuarterPrice) {
+      return 0;
+    }
+    
+    // Calculate percentage change from previous quarter
+    const changePercent = ((currentQuarterPrice.value - previousQuarterPrice.value) / previousQuarterPrice.value) * 100;
     return changePercent;
   }
 
