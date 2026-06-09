@@ -1,22 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { EvergreenDatePipe } from '../../shared/pipes/evergreen-date.pipe';
+import { DefineComponent } from '../../shared/components/define/define.component';
+import { PageIntroComponent } from '../../shared/components/page-intro/page-intro.component';
 import { Subscription } from 'rxjs';
-import { DataService } from '../../shared/services/data.service';
 import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
 import { CurrentDateService } from '../../shared/services/current-date.service';
-import { TransferDialogComponent } from './transfer-dialog.component';
 
 @Component({
   selector: 'app-banking',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatIconModule, MatTooltipModule, EvergreenDatePipe, DefineComponent, PageIntroComponent],
   templateUrl: './banking.component.html',
   styleUrl: './banking.component.scss'
 })
@@ -26,7 +22,10 @@ export class BankingComponent implements OnInit, OnDestroy {
   transactions: Array<Transaction & { runningBalance: number, displayDescription: string }> = [];
   private subscription = new Subscription();
 
-  constructor(public dataService: DataService, public transactionsService: TransactionsService, public currentDateService: CurrentDateService, private dialog: MatDialog, private router: Router) {}
+  constructor(
+    public transactionsService: TransactionsService,
+    public currentDateService: CurrentDateService
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to current date
@@ -55,27 +54,9 @@ export class BankingComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  openTransferDialog(): void {
-    const dialogRef = this.dialog.open(TransferDialogComponent, {
-      width: '400px',
-      maxHeight: '90vh',
-      data: { 
-        maxAmount: this.cashBalance,
-        currentDate: this.currentDate,
-        transferDirection: 'to-brokerage' as const
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.amount > 0) {
-            this.transactionsService.addTransferTransaction(result.amount, this.currentDate);
-      }
-    });
-  }
-
   getTransactionAmount(transaction: Transaction & { runningBalance: number, displayDescription: string }): number {
     if (transaction.type === 'transfer') {
-      // For transfers, show the amount from banking account's perspective
+      // For transfers, show the amount from the banking account's perspective
       if (transaction.account_from === 'banking001') {
         return -transaction.amount; // Money going out
       } else if (transaction.account_to === 'banking001') {
@@ -83,9 +64,5 @@ export class BankingComponent implements OnInit, OnDestroy {
       }
     }
     return transaction.amount;
-  }
-
-  navigateToBankSim(): void {
-    this.router.navigate(['/bank-sim']);
   }
 }

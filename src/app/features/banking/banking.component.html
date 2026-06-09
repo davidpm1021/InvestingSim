@@ -3,7 +3,7 @@
     <div class="logo-container">
       <div class="account-logo">
         <mat-icon class="account-icon">account_balance</mat-icon>
-        <h1 class="account-name">My Bank</h1>
+        <h1 class="account-name">Evergreen Bank</h1>
       </div>
       <p class="account-service">Online Banking</p>
     </div>
@@ -12,13 +12,18 @@
   <div class="page-description">
     <p>Manage your cash accounts, track transactions, and access your financial information securely.</p>
   </div>
-  
+
+  <app-page-intro pageKey="bank"
+    text="This is your Evergreen Bank savings account — separate from your brokerage. Money you invest leaves here, and your savings earns interest, paid monthly.">
+  </app-page-intro>
+
   <div class="banking-content">
             <div class="account-summary">
               <h2>Account Summary</h2>
               <div class="account-card">
-                <h3>Primary Checking</h3>
+                <h3>Savings</h3>
                 <p class="balance">${{ cashBalance | number:'1.2-2' }}</p>
+                <p class="account-apy"><app-define term="APY" label="1.50% APY"></app-define></p>
               </div>
             </div>
     
@@ -36,7 +41,7 @@
                         </div>
                         <div *ngFor="let transaction of transactions" class="transaction-item">
                           <div class="transaction-description">{{ transaction.displayDescription }}</div>
-                          <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
+                          <div class="transaction-date">{{ transaction.date | evergreenDate:'short' }}</div>
                           <div class="transaction-amount" 
                                [class.positive]="getTransactionAmount(transaction) > 0" 
                                [class.negative]="getTransactionAmount(transaction) < 0">
@@ -48,13 +53,5 @@
                         </div>
                       </div>
             </div>
-  </div>
-  
-  <!-- Footer Section -->
-  <div class="banking-footer">
-    <div class="footer-divider"></div>
-    <div class="footer-content">
-      <a href="#" class="help-link" (click)="navigateToBankSim(); $event.preventDefault()">How to use online banking?</a>
-    </div>
   </div>
 </div>

@@ -12,30 +12,25 @@
 <!-- Web Browser Layout -->
 <div class="browser-layout" *ngIf="currentLayout === 'web_browser'">
   <app-header></app-header>
-  <div class="browser-window" 
-       [class.maximized]="isMaximized" 
+  <div class="browser-window"
+       [class.maximized]="isMaximized"
        [class.minimized]="isMinimized"
        [class.closing]="isClosing"
+       [class.opening]="justOpened"
        (click)="isMinimized ? restoreFromMinimized() : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
-      <div class="tab tab-home" 
-           [class.active]="currentRoute === '/home'"
-           (click)="navigateTo('/home'); $event.stopPropagation()">
-        <mat-icon class="tab-favicon">school</mat-icon>
-        <span class="tab-text">Investing Sim</span>
-      </div>
-      <div class="tab tab-banking" 
+      <div class="tab tab-banking"
            [class.active]="currentRoute === '/banking'"
            (click)="navigateTo('/banking'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">account_balance</mat-icon>
-        <span class="tab-text">My Bank</span>
+        <span class="tab-text">Evergreen Bank</span>
       </div>
-      <div class="tab tab-investing" 
+      <div class="tab tab-investing"
            [class.active]="currentRoute === '/investing'"
            (click)="navigateTo('/investing'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">trending_up</mat-icon>
-        <span class="tab-text">My Investing</span>
+        <span class="tab-text">Summit Invest</span>
       </div>
       <div class="tab tab-admin" 
            [class.active]="currentRoute === '/admin'"

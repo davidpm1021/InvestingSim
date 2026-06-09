@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { CurrentDateService } from './current-date.service';
 import { ASSETS, Asset } from '../data/assets.data';
+import { SIM_END } from '../data/quarters.data';
 
 export interface HoldingTransaction {
   assetId: string;
@@ -10,6 +11,17 @@ export interface HoldingTransaction {
   price: number;
   date: string; // YYYY-MM-DD
   time: string; // HH:mm:ss
+}
+
+export interface RealizedSale {
+  assetId: string;
+  date: string;
+  time: string;
+  shares: number;
+  proceeds: number;
+  costBasis: number;
+  gain: number;
+  term: 'short' | 'long';
 }
 
 @Injectable({
@@ -64,43 +76,23 @@ export class HoldingsService {
         }> = [];
 
         Object.keys(assetTransactions).forEach(assetId => {
-          const transactions = assetTransactions[assetId];
           const asset = this.getAssetById(assetId);
-          
           if (!asset) return; // Skip if asset not found
 
-          // Compute net shares and cost basis
-          let totalShares = 0;
-          let totalCost = 0;
-          
-          transactions.forEach(transaction => {
-            if (transaction.action === 'buy') {
-              totalShares += transaction.shares;
-              totalCost += transaction.shares * transaction.price;
-            } else if (transaction.action === 'sell') {
-              totalShares -= transaction.shares;
-              // Reduce cost basis proportionally
-              if (totalShares > 0) {
-                totalCost = (totalCost * totalShares) / (totalShares + transaction.shares);
-              } else {
-                totalCost = 0; // Reset if shares go to 0
-              }
-            }
-          });
+          // FIFO cost basis: remaining shares and their original cost
+          const { remainingShares, remainingCost } = this.replayLots(assetTransactions[assetId]);
 
           // Only include assets with positive shares
-          if (totalShares > 0) {
-            // Get current price from historical performance
+          if (remainingShares > 0.0000005) {
             const currentPrice = this.getCurrentPrice(asset, currentDate);
-            const currentValue = totalShares * currentPrice;
-            const costBasis = totalCost;
-            const gainLoss = currentValue - costBasis;
-            const gainLossPercent = costBasis > 0 ? (gainLoss / costBasis) * 100 : 0;
+            const currentValue = remainingShares * currentPrice;
+            const gainLoss = currentValue - remainingCost;
+            const gainLossPercent = remainingCost > 0 ? (gainLoss / remainingCost) * 100 : 0;
 
             holdings.push({
               assetId: assetId,
               name: asset.name,
-              shares: totalShares,
+              shares: remainingShares,
               price: currentPrice,
               value: currentValue,
               gainLoss: gainLoss,
@@ -180,6 +172,7 @@ export class HoldingsService {
 
     const currentHoldingTransactions = this.holdingTransactionsSubject.value;
     const updatedHoldingTransactions = [...currentHoldingTransactions, holdingTransaction];
+    this.detailsCache.clear();
     this.holdingTransactionsSubject.next(updatedHoldingTransactions);
     this.saveHoldingTransactionsToStorage(updatedHoldingTransactions);
   }
@@ -247,6 +240,103 @@ export class HoldingsService {
   }
 
   /**
+   * Replay an asset's buys/sells in FIFO order. Returns the remaining share count
+   * and the original cost of those remaining shares, plus realized sales (each with
+   * gain/loss and a short-/long-term flag). Single source for cost basis + gains.
+   */
+  private replayLots(transactions: HoldingTransaction[]): { remainingShares: number; remainingCost: number; realized: RealizedSale[] } {
+    const sorted = [...transactions].sort((a, b) =>
+      `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
+    );
+    const lots: Array<{ shares: number; price: number; date: string }> = [];
+    const realized: RealizedSale[] = [];
+
+    for (const t of sorted) {
+      if (t.action === 'buy') {
+        lots.push({ shares: t.shares, price: t.price, date: t.date });
+      } else {
+        let toSell = t.shares;
+        let costBasis = 0;
+        let allLong = true;
+        while (toSell > 1e-9 && lots.length > 0) {
+          const lot = lots[0];
+          const take = Math.min(lot.shares, toSell);
+          costBasis += take * lot.price;
+          if (!this.isLongTerm(lot.date, t.date)) {
+            allLong = false;
+          }
+          lot.shares -= take;
+          toSell -= take;
+          if (lot.shares <= 1e-9) {
+            lots.shift();
+          }
+        }
+        // Clamp to the shares actually covered by lots. An oversell (more sold than
+        // ever bought — possible only via inconsistent data) must not fabricate
+        // gain against a zero cost basis.
+        const sharesSold = t.shares - Math.max(0, toSell);
+        if (toSell > 1e-9) {
+          console.warn(`Oversell detected for ${t.assetId} on ${t.date}: ${t.shares} sold, only ${sharesSold.toFixed(6)} covered by lots.`);
+        }
+        const proceeds = sharesSold * t.price;
+        realized.push({
+          assetId: t.assetId,
+          date: t.date,
+          time: t.time,
+          shares: sharesSold,
+          proceeds,
+          costBasis,
+          gain: proceeds - costBasis,
+          term: allLong ? 'long' : 'short'
+        });
+      }
+    }
+
+    const remainingShares = lots.reduce((sum, l) => sum + l.shares, 0);
+    const remainingCost = lots.reduce((sum, l) => sum + l.shares * l.price, 0);
+    return { remainingShares, remainingCost, realized };
+  }
+
+  private isLongTerm(buyDate: string, sellDate: string): boolean {
+    // Pure string math on YYYY-MM-DD (timezone-free): long-term = held MORE than
+    // one calendar year. Lexicographic comparison is valid for ISO dates.
+    const oneYearLater = `${parseInt(buyDate.slice(0, 4), 10) + 1}${buyDate.slice(4)}`;
+    return sellDate > oneYearLater;
+  }
+
+  /**
+   * The most shares a sell at `asOfDate` may safely take: the position visible at
+   * that date, further capped by the END-OF-SIM net position so a back-dated sell
+   * (possible after a teacher moves time backward) can never push the all-time
+   * position negative once later-dated sells are counted again.
+   */
+  public getMaxSellableShares(assetId: string, asOfDate: string): number {
+    return Math.max(0, Math.min(
+      this.getSharesOwned(assetId, asOfDate),
+      this.getSharesOwned(assetId, SIM_END)
+    ));
+  }
+
+  /**
+   * Realized sales (FIFO) across all assets up to the given date — used to surface
+   * short-/long-term gains on the Activity feed and the statement.
+   */
+  public getRealizedSales(asOfDate: string): RealizedSale[] {
+    const byAsset: { [assetId: string]: HoldingTransaction[] } = {};
+    this.holdingTransactionsSubject.value
+      .filter(t => t.date <= asOfDate)
+      .forEach(t => {
+        (byAsset[t.assetId] = byAsset[t.assetId] || []).push(t);
+      });
+
+    const all: RealizedSale[] = [];
+    Object.keys(byAsset).forEach(assetId => {
+      all.push(...this.replayLots(byAsset[assetId]).realized);
+    });
+    return all;
+  }
+
+  /**
    * Get asset by ID
    */
   getAssetById(id: string): Asset | undefined {
@@ -279,5 +369,56 @@ export class HoldingsService {
 
     // Return only holdings with positive shares
     return Array.from(holdingsMap.values()).filter(h => h.shares > 0);
+  }
+
+  // Memoized per-date holding details (FIFO replays are the app's hottest math);
+  // invalidated whenever a holding transaction is added.
+  private detailsCache = new Map<string, Array<{ assetId: string; name: string; type: string; shares: number; price: number; value: number; costBasis: number; gainLoss: number; }>>();
+
+  /** Per-asset holding detail as of a date, with FIFO cost basis ("what you paid"). Do not mutate the result. */
+  getHoldingDetailsAtDate(date: string): Array<{ assetId: string; name: string; type: string; shares: number; price: number; value: number; costBasis: number; gainLoss: number; }> {
+    const cached = this.detailsCache.get(date);
+    if (cached) {
+      return cached;
+    }
+    const byAsset: { [assetId: string]: HoldingTransaction[] } = {};
+    this.holdingTransactionsSubject.value
+      .filter(t => t.date <= date)
+      .forEach(t => {
+        (byAsset[t.assetId] = byAsset[t.assetId] || []).push(t);
+      });
+
+    const details: Array<{ assetId: string; name: string; type: string; shares: number; price: number; value: number; costBasis: number; gainLoss: number; }> = [];
+    Object.keys(byAsset).forEach(assetId => {
+      const asset = this.getAssetById(assetId);
+      if (!asset) return;
+      const { remainingShares, remainingCost } = this.replayLots(byAsset[assetId]);
+      if (remainingShares > 0.0000005) {
+        const price = this.getCurrentPrice(asset, date);
+        const value = remainingShares * price;
+        details.push({
+          assetId,
+          name: asset.name,
+          type: asset.type,
+          shares: remainingShares,
+          price,
+          value,
+          costBasis: remainingCost,
+          gainLoss: value - remainingCost
+        });
+      }
+    });
+    this.detailsCache.set(date, details);
+    return details;
+  }
+
+  /** Total invested value (excludes cash) as of a date. */
+  getInvestmentsValueAtDate(date: string): number {
+    return this.getHoldingDetailsAtDate(date).reduce((sum, h) => sum + h.value, 0);
+  }
+
+  /** Raw holding (buy/sell) transactions — snapshot. */
+  getAllHoldingTransactions(): HoldingTransaction[] {
+    return this.holdingTransactionsSubject.value;
   }
 }

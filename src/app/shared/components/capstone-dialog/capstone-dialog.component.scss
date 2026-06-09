@@ -1,0 +1,74 @@
+.capstone {
+  padding: 8px 8px 4px;
+}
+
+.capstone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    color: #1976d2;
+  }
+}
+
+.capstone-intro {
+  color: #666;
+  margin: 4px 0 16px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  background: #f5f8fc;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  &.pos .stat-value { color: #1e7e34; }
+  &.neg .stat-value { color: #c62828; }
+}
+
+.capstone-allocation {
+  margin-top: 20px;
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 8px;
+    color: #424242;
+  }
+}
+
+.alloc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 4px;
+  border-bottom: 1px solid #eee;
+
+  .alloc-pct { font-variant-numeric: tabular-nums; color: #555; }
+}
+
+.capstone-actions {
+  margin-top: 20px;
+  text-align: right;
+}

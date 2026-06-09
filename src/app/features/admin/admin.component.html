@@ -64,6 +64,22 @@
                           </mat-form-field>
                         </td>
                       </tr>
+                      <tr>
+                        <td class="option-name">
+                          <strong>Quarter (teacher)</strong>
+                        </td>
+                        <td class="option-description">
+                          Move the simulation to any quarter. Students can only go forward; this override lets a
+                          teacher send a student back to redo a quarter.
+                        </td>
+                        <td class="option-control">
+                          <mat-form-field appearance="outline">
+                            <mat-select [(ngModel)]="selectedQuarterValue" (selectionChange)="onSetQuarter($event.value)">
+                              <mat-option *ngFor="let q of quarterOptions" [value]="q.value">{{ q.label }}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </mat-card-content>

@@ -8,12 +8,7 @@
               <div class="quarter-info">
                 <span class="current-quarter-label">Current: {{ currentQuarterLabel }}</span>
               </div>
-              <select class="quarter-selector" [(ngModel)]="selectedQuarter" (change)="onQuarterChange($any($event.target).value)">
-                <option *ngFor="let quarter of quarterOptions" [value]="quarter.value">
-                  {{ quarter.label }}
-                </option>
-              </select>
-              <button *ngIf="canNavigateToNext" 
+              <button *ngIf="canNavigateToNext"
                       mat-raised-button 
                       color="primary" 
                       class="jump-quarter-button" 
@@ -25,6 +20,17 @@
                 <mat-icon>refresh</mat-icon>
                 Reset
               </button>
+              <button mat-icon-button class="notif-button" [matMenuTriggerFor]="notifMenu" (menuOpened)="onNotificationsOpened()" aria-label="Notifications">
+                <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+              </button>
+              <mat-menu #notifMenu="matMenu" class="notif-menu">
+                <div class="notif-title" mat-menu-item disabled>Notifications</div>
+                <div class="notif-empty" *ngIf="notifications.length === 0" mat-menu-item disabled>No notifications yet</div>
+                <button mat-menu-item *ngFor="let n of notifications" (click)="onNotificationClick(n)">
+                  <span class="notif-msg">{{ n.message }}</span>
+                  <span class="notif-date" *ngIf="n.date"> · {{ n.date | evergreenDate:'short' }}</span>
+                </button>
+              </mat-menu>
               <button mat-raised-button color="primary" class="account-button" [matMenuTriggerFor]="accountMenu">
                 <mat-icon>account_circle</mat-icon>
                 Account

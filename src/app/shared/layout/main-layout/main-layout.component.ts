@@ -22,6 +22,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   isMaximized: boolean = false;
   isMinimized: boolean = false;
   isClosing: boolean = false;
+  justOpened: boolean = true;
   hasAccessedAdmin: boolean = false;
   hasAccessedBankSim: boolean = false;
   private subscription = new Subscription();
@@ -34,7 +35,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Get initial layout setting
     this.updateLayout();
-    
+
+    // Play the browser-open animation once on mount, then clear the flag so it
+    // doesn't replay when the window is minimized/maximized/closed.
+    setTimeout(() => { this.justOpened = false; }, 500);
+
     // Set initial route on page load/refresh
     this.currentRoute = this.router.url;
     // Set hasAccessedAdmin to true if already on admin page
@@ -83,19 +88,17 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   // Method to get current URL for address bar
   getCurrentUrl(): string {
     switch (this.currentRoute) {
-      case '/home':
-        return 'https://investing-sim.example';
       case '/banking':
-        return 'https://my-bank.example/online-banking';
+        return 'https://evergreenbank.example/online-banking';
       case '/investing':
-        const baseUrl = 'https://my-investing.example/investment';
+        const baseUrl = 'https://summitinvest.example/investment';
         return this.currentInvestingTab ? `${baseUrl}/${this.currentInvestingTab}` : baseUrl;
       case '/admin':
-        return 'https://investing-sim.example/admin';
+        return 'https://summitinvest.example/admin';
       case '/bank-sim':
         return 'https://www.ngpf.org/bank-sim';
       default:
-        return 'https://investing-sim.example';
+        return 'https://summitinvest.example';
     }
   }
 
@@ -132,7 +135,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   goHome(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/investing']);
   }
 
   // Method to check if URL is secure (HTTPS)

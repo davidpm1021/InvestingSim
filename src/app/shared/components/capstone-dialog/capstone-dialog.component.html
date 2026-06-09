@@ -1,0 +1,41 @@
+<div class="capstone" *ngIf="model">
+  <div class="capstone-header">
+    <h2>Year-End Review</h2>
+    <button mat-icon-button (click)="close()" aria-label="Close"><mat-icon>close</mat-icon></button>
+  </div>
+  <p class="capstone-intro">Here's how your investing year turned out.</p>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <span class="stat-label">Account value</span>
+      <span class="stat-value">{{ model.finalValue | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">You added</span>
+      <span class="stat-value">{{ model.added | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="stat" [class.pos]="model.gainLoss >= 0" [class.neg]="model.gainLoss < 0">
+      <span class="stat-label">Total gain / loss</span>
+      <span class="stat-value">
+        {{ model.gainLoss >= 0 ? '+' : '' }}{{ model.gainLoss | currency:'USD':'symbol':'1.2-2' }}
+        ({{ model.gainLossPct | number:'1.2-2' }}%)
+      </span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Income earned (dividends + interest)</span>
+      <span class="stat-value">{{ model.incomeTotal | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <div class="capstone-allocation">
+    <h3>Where you ended up</h3>
+    <div class="alloc-row" *ngFor="let a of model.allocation">
+      <span class="alloc-label">{{ a.label }}</span>
+      <span class="alloc-pct">{{ a.pct | number:'1.2-2' }}%</span>
+    </div>
+  </div>
+
+  <div class="capstone-actions">
+    <button mat-raised-button color="primary" (click)="close()">Done</button>
+  </div>
+</div>

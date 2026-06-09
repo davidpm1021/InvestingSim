@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>Connect your bank account</h2>
+<mat-dialog-content>
+  <!-- Step 1: review pre-filled details -->
+  <div *ngIf="status === 'review'" class="connect-review">
+    <p class="connect-intro">
+      Link your Evergreen Bank account so you can move money into Summit Invest and start
+      investing. Review your details below, then connect.
+    </p>
+    <div class="bank-details">
+      <div class="detail-row">
+        <span class="detail-label">Account holder</span>
+        <span class="detail-value">{{ bankDetails.accountHolder }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Bank</span>
+        <span class="detail-value">{{ bankDetails.bankName }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Routing number</span>
+        <span class="detail-value">{{ bankDetails.routingNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Account number</span>
+        <span class="detail-value">{{ bankDetails.accountNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Account type</span>
+        <span class="detail-value">{{ bankDetails.accountType }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: connecting animation -->
+  <div *ngIf="status === 'connecting'" class="connect-status">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Securely connecting to {{ bankDetails.bankName }}…</p>
+  </div>
+
+  <!-- Step 3: connected -->
+  <div *ngIf="status === 'connected'" class="connect-status">
+    <mat-icon class="success-icon">check_circle</mat-icon>
+    <p>Connected to {{ bankDetails.bankName }}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" *ngIf="status === 'review'">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="connect()">Connect to your Bank</button>
+</mat-dialog-actions>

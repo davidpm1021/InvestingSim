@@ -4,13 +4,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
+import { NotificationsService, AppNotification } from '../../services/notifications.service';
+import { EvergreenDatePipe } from '../../pipes/evergreen-date.pipe';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { QuarterNavigationDialogComponent, QuarterNavigationDialogData } from '../quarter-navigation-dialog/quarter-navigation-dialog.component';
+import { CapstoneDialogComponent } from '../capstone-dialog/capstone-dialog.component';
+import { isFinalQuarter } from '../../data/quarters.data';
 
 interface QuarterOption {
   label: string;
@@ -20,7 +26,7 @@ interface QuarterOption {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, MatDialogModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, MatDialogModule, MatSnackBarModule, MatBadgeModule, FormsModule, EvergreenDatePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -30,6 +36,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentQuarterLabel: string = 'Quarter 1';
   nextQuarterLabel: string = '';
   canNavigateToNext: boolean = false;
+  notifications: AppNotification[] = [];
+  unreadCount: number = 0;
   private subscription = new Subscription();
 
   constructor(
@@ -37,7 +45,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private currentDateService: CurrentDateService,
     private transactionsService: TransactionsService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private notificationsService: NotificationsService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +64,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     
     // Initial update
     this.updateQuarterInfo();
+
+    // Notifications (factual events only)
+    this.subscription.add(
+      this.notificationsService.notifications$.subscribe(list => {
+        this.notifications = list;
+        this.unreadCount = list.filter(n => !n.read).length;
+      })
+    );
+  }
+
+  onNotificationsOpened(): void {
+    this.notificationsService.markAllRead();
+  }
+
+  onNotificationClick(n: AppNotification): void {
+    if (n.link) {
+      this.router.navigate([n.link]);
+    }
   }
   
   updateQuarterInfo(): void {
@@ -77,13 +105,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onQuarterChange(selectedValue: string): void {
-    this.currentDateService.setCurrentDate(selectedValue);
-    console.log('Selected quarter:', this.currentDateService.getQuarterLabel(selectedValue), 'Date:', selectedValue);
-    // Navigate to Investing Sim tab when quarter changes
-    this.router.navigate(['/home']);
-  }
-
   onReset(): void {
     // Clear all transactions first
     this.transactionsService.clearAllTransactions();
@@ -91,9 +112,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Clear only investing_sim__ localStorage keys
     const keysToRemove = [
       'investing_sim__admin_options',
-      'investing_sim__current_date', 
+      'investing_sim__current_date',
       'investing_sim__holding_transactions',
-      'investing_sim__transactions'
+      'investing_sim__transactions',
+      'investing_sim__onboarding',
+      'investing_sim__notifications',
+      'investing_sim__visited_pages'
     ];
     
     keysToRemove.forEach(key => {
@@ -125,13 +149,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        // Find the next quarter value and navigate to it
+        const completedLabel = this.currentDateService.getQuarterLabel(this.selectedQuarter);
         const currentIndex = this.quarterOptions.findIndex(option => option.value === this.selectedQuarter);
         if (currentIndex >= 0 && currentIndex < this.quarterOptions.length - 1) {
           const nextQuarter = this.quarterOptions[currentIndex + 1];
           this.currentDateService.setCurrentDate(nextQuarter.value);
-          // Navigate to Investing Sim tab when quarter changes
-          this.router.navigate(['/home']);
+          this.router.navigate(['/investing']);
+          if (isFinalQuarter(nextQuarter.value)) {
+            // Reaching the Year-End Review — show the capstone summary.
+            this.notificationsService.add('Your Year-End Review is ready.', '/investing', nextQuarter.value);
+            this.dialog.open(CapstoneDialogComponent, { width: '640px', maxHeight: '90vh' });
+          } else {
+            this.notificationsService.add(`Your ${completedLabel} statement is ready.`, '/investing', nextQuarter.value);
+            this.snackBar.open(`Your ${completedLabel} statement is ready.`, 'View', { duration: 6000 })
+              .onAction().subscribe(() => this.router.navigate(['/investing']));
+          }
         }
       }
     });

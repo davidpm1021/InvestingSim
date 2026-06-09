@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Chart, registerables } from 'chart.js';
+import { MONTHS_SHORT } from '../../pipes/evergreen-date.pipe';
 import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
 import { AssetTypePipe } from '../../pipes/asset-type.pipe';
@@ -179,8 +180,7 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
     const labels = historicalData.map((point: any) => {
       // Format date string as "MM/YYYY" for monthly display
       const [year, month] = point.date.split('-');
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${monthNames[parseInt(month) - 1]} ${year}`;
+      return MONTHS_SHORT[parseInt(month) - 1];
     });
     const data = historicalData.map((point: any) => point.value);
 

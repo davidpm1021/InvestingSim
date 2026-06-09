@@ -1,0 +1,56 @@
+.full-width {
+  width: 100%;
+}
+
+.trade-row {
+  margin-bottom: 16px;
+}
+
+.action-toggle {
+  width: 100%;
+
+  ::ng-deep .mat-button-toggle {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.trade-details {
+  margin-top: 8px;
+}
+
+.current-price {
+  color: #555;
+  margin: 0 0 12px;
+}
+
+.amount-type {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.conversion {
+  color: #1976d2;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.avail {
+  color: #777;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.validation-error {
+  color: #c62828;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.trade-note {
+  color: #888;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 8px 0 0;
+}

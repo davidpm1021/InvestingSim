@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Trade</h2>
+<mat-dialog-content>
+  <div class="trade-row">
+    <mat-button-toggle-group [value]="action" (change)="onActionChange($event.value)"
+                             hideSingleSelectionIndicator="true" class="action-toggle">
+      <mat-button-toggle value="buy">Buy</mat-button-toggle>
+      <mat-button-toggle value="sell">Sell</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Investment</mat-label>
+    <mat-select [(ngModel)]="selectedAssetId" (selectionChange)="onAssetSelect()">
+      <ng-container *ngIf="action === 'buy'">
+        <mat-optgroup label="Stocks">
+          <mat-option *ngFor="let a of stocks" [value]="a.id">{{ a.name }}</mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="Funds">
+          <mat-option *ngFor="let a of funds" [value]="a.id">{{ a.name }}</mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="Bonds">
+          <mat-option *ngFor="let a of bonds" [value]="a.id">{{ a.name }}</mat-option>
+        </mat-optgroup>
+      </ng-container>
+      <ng-container *ngIf="action === 'sell'">
+        <mat-option *ngIf="data.holdings.length === 0" [disabled]="true">No holdings to sell</mat-option>
+        <mat-option *ngFor="let h of data.holdings" [value]="h.assetId">
+          {{ h.name }} ({{ h.shares | number:'1.2-4' }} shares)
+        </mat-option>
+      </ng-container>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="selectedAssetId" class="trade-details">
+    <p class="current-price">Current price: <strong>${{ currentPrice | number:'1.2-2' }}</strong></p>
+
+    <mat-radio-group [(ngModel)]="inputType" class="amount-type">
+      <mat-radio-button value="dollars">Dollar amount</mat-radio-button>
+      <mat-radio-button value="shares">Shares</mat-radio-button>
+    </mat-radio-group>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ inputType === 'dollars' ? 'Dollar amount' : 'Shares' }}</mat-label>
+      <input matInput type="number" [(ngModel)]="inputAmount" min="0" step="0.01"
+             [placeholder]="inputType === 'dollars' ? 'Enter dollars' : 'Enter shares'">
+    </mat-form-field>
+
+    <div *ngIf="inputAmount && inputAmount > 0" class="conversion">
+      <span *ngIf="inputType === 'dollars'">≈ {{ getCalculatedShares() | number:'1.2-4' }} shares</span>
+      <span *ngIf="inputType === 'shares'">≈ ${{ getCalculatedDollars() | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="avail">
+      <span *ngIf="action === 'buy'">Cash available: ${{ data.brokerageBalance | number:'1.2-2' }}</span>
+      <span *ngIf="action === 'sell' && getHolding(selectedAssetId)">Shares held: {{ getHolding(selectedAssetId).shares | number:'1.2-4' }}</span>
+    </div>
+
+    <div *ngIf="validationMessage()" class="validation-error">{{ validationMessage() }}</div>
+
+    <p class="trade-note">
+      <app-define term="Commission-free"></app-define> — no fee to buy or sell. Trades are instant in this simulation;
+      in real life cash from a sale typically <app-define term="Settlement" label="settles"></app-define> the next
+      business day (T+1).
+    </p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="submit()">
+    {{ action === 'buy' ? 'Buy' : 'Sell' }}
+  </button>
+</mat-dialog-actions>

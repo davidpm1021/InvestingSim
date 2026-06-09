@@ -876,6 +876,96 @@ h2 {
   flex: 1;
 }
 
+// Connect-bank onboarding gate (Chunk 1)
+.connect-bank-gate {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.connect-bank-text {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.connect-bank-button {
+  width: 100%;
+}
+
+.bank-linked-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: #2e7d32;
+  font-weight: 500;
+
+  .linked-check {
+    color: #2e7d32;
+  }
+}
+
+.cash-apy-note {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2e7d32;
+  cursor: default;
+}
+
+.account-value-summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f5f8fc;
+  border-radius: 8px;
+}
+
+.av-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 0;
+
+  .av-label { color: #777; }
+  .av-value { font-variant-numeric: tabular-nums; }
+
+  &.positive .av-value { color: #1e7e34; }
+  &.negative .av-value { color: #c62828; }
+}
+
+.trade-buttons {
+  margin-top: 10px;
+
+  button { flex: 1; }
+}
+
+.holding-item.cash-holding {
+  cursor: default;
+
+  .holding-shares {
+    color: #2e7d32;
+  }
+}
+
+.realized-badge {
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.gain {
+    background: #e6f4ea;
+    color: #1e7e34;
+  }
+
+  &.loss {
+    background: #fde8e8;
+    color: #c62828;
+  }
+}
+
 // Trading Activity Column Styles
 .transaction-shares {
   font-weight: 500;

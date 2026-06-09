@@ -3,18 +3,22 @@
     <div class="logo-container">
       <div class="account-logo">
         <mat-icon class="account-icon">trending_up</mat-icon>
-        <h1 class="account-name">My Investing</h1>
+        <h1 class="account-name">Summit Invest</h1>
       </div>
       <p class="account-service">Investment Services</p>
     </div>
   </div>
-  
+
   <div class="page-description">
     <p>Build and manage your investment portfolio with professional tools and real-time market data.</p>
   </div>
-  
+
+  <app-page-intro pageKey="brokerage"
+    text="This is Summit Invest, your brokerage. Connect your bank, move cash into your settlement account, then use Buy to invest. Remember — gains aren't real until you sell.">
+  </app-page-intro>
+
   <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Dashboard">
+    <mat-tab label="Overview">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="row">
@@ -31,36 +35,72 @@
                 <div class="balance-amount">${{ holdingsValue | number:'1.2-2' }}</div>
               </div>
               <div class="balance-row">
-                <div class="balance-label">Cash Balance:</div>
+                <div class="balance-label">Cash Settlement Account:</div>
                 <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
               </div>
-              <div class="button-group">
-                <button mat-raised-button 
-                        color="accent" 
-                        (click)="openAddFundsDialog()"
-                        class="add-funds-button">
-                  Add Funds
-                </button>
-                <button mat-raised-button 
-                        color="primary" 
-                        (click)="openWithdrawDialog()"
-                        [disabled]="brokerageBalance <= 0"
-                        class="withdraw-button">
-                  Withdraw Funds
+              <div class="cash-apy-note"><app-define term="APY" label="0.25% APY"></app-define></div>
+
+              <!-- Account value vs. what you've put in (QA4) -->
+              <div class="account-value-summary" *ngIf="bankLinked">
+                <div class="av-row">
+                  <span class="av-label">Account value</span>
+                  <strong class="av-value">${{ accountValue | number:'1.2-2' }}</strong>
+                </div>
+                <div class="av-row">
+                  <span class="av-label">You've added</span>
+                  <span class="av-value">${{ netContributions | number:'1.2-2' }}</span>
+                </div>
+                <div class="av-row" [class.positive]="accountGainLoss >= 0" [class.negative]="accountGainLoss < 0">
+                  <span class="av-label">Up / down</span>
+                  <span class="av-value">
+                    {{ accountGainLoss >= 0 ? '+' : '' }}{{ accountGainLoss | currency:'USD':'symbol':'1.2-2' }}
+                    ({{ accountGainLossPct | number:'1.2-2' }}%)
+                  </span>
+                </div>
+              </div>
+
+              <!-- Connect-bank gate (Chunk 1): funding unlocks only after linking the bank -->
+              <div class="connect-bank-gate" *ngIf="!bankLinked">
+                <p class="connect-bank-text">Connect your bank to fund your account and start investing.</p>
+                <button mat-raised-button
+                        color="accent"
+                        (click)="openConnectBankDialog()"
+                        class="connect-bank-button">
+                  Connect your bank
                 </button>
               </div>
-              <div class="account-activity-link">
-                <button mat-button color="primary" (click)="goToProfileTab()">
-                  View Profile
-                </button>
-              </div>
+              <ng-container *ngIf="bankLinked">
+                <div class="bank-linked-indicator">
+                  <mat-icon class="linked-check">check_circle</mat-icon>
+                  <span>Bank linked: Evergreen Bank •••• 1234</span>
+                </div>
+                <div class="button-group">
+                  <button mat-raised-button
+                          color="accent"
+                          (click)="openAddFundsDialog()"
+                          class="add-funds-button">
+                    Add Funds
+                  </button>
+                  <button mat-raised-button
+                          color="primary"
+                          (click)="openWithdrawDialog()"
+                          [disabled]="brokerageBalance <= 0"
+                          class="withdraw-button">
+                    Withdraw Funds
+                  </button>
+                </div>
+                <div class="button-group trade-buttons">
+                  <button mat-raised-button color="primary" (click)="openTradeDialog('buy')">Buy</button>
+                  <button mat-stroked-button color="primary" (click)="openTradeDialog('sell')" [disabled]="holdings.length === 0">Sell</button>
+                </div>
+              </ng-container>
             </mat-card-content>
           </mat-card>
 
           <!-- Allocation Section -->
           <mat-card class="allocation-card mb-3">
             <mat-card-header>
-              <mat-card-title>Allocation</mat-card-title>
+              <mat-card-title><app-define term="Asset allocation" label="Allocation"></app-define></mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div *ngIf="isDashboardTab && currentDate">
@@ -86,13 +126,13 @@
             <mat-card-content>
               <div class="recent-activity-list" *ngIf="recentActivity.length > 0">
                 <div class="recent-activity-item" *ngFor="let activity of recentActivity">
-                  <div class="activity-date">{{ activity.date | date:'M/d/yyyy' }}</div>
+                  <div class="activity-date">{{ activity.date | evergreenDate:'short' }}</div>
                   <div class="activity-description">
                     <span *ngIf="activity.action === 'buy'">Purchased </span>
                     <span *ngIf="activity.action === 'sell'">Sold </span>
                     <strong>{{ activity.shares | number:'1.2-2' }} shares</strong> of <em>{{ getAssetName(activity.assetId) }}</em>
                   </div>
-                  <div class="activity-price" 
+                  <div class="activity-price"
                        [class.positive]="activity.action === 'buy'"
                        [class.negative]="activity.action === 'sell'">
                     {{ activity.action === 'buy' ? '+' : '-' }}${{ activity.price | number:'1.2-2' }}
@@ -106,6 +146,29 @@
                 <button mat-button color="primary" (click)="goToActivityTab()">
                   View All Trade Activities
                 </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Recent Transactions (cash) — folded in from the old Profile tab (Chunk 7) -->
+          <mat-card class="recent-activity-card mb-3">
+            <mat-card-header>
+              <mat-card-title>Recent Transactions</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="no-recent-activity" *ngIf="transactions.length === 0">
+                <p>No transactions yet</p>
+              </div>
+              <div class="recent-activity-list" *ngIf="transactions.length > 0">
+                <div class="recent-activity-item" *ngFor="let t of transactions.slice(0, 5)">
+                  <div class="activity-date">{{ t.date | evergreenDate:'short' }}</div>
+                  <div class="activity-description">{{ t.displayDescription }}</div>
+                  <div class="activity-price"
+                       [class.positive]="getTransactionAmount(t) > 0"
+                       [class.negative]="getTransactionAmount(t) < 0">
+                    {{ getTransactionAmount(t) > 0 ? '+' : '' }}{{ getTransactionAmount(t) | currency:'USD':'symbol':'1.2-2' }}
+                  </div>
+                </div>
               </div>
             </mat-card-content>
           </mat-card>
@@ -125,31 +188,31 @@
                       <th mat-header-cell *matHeaderCellDef>Asset</th>
                       <td mat-cell *matCellDef="let holding" class="asset-name-cell">{{ holding.name }}</td>
                     </ng-container>
-                
+
                 <ng-container matColumnDef="shares">
                   <th mat-header-cell *matHeaderCellDef>Shares</th>
                   <td mat-cell *matCellDef="let holding">{{ holding.shares | number:'1.2-2' }}</td>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="price">
                   <th mat-header-cell *matHeaderCellDef>Price</th>
                   <td mat-cell *matCellDef="let holding">${{ holding.price | number:'1.2-2' }}</td>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="value">
                   <th mat-header-cell *matHeaderCellDef>Value</th>
                   <td mat-cell *matCellDef="let holding">${{ holding.value | number:'1.2-2' }}</td>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="gainLoss">
                   <th mat-header-cell *matHeaderCellDef>Gain/Loss</th>
-                  <td mat-cell *matCellDef="let holding" 
-                      [class.positive]="getHoldingPriceChange(holding) > 0" 
+                  <td mat-cell *matCellDef="let holding"
+                      [class.positive]="getHoldingPriceChange(holding) > 0"
                       [class.negative]="getHoldingPriceChange(holding) < 0">
                     {{ getHoldingPriceChange(holding) > 0 ? '+' : '' }}{{ getHoldingPriceChange(holding) | number:'1.2-2' }}%
                   </td>
                 </ng-container>
-                
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectHoldingAndNavigate(row)" class="clickable-row"></tr>
               </table>
@@ -160,7 +223,20 @@
               </div>
             </mat-card-content>
           </mat-card>
-          
+
+          <!-- Compare Investments (Chunk 5) -->
+          <mat-card class="compare-card mb-3">
+            <mat-card-header>
+              <mat-card-title>Compare Investments</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
+              <app-line-chart [labels]="compareLabels" [series]="compareSeries"
+                              [showLegend]="true" yLabel="% change since start" valueFormat="percent"
+                              [height]="320"></app-line-chart>
+            </mat-card-content>
+          </mat-card>
+
           <!-- Daily Movers Section -->
           <mat-card class="daily-movers-card">
             <mat-card-header>
@@ -193,17 +269,7 @@
         </div>
       </div>
     </mat-tab>
-    
-    <mat-tab label="Place Trade">
-      <app-place-trade 
-        [brokerageBalance]="brokerageBalance" 
-        [currentDate]="currentDate"
-        [holdings]="holdings"
-        (tradeSubmitted)="processTrade($event)"
-        (tradeCompleted)="onTradeCompleted()">
-      </app-place-trade>
-    </mat-tab>
-    
+
     <mat-tab label="Holdings">
       <div class="tab-content">
         <div class="container-fluid">
@@ -216,28 +282,44 @@
                   <mat-card-title>Current Holdings</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <div class="holdings-list" *ngIf="holdings.length > 0; else noHoldings">
-                    <div class="holding-item" 
-                         *ngFor="let holding of holdings" 
+                  <div class="holdings-list">
+                    <!-- Cash Settlement Account, always shown as a holding line (Chunk 2) -->
+                    <div class="holding-item cash-holding">
+                      <div class="holding-name">Cash Settlement Account</div>
+                      <div class="holding-shares">Earns 0.25% APY</div>
+                      <div class="holding-value">${{ brokerageBalance | number:'1.2-2' }}</div>
+                    </div>
+                    <!-- Investment holdings -->
+                    <div class="holding-item"
+                         *ngFor="let holding of holdings"
                          (click)="selectHolding(holding)"
                          [class.selected]="selectedHolding?.assetId === holding.assetId">
                       <div class="holding-name">{{ holding.name }}</div>
                       <div class="holding-shares">{{ holding.shares | number:'1.2-2' }} shares</div>
                       <div class="holding-value">${{ holding.value | number:'1.2-2' }}</div>
                     </div>
-                  </div>
-                  <ng-template #noHoldings>
-                    <div class="no-holdings">
-                      <p>No holdings yet</p>
+                    <div class="no-holdings" *ngIf="holdings.length === 0">
+                      <p>No investments yet</p>
                     </div>
-                  </ng-template>
+                  </div>
                 </mat-card-content>
               </mat-card>
 
               <!-- Holdings Totals Component -->
               <app-holdings-totals [hideTotalValue]="false"></app-holdings-totals>
+
+              <!-- Portfolio Value Over Time (Chunk 5) -->
+              <mat-card class="portfolio-chart-card mb-3">
+                <mat-card-header>
+                  <mat-card-title>Portfolio Value Over Time</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <app-line-chart [labels]="compareLabels" [series]="portfolioSeries"
+                                  yLabel="Value ($)" [height]="240"></app-line-chart>
+                </mat-card-content>
+              </mat-card>
             </div>
-            
+
             <!-- Right Column - Asset Details -->
             <div class="col-md-8">
               <mat-card class="asset-details-card">
@@ -267,7 +349,7 @@
                       <label>Symbol:</label>
                       <span>{{ selectedHolding.assetId }}</span>
                     </div>
-                    
+
                     <!-- Price History Chart -->
             <div class="price-history-section" *ngIf="selectedHolding">
               <h4>Price History</h4>
@@ -288,7 +370,7 @@
         </div>
       </div>
     </mat-tab>
-    
+
     <mat-tab label="Activity">
       <div class="tab-content">
         <div class="container-fluid">
@@ -308,16 +390,22 @@
               <div class="header-balance">Balance</div>
             </div>
             <div *ngFor="let transaction of holdingTransactions" class="transaction-item">
-              <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
-              <div class="transaction-action" 
+              <div class="transaction-date">{{ transaction.date | evergreenDate:'short' }}</div>
+              <div class="transaction-action"
                    [class.buy-action]="transaction.action === 'buy'"
                    [class.sell-action]="transaction.action === 'sell'">
                 {{ transaction.action | titlecase }}
+                <span *ngIf="transaction.action === 'sell' && getRealizedGain(transaction) as r"
+                      class="realized-badge"
+                      [class.gain]="r.gain >= 0"
+                      [class.loss]="r.gain < 0">
+                  {{ r.term === 'long' ? 'LT' : 'ST' }} {{ r.gain >= 0 ? '+' : '' }}{{ r.gain | currency:'USD':'symbol':'1.2-2' }}
+                </span>
               </div>
               <div class="transaction-asset">{{ getAssetName(transaction.assetId) }}</div>
               <div class="transaction-asset-type">{{ getAssetType(transaction.assetId) | assetType }}</div>
               <div class="transaction-shares">{{ transaction.shares | number:'1.2-2' }}</div>
-              <div class="transaction-price" 
+              <div class="transaction-price"
                    [class.positive]="transaction.action === 'buy'"
                    [class.negative]="transaction.action === 'sell'">
                 {{ transaction.action === 'buy' ? '+' : '-' }}${{ transaction.price | number:'1.2-2' }}
@@ -329,107 +417,18 @@
         </div>
       </div>
     </mat-tab>
-    
-    <mat-tab label="Profile">
-      <div class="tab-content">
-        <div class="container-fluid">
-          <div class="row">
-            <!-- Profile Summary Card -->
-            <div class="col-md-6">
-              <mat-card class="balance-card">
-                <mat-card-header>
-                  <mat-card-title>Profile Summary</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="balance-row">
-                    <div class="balance-label">Holdings Value:</div>
-                    <div class="balance-amount">${{ holdingsValue | number:'1.2-2' }}</div>
-                  </div>
-                  <div class="balance-row">
-                    <div class="balance-label">Cash Balance:</div>
-                    <div class="balance-amount">${{ brokerageBalance | number:'1.2-2' }}</div>
-                  </div>
-                  <div class="button-group">
-                    <button mat-raised-button 
-                            color="accent" 
-                            (click)="openAddFundsDialog()"
-                            class="add-funds-button">
-                      Add Funds
-                    </button>
-                    <button mat-raised-button 
-                            color="primary" 
-                            (click)="openWithdrawDialog()"
-                            [disabled]="brokerageBalance <= 0"
-                            class="withdraw-button">
-                      Withdraw Funds
-                    </button>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-            
-            <!-- Overview Card -->
-            <div class="col-md-6">
-              <mat-card class="balance-card">
-                <mat-card-header>
-                  <mat-card-title>Asset Allocation</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="allocation-list">
-                    <div class="allocation-item" *ngFor="let allocation of assetTypeAllocation">
-                      <div class="allocation-type">{{ allocation.type | assetType }}</div>
-                      <div class="allocation-percentage" [class.no-allocation]="allocation.percentage === 0">
-                        {{ allocation.percentage | number:'1.1-1' }}%
-                      </div>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          </div>
-          
-          <!-- Transactions List -->
-          <div class="transactions-section mt-4">
-            <h2>Recent Transactions</h2>
-            <div *ngIf="transactions.length === 0" class="no-transactions">
-              <p>No transactions yet.</p>
-            </div>
-            <div *ngIf="transactions.length > 0" class="transactions-list">
-              <div class="transaction-header">
-                <div class="header-description">Description</div>
-                <div class="header-date">Date</div>
-                <div class="header-amount">Amount</div>
-                <div class="header-balance">Balance</div>
-              </div>
-              <div *ngFor="let transaction of transactions" class="transaction-item">
-                <div class="transaction-description">{{ transaction.displayDescription }}</div>
-                <div class="transaction-date">{{ transaction.date | date:'M/d/yyyy' }}</div>
-                <div class="transaction-amount" 
-                     [class.positive]="getTransactionAmount(transaction) > 0" 
-                     [class.negative]="getTransactionAmount(transaction) < 0">
-                  {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
-                </div>
-                <div class="transaction-balance">
-                  {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-    
+
     <mat-tab label="Statements">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="statements-section">
             <h2>Quarterly Statements</h2>
             <p>Click on a statement to view detailed quarterly performance and activity.</p>
-            
+
             <div *ngIf="quarterlyStatements.length === 0" class="no-statements">
               <p>No statements available yet. Statements will appear after the first quarter ends.</p>
             </div>
-            
+
             <div class="statements-grid">
               <mat-card *ngFor="let statement of quarterlyStatements" class="statement-card" (click)="openStatementDialog(statement)">
                 <mat-card-content>
@@ -442,10 +441,6 @@
                       <div class="ending-balance">
                         <span class="label">Ending Balance:</span>
                         <span class="amount">${{ (statement.endingCashBalance || 0) + (statement.endingHoldingsValue || 0) | number:'1.2-2' }}</span>
-                      </div>
-                      <div class="total-return" [class.positive]="(statement.performance?.totalReturn || 0) > 0" [class.negative]="(statement.performance?.totalReturn || 0) < 0">
-                        <span class="label">Total Return:</span>
-                        <span class="amount">{{ (statement.performance?.totalReturn || 0) > 0 ? '+' : '' }}${{ statement.performance?.totalReturn || 0 | number:'1.2-2' }}</span>
                       </div>
                     </div>
                     <mat-icon class="open-icon">open_in_new</mat-icon>

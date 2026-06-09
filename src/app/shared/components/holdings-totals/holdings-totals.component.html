@@ -13,22 +13,27 @@
         <span class="stat-value">{{ holdings.length }}</span>
       </div>
       <div class="performance-section">
-        <h4 class="performance-heading">90-Day Performance</h4>
+        <div class="performance-toggle">
+          <mat-button-toggle-group [value]="range" (change)="setRange($event.value)" hideSingleSelectionIndicator="true">
+            <mat-button-toggle *ngFor="let r of ranges" [value]="r.key">{{ r.label }}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+        <h4 class="performance-heading">Performance — {{ rangeLabel() }}</h4>
         <div class="performance-cards">
-          <div class="performance-card amount-card" 
-               [class.positive]="get90DayPerformance().amount > 0" 
-               [class.negative]="get90DayPerformance().amount < 0">
-            <span class="performance-label">Amount</span>
+          <div class="performance-card amount-card"
+               [class.positive]="performance.amount > 0"
+               [class.negative]="performance.amount < 0">
+            <span class="performance-label">Change ({{ rangeLabel() }})</span>
             <span class="performance-value">
-              {{ get90DayPerformance().amount > 0 ? '+' : '' }}${{ get90DayPerformance().amount | number:'1.2-2' }}
+              {{ performance.amount > 0 ? '+' : '' }}${{ performance.amount | number:'1.2-2' }}
             </span>
           </div>
-          <div class="performance-card percentage-card" 
-               [class.positive]="get90DayPerformance().percentage > 0" 
-               [class.negative]="get90DayPerformance().percentage < 0">
-            <span class="performance-label">Percentage</span>
+          <div class="performance-card percentage-card"
+               [class.positive]="performance.percentage > 0"
+               [class.negative]="performance.percentage < 0">
+            <span class="performance-label">Return ({{ rangeLabel() }})</span>
             <span class="performance-value">
-              {{ get90DayPerformance().percentage > 0 ? '+' : '' }}{{ get90DayPerformance().percentage | number:'1.2-2' }}%
+              {{ performance.percentage > 0 ? '+' : '' }}{{ performance.percentage | number:'1.2-2' }}%
             </span>
           </div>
         </div>

@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { CurrentDateService } from './current-date.service';
+import { HoldingsService } from './holdings.service';
+import { DataService } from './data.service';
+import { SIM_YEAR_START, SIM_END, PAYING_QUARTER_ENDS } from '../data/quarters.data';
 
 export interface Transaction {
   type: string;
@@ -22,11 +25,11 @@ export class TransactionsService {
   private readonly TRANSACTIONS_KEY = 'investing_sim__transactions';
   
   private accounts: {
-    banking001: {name: "Banking Account", initialBalance: number, type: "banking"},
-    brokerage001: {name: "Brokerage Account", initialBalance: number, type: "brokerage"}
+    banking001: {name: string, initialBalance: number, type: "banking", apy: number},
+    brokerage001: {name: string, initialBalance: number, type: "brokerage", apy: number}
   } = {
-    banking001: {name: "Banking Account", initialBalance: 0, type: "banking"},
-    brokerage001: {name: "Brokerage Account", initialBalance: 0, type: "brokerage"}
+    banking001: {name: "Savings", initialBalance: 0, type: "banking", apy: 0.015},
+    brokerage001: {name: "Cash Settlement Account", initialBalance: 0, type: "brokerage", apy: 0.0025}
   };
 
   // Transactions BehaviorSubject
@@ -36,25 +39,34 @@ export class TransactionsService {
   // Combined observables for reactive account data
   public accountData$: Observable<any>;
 
-  constructor(private currentDateService: CurrentDateService) {
+  constructor(
+    private currentDateService: CurrentDateService,
+    private holdingsService: HoldingsService,
+    private dataService: DataService
+  ) {
     // Initialize with stored transactions
     this.initializeTransactions();
     // Ensure transactions are saved to localStorage
     this.ensureLocalStorageInitialized();
+
+    // Income derivation reads holding state, so the ledger cache must drop
+    // whenever holding transactions change. (Registered before any consumer
+    // subscribes to accountData$, so clears always run first.)
+    this.holdingsService.holdingTransactions$.subscribe(() => this.ledgerCache.clear());
     
     // Initialize observables that depend on CurrentDateService
     this.accountData$ = combineLatest([
       this.currentDateService.currentDate$,
-      this.transactions$
+      this.transactions$,
+      this.holdingsService.holdingTransactions$
     ]).pipe(
-      map(([currentDate, transactions]) => {
-        const sortedTransactions = transactions.sort((a, b) => {
+      map(([currentDate]) => {
+        // Full derived ledger (base + interest + income), memoized per date.
+        const filteredTransactions = [...this.getLedgerAsOf(currentDate)].sort((a, b) => {
           const dateTimeA = `${a.date} ${a.time}`;
           const dateTimeB = `${b.date} ${b.time}`;
           return dateTimeB.localeCompare(dateTimeA); // Descending order (newest first)
         });
-
-        const filteredTransactions = sortedTransactions.filter(t => t.date <= currentDate);
         
         const balances: { [accountId: string]: number } = {};
         
@@ -128,6 +140,7 @@ export class TransactionsService {
    * Clear all transactions (for reset functionality)
    */
   public clearAllTransactions(): void {
+    this.ledgerCache.clear();
     this.transactionsSubject.next([]);
     this.saveTransactionsToStorage([]);
   }
@@ -169,6 +182,7 @@ export class TransactionsService {
   addTransaction(transaction: Transaction): void {
     const currentTransactions = this.transactionsSubject.value;
     const updatedTransactions = [...currentTransactions, transaction];
+    this.ledgerCache.clear();
     this.transactionsSubject.next(updatedTransactions);
     this.saveTransactionsToStorage(updatedTransactions);
   }
@@ -275,19 +289,6 @@ export class TransactionsService {
   }
 
   /**
-   * Get all transactions ordered by date, time ascending (reactive)
-   */
-  getAllTransactions$(): Observable<Transaction[]> {
-    return this.transactions$.pipe(
-      map(transactions => transactions.sort((a, b) => {
-        const dateTimeA = `${a.date} ${a.time}`;
-        const dateTimeB = `${b.date} ${b.time}`;
-        return dateTimeA.localeCompare(dateTimeB);
-      }))
-    );
-  }
-
-  /**
    * Get transactions and balance as of current date (reactive)
    */
   getCurrentAccountData$(): Observable<{ transactions: Transaction[], balances: { [accountId: string]: number } }> {
@@ -366,79 +367,161 @@ export class TransactionsService {
     );
   }
 
-  /**
-   * Get transactions and balance as of a specific date (reactive)
-   */
-  getTransactionsAndBalanceAsOf$(asOfDate: string): Observable<{ transactions: Transaction[], balances: { [accountId: string]: number } }> {
-    return this.transactions$.pipe(
-      map(transactions => {
-        const sortedTransactions = transactions.sort((a, b) => {
-          const dateTimeA = `${a.date} ${a.time}`;
-          const dateTimeB = `${b.date} ${b.time}`;
-          return dateTimeA.localeCompare(dateTimeB);
-        });
+  // Memoized derived ledgers keyed by as-of date; invalidated whenever the base
+  // transactions or holding transactions (which drive income) change.
+  private ledgerCache = new Map<string, Transaction[]>();
 
-        const filteredTransactions = sortedTransactions.filter(t => t.date <= asOfDate);
-        
-        const balances: { [accountId: string]: number } = {};
-        
-        // Initialize balances with initial amounts
-        Object.keys(this.accounts).forEach(accountId => {
-          balances[accountId] = this.accounts[accountId as keyof typeof this.accounts].initialBalance;
-        });
-        
-        // Apply transactions
-        filteredTransactions.forEach(transaction => {
-          if (transaction.type === 'transfer') {
-            // Handle transfer transactions
-            if (transaction.account_from && balances.hasOwnProperty(transaction.account_from)) {
-              balances[transaction.account_from] -= transaction.amount;
-            }
-            if (transaction.account_to && balances.hasOwnProperty(transaction.account_to)) {
-              balances[transaction.account_to] += transaction.amount;
-            }
-          } else {
-            // Handle regular transactions
-            if (transaction.account && balances.hasOwnProperty(transaction.account)) {
-              balances[transaction.account] += transaction.amount;
+  /**
+   * Full derived ledger (base transactions + monthly interest + quarterly income),
+   * filtered up to the given date. Single source for as-of balances and the statement.
+   * Do not mutate the returned array.
+   */
+  getLedgerAsOf(date: string): Transaction[] {
+    const cached = this.ledgerCache.get(date);
+    if (cached) {
+      return cached;
+    }
+    const base = this.transactionsSubject.value;
+    const interest = this.generateInterestTransactions(base, date);
+    const income = this.generateIncomeTransactions(date);
+    const ledger = [...base, ...interest, ...income].filter(t => t.date <= date);
+    this.ledgerCache.set(date, ledger);
+    return ledger;
+  }
+
+  getBalanceAtDate(accountId: string, date: string): number {
+    return this.getLedgerAsOf(date)
+      .filter(tx => tx.account === accountId)
+      .reduce((balance, tx) => balance + tx.amount, 0);
+  }
+
+  /**
+   * The most that may safely leave an account at `asOfDate`: the balance visible
+   * at that date, further capped by the END-OF-SIM balance so a back-dated
+   * transfer (possible after a teacher moves time backward) can never push the
+   * account negative once later-dated transactions are counted again.
+   */
+  getMaxWithdrawable(accountId: string, asOfDate: string): number {
+    return Math.max(0, Math.min(
+      this.getBalanceAtDate(accountId, asOfDate),
+      this.getBalanceAtDate(accountId, SIM_END)
+    ));
+  }
+
+  private readonly INTEREST_TIME = '23:59:59';
+  // Interest only accrues from the first playable quarter; the "Opening" period
+  // (the seed deposit dated in December) earns nothing, so the student starts flat.
+  private readonly INTEREST_START = SIM_YEAR_START;
+
+  /**
+   * Deterministically derive month-end interest entries for both accounts up to
+   * `upToDate`. Interest compounds monthly on the prior balance. These entries are
+   * never persisted — they are recomputed from the base transactions each time, so
+   * accrual is idempotent across repeated quarter advances.
+   */
+  private generateInterestTransactions(baseTransactions: Transaction[], upToDate: string): Transaction[] {
+    const interest: Transaction[] = [];
+
+    (Object.keys(this.accounts) as Array<keyof typeof this.accounts>).forEach(accountId => {
+      const account = this.accounts[accountId];
+      const monthlyRate = account.apy / 12;
+      if (monthlyRate <= 0) {
+        return;
+      }
+
+      const accountTx = baseTransactions
+        .filter(t => t.account === accountId)
+        .sort((a, b) => a.date.localeCompare(b.date));
+      if (accountTx.length === 0) {
+        return;
+      }
+
+      let year = parseInt(accountTx[0].date.slice(0, 4), 10);
+      let month = parseInt(accountTx[0].date.slice(5, 7), 10) - 1; // 0-indexed
+      const endYear = parseInt(upToDate.slice(0, 4), 10);
+      const endMonth = parseInt(upToDate.slice(5, 7), 10) - 1;
+
+      let accrued = 0;
+      while (year < endYear || (year === endYear && month <= endMonth)) {
+        const monthEnd = this.lastDayOfMonth(year, month);
+        if (monthEnd <= upToDate && monthEnd >= this.INTEREST_START) {
+          const baseBalance = account.initialBalance + accountTx
+            .filter(t => t.date <= monthEnd)
+            .reduce((sum, t) => sum + t.amount, 0);
+          const balance = baseBalance + accrued;
+          if (balance > 0) {
+            const amount = Math.round(balance * monthlyRate * 100) / 100;
+            if (amount > 0) {
+              interest.push({
+                type: 'interest',
+                account: accountId,
+                amount,
+                date: monthEnd,
+                time: this.INTEREST_TIME,
+                description: 'Interest payment'
+              });
+              accrued += amount;
             }
           }
-        });
-        
-        return {
-          transactions: filteredTransactions,
-          balances
-        };
-      })
-    );
-  }
-
-  /**
-   * Get balance for an account at a specific date
-   */
-  getBalanceAtDate(accountId: string, date: string): number {
-    const allTransactions = this.transactionsSubject.value;
-    let balance = 0;
-
-    // Process all transactions up to the specified date
-    const relevantTransactions = allTransactions
-      .filter(tx => tx.date <= date && tx.account === accountId);
-    
-    relevantTransactions.forEach(tx => {
-      balance += tx.amount;
+        }
+        month += 1;
+        if (month > 11) {
+          month = 0;
+          year += 1;
+        }
+      }
     });
 
-    // Debug logging (can be removed in production)
-    // console.log(`Balance for ${accountId} at ${date}:`, balance);
-
-    return balance;
+    return interest;
   }
 
+  private lastDayOfMonth(year: number, monthIndex0: number): string {
+    const day = new Date(year, monthIndex0 + 1, 0).getDate();
+    const mm = String(monthIndex0 + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    return `${year}-${mm}-${dd}`;
+  }
+
+  // Quarter-end dates used for dividend / bond-income posting (from quarters.data).
+  private readonly QUARTER_ENDS = PAYING_QUARTER_ENDS;
+
   /**
-   * Get all transactions (for statements)
+   * Derive quarterly income — dividends (equities/funds) and bond-fund income (30-day
+   * SEC yield) — paid as cash into the settlement account. Not persisted, so it's
+   * idempotent across quarter advances. Cash only; no reinvestment.
    */
-  getAllTransactions(): Transaction[] {
-    return this.transactionsSubject.value;
+  private generateIncomeTransactions(upToDate: string): Transaction[] {
+    const income: Transaction[] = [];
+    for (const quarterEnd of this.QUARTER_ENDS) {
+      if (quarterEnd > upToDate) {
+        continue;
+      }
+      for (const asset of this.dataService.assets) {
+        const shares = this.holdingsService.getSharesOwned(asset.id, quarterEnd);
+        if (shares <= 0) {
+          continue;
+        }
+        const isBond = asset.type === 'bond_fund';
+        const rate = isBond ? (asset.secYield ?? 0) : (asset.dividendYield ?? 0);
+        if (rate <= 0) {
+          continue;
+        }
+        const price = this.holdingsService.getCurrentPrice(asset, quarterEnd);
+        const amount = Math.round(shares * price * (rate / 4) * 100) / 100;
+        if (amount <= 0) {
+          continue;
+        }
+        income.push({
+          type: 'income',
+          account: 'brokerage001',
+          amount,
+          date: quarterEnd,
+          time: '23:59:58',
+          description: isBond ? `Bond fund income — ${asset.name}` : `Dividend — ${asset.name}`
+        });
+      }
+    }
+    return income;
   }
 
 }

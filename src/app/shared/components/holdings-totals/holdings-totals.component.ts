@@ -1,23 +1,39 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { HoldingsService } from '../../services/holdings.service';
 import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
+import { SIM_YEAR_START } from '../../data/quarters.data';
+
+type PerfRange = '1M' | '3M' | 'YTD' | 'All';
 
 @Component({
   selector: 'app-holdings-totals',
   standalone: true,
-  imports: [CommonModule, MatCardModule],
+  imports: [CommonModule, MatCardModule, MatButtonToggleModule],
   templateUrl: './holdings-totals.component.html',
   styleUrl: './holdings-totals.component.scss'
 })
 export class HoldingsTotalsComponent implements OnInit, OnDestroy {
-  @Input() hideTotalValue: boolean = false;
-  
+  @Input() hideTotalValue = false;
+
   holdings: any[] = [];
-  holdingsValue: number = 0;
+  holdingsValue = 0;
+  range: PerfRange = 'YTD';
+  performance = { percentage: 0, amount: 0 };
+
+  readonly ranges: Array<{ key: PerfRange; label: string }> = [
+    { key: '1M', label: '1M' },
+    { key: '3M', label: '3M' },
+    { key: 'YTD', label: 'YTD' },
+    { key: 'All', label: 'All' }
+  ];
+
+  private readonly YEAR_START = SIM_YEAR_START;
+  private currentDate = '2025-01-01';
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -27,7 +43,6 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to holdings and current date changes
     combineLatest([
       this.holdingsService.holdings$,
       this.currentDateService.currentDate$
@@ -35,7 +50,9 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(([holdings, currentDate]) => {
       this.holdings = holdings;
-      this.calculateHoldingsValue(currentDate);
+      this.currentDate = currentDate;
+      this.calculateHoldingsValue();
+      this.recomputePerformance();
     });
   }
 
@@ -44,67 +61,58 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private calculateHoldingsValue(currentDate: string): void {
-    let totalValue = 0;
-    for (const holding of this.holdings) {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (asset) {
-        const currentPrice = this.holdingsService.getCurrentPrice(asset, currentDate);
-        totalValue += holding.shares * currentPrice;
-      }
-    }
-    this.holdingsValue = totalValue;
+  setRange(range: PerfRange): void {
+    this.range = range;
+    this.recomputePerformance();
   }
 
-  // Get 90-day performance for holdings overview
-  get90DayPerformance(): { percentage: number, amount: number } {
-    if (this.holdings.length === 0) {
-      return { percentage: 0, amount: 0 };
+  rangeLabel(): string {
+    switch (this.range) {
+      case '1M': return 'Past Month';
+      case '3M': return 'Past 3 Months';
+      case 'YTD': return 'Year to Date';
+      default: return 'All Time';
     }
+  }
 
-    const currentDate = this.currentDateService.getCurrentDate();
-    let totalCurrentValue = 0;
-    let totalPreviousValue = 0;
+  private calculateHoldingsValue(): void {
+    // holdings$ already prices each holding at the current date — just sum.
+    this.holdingsValue = this.holdings.reduce((sum, h) => sum + h.value, 0);
+  }
 
+  // Mark-to-market return on current holdings over the selected window.
+  private recomputePerformance(): void {
+    if (this.holdings.length === 0) {
+      this.performance = { percentage: 0, amount: 0 };
+      return;
+    }
+    const startDate = this.windowStart();
+    let current = 0;
+    let previous = 0;
     for (const holding of this.holdings) {
       const asset = this.dataService.getAssetById(holding.assetId);
       if (!asset) continue;
-
-      // Get current price
-      const currentPrice = this.holdingsService.getCurrentPrice(asset, currentDate);
-      const currentValue = holding.shares * currentPrice;
-      totalCurrentValue += currentValue;
-
-      // Get price from 90 days ago (approximately 3 months)
-      const currentDateObj = new Date(currentDate);
-      const ninetyDaysAgo = new Date(currentDateObj);
-      ninetyDaysAgo.setDate(currentDateObj.getDate() - 90);
-      const ninetyDaysAgoString = ninetyDaysAgo.toISOString().split('T')[0];
-
-      // Find the closest price point to 90 days ago
-      const previousPerformancePoint = asset.historicalPerformance
-        .filter((point: any) => point.date <= ninetyDaysAgoString)
-        .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
-
-      if (previousPerformancePoint) {
-        const previousValue = holding.shares * previousPerformancePoint.value;
-        totalPreviousValue += previousValue;
-      } else {
-        // If no historical data for 90 days ago, use current value (no change)
-        totalPreviousValue += currentValue;
-      }
+      current += holding.shares * this.holdingsService.getCurrentPrice(asset, this.currentDate);
+      previous += holding.shares * this.holdingsService.getCurrentPrice(asset, startDate);
     }
-
-    if (totalPreviousValue === 0) {
-      return { percentage: 0, amount: 0 };
+    if (previous === 0) {
+      this.performance = { percentage: 0, amount: 0 };
+      return;
     }
-
-    const percentageChange = ((totalCurrentValue - totalPreviousValue) / totalPreviousValue) * 100;
-    const amountChange = totalCurrentValue - totalPreviousValue;
-
-    return {
-      percentage: percentageChange,
-      amount: amountChange
+    this.performance = {
+      percentage: ((current - previous) / previous) * 100,
+      amount: current - previous
     };
+  }
+
+  private windowStart(): string {
+    if (this.range === 'YTD') return this.YEAR_START;
+    if (this.range === 'All') return '2024-01-01';
+    const d = new Date(this.currentDate + 'T00:00:00');
+    d.setMonth(d.getMonth() - (this.range === '1M' ? 1 : 3));
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 }

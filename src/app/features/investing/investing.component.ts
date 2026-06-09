@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule, MatTabGroup } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { Subscription, combineLatest } from 'rxjs';
 import { DataService } from '../../shared/services/data.service';
@@ -21,12 +22,20 @@ import { CurrentDateService } from '../../shared/services/current-date.service';
 import { getQuarterForDate, getPreviousQuarter } from '../../shared/data/quarters.data';
 import { TransferDialogComponent } from '../banking/transfer-dialog.component';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
-import { PlaceTradeComponent, TradeData } from './place-trade.component';
+import { EvergreenDatePipe, MONTHS_SHORT } from '../../shared/pipes/evergreen-date.pipe';
+import { DefineComponent } from '../../shared/components/define/define.component';
+import { PageIntroComponent } from '../../shared/components/page-intro/page-intro.component';
+import { NotificationsService } from '../../shared/services/notifications.service';
+import { TradeDialogComponent, TradeData } from './trade-dialog.component';
 import { HoldingsTotalsComponent } from '../../shared/components/holdings-totals/holdings-totals.component';
+import { LineChartComponent, LineSeries } from '../../shared/components/line-chart/line-chart.component';
 import { StatementDialogComponent, StatementDialogData } from './statement-dialog.component';
 import { AssetDetailsDialogComponent, AssetDetailsDialogData } from '../../shared/components/asset-details-dialog/asset-details-dialog.component';
 import { Chart, registerables } from 'chart.js';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout.component';
+import { OnboardingService } from '../../shared/services/onboarding.service';
+import { QUARTERS, SIM_YEAR_START } from '../../shared/data/quarters.data';
+import { ConnectBankDialogComponent } from '../../shared/components/connect-bank-dialog/connect-bank-dialog.component';
 
 export interface Holding {
   asset: string;
@@ -40,7 +49,7 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, FormsModule, PlaceTradeComponent, AssetTypePipe, HoldingsTotalsComponent],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, MatTooltipModule, FormsModule, AssetTypePipe, EvergreenDatePipe, HoldingsTotalsComponent, LineChartComponent, DefineComponent, PageIntroComponent],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })
@@ -60,6 +69,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   
   // Holding transactions for Activity tab
   holdingTransactions: any[] = [];
+
+  // Realized FIFO sales (short/long-term gains) keyed by assetId|date|time
+  private realizedSalesMap = new Map<string, { gain: number; term: string }>();
   
   // Asset type allocation percentages
   assetTypeAllocation: Array<{type: string, percentage: number, value: number}> = [];
@@ -80,8 +92,22 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   isDashboardTab: boolean = true;
   isHoldingsTab: boolean = false;
 
+  // Onboarding (Chunk 1): has the student linked their bank yet?
+  bankLinked: boolean = false;
+
   // Dynamic quarterly statements
   quarterlyStatements: any[] = [];
+
+  // Performance charts (Chunk 5)
+  compareLabels: string[] = [];
+  compareSeries: LineSeries[] = [];
+  portfolioSeries: LineSeries[] = [];
+
+  // Account summary (QA4) — shown on the Overview
+  accountValue = 0;
+  netContributions = 0;
+  accountGainLoss = 0;
+  accountGainLossPct = 0;
   
   private subscription = new Subscription();
 
@@ -91,6 +117,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     public holdingsService: HoldingsService, 
     public currentDateService: CurrentDateService, 
     private dialog: MatDialog,
+    public onboardingService: OnboardingService,
+    private notificationsService: NotificationsService,
     @Optional() private mainLayout: MainLayoutComponent
   ) {
     // Register Chart.js components
@@ -100,12 +128,20 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     // Initialize all assets for daily movers
     this.allAssets = this.dataService.assets;
-    
+
+    // Track bank-link onboarding state (Chunk 1)
+    this.subscription.add(
+      this.onboardingService.bankLinked$.subscribe(linked => {
+        this.bankLinked = linked;
+      })
+    );
+
     // Subscribe to current date
     this.subscription.add(
       this.currentDateService.currentDate$.subscribe(date => {
         this.currentDate = date;
-        
+        this.updatePerformanceCharts();
+
         // Re-render line chart if we have a selected holding
         if (this.selectedHolding) {
           setTimeout(() => {
@@ -121,6 +157,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       this.transactionsService.getCurrentBalance$('brokerage001').subscribe(balance => {
         this.brokerageBalance = balance;
         this.generateQuarterlyStatements();
+        // Cash is part of the allocation lens, so recompute when it changes.
+        this.calculateAssetTypeAllocation();
       })
     );
 
@@ -144,6 +182,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         this.holdings = holdings;
         this.calculateAssetTypeAllocation();
         this.generateQuarterlyStatements();
+        this.updatePerformanceCharts();
       })
     );
 
@@ -174,6 +213,12 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         
         // Update recent activity (last 3 transactions)
         this.recentActivity = sortedTransactions.slice(0, 3);
+
+        // Map realized sales (FIFO short/long-term gains) for the Activity feed
+        this.realizedSalesMap.clear();
+        for (const sale of this.holdingsService.getRealizedSales(currentDate)) {
+          this.realizedSalesMap.set(`${sale.assetId}|${sale.date}|${sale.time}`, { gain: sale.gain, term: sale.term });
+        }
       })
     );
   }
@@ -191,12 +236,12 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('holdings length:', this.holdings?.length);
     
     // Update tab tracking
-    this.isDashboardTab = event.index === 0; // Dashboard is the first tab (index 0)
-    this.isHoldingsTab = event.index === 2; // Holdings is the third tab (index 2)
-    
+    this.isDashboardTab = event.index === 0; // Overview is the first tab
+    this.isHoldingsTab = event.index === 1; // Holdings is the second tab
+
     // Update the fake URL in web browser layout
     if (this.mainLayout) {
-      const tabNames = ['dashboard', 'place-trade', 'holdings', 'activity', 'profile', 'statements'];
+      const tabNames = ['overview', 'holdings', 'activity', 'statements'];
       const tabName = tabNames[event.index] || '';
       this.mainLayout.updateInvestingTab(tabName);
     }
@@ -357,6 +402,40 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     return maxPrice;
   }
 
+  // Build data for the compare-assets and portfolio-value charts (Chunk 5)
+  private updatePerformanceCharts(): void {
+    const dates = (this.dataService.assets[0]?.historicalPerformance || [])
+      .map(p => p.date)
+      .filter(d => d <= this.currentDate);
+
+    this.compareLabels = dates.map(d => MONTHS_SHORT[parseInt(d.slice(5, 7), 10) - 1]);
+    // Normalize each asset to % change from its first visible point — raw prices sit
+    // at different levels ($44–$116), which flattens every line on a shared $ axis.
+    this.compareSeries = this.dataService.assets.map(a => {
+      const prices = dates.map(d => this.holdingsService.getCurrentPrice(a, d));
+      const base = prices[0] || 1;
+      return {
+        label: a.name,
+        data: prices.map(p => ((p / base) - 1) * 100)
+      };
+    });
+
+    this.portfolioSeries = [{
+      label: 'Portfolio Value',
+      data: dates.map(d => this.holdingsService.getInvestmentsValueAtDate(d))
+    }];
+  }
+
+  // Account-value summary for the Overview (QA4): value vs. what you put in.
+  private recomputeAccountSummary(): void {
+    this.accountValue = this.holdingsValue + this.brokerageBalance;
+    this.netContributions = this.transactionsService.getLedgerAsOf(this.currentDate)
+      .filter(t => t.account === 'brokerage001' && t.type === 'transaction')
+      .reduce((sum, t) => sum + t.amount, 0);
+    this.accountGainLoss = this.accountValue - this.netContributions;
+    this.accountGainLossPct = this.netContributions > 0 ? (this.accountGainLoss / this.netContributions) * 100 : 0;
+  }
+
   private initializeLineChart(): void {
     console.log('initializeLineChart called');
     console.log('lineChartCanvas:', this.lineChartCanvas);
@@ -464,8 +543,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     const labels = historicalData.map((point: any) => {
       // Format date string as "MM/YYYY" for monthly display
       const [year, month] = point.date.split('-');
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${monthNames[parseInt(month) - 1]} ${year}`;
+      return MONTHS_SHORT[parseInt(month) - 1];
     });
     const data = historicalData.map((point: any) => point.value);
     
@@ -505,8 +583,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '600px',
       maxHeight: '90vh',
-      data: { 
-        maxAmount: this.brokerageBalance,
+      data: {
+        maxAmount: this.transactionsService.getMaxWithdrawable('brokerage001', this.currentDate),
         currentDate: this.currentDate,
         transferDirection: 'to-banking' as const,
         sourceBalance: this.brokerageBalance, // Investment account balance
@@ -525,8 +603,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '600px',
       maxHeight: '90vh',
-      data: { 
-        maxAmount: this.bankingBalance, // Use actual banking balance
+      data: {
+        maxAmount: this.transactionsService.getMaxWithdrawable('banking001', this.currentDate),
         currentDate: this.currentDate,
         transferDirection: 'to-brokerage' as const,
         sourceBalance: this.bankingBalance, // Bank account balance
@@ -537,6 +615,42 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.amount > 0) {
             this.transactionsService.addTransferTransaction(result.amount, this.currentDate);
+            this.onboardingService.setHasFunded(true);
+      }
+    });
+  }
+
+  openConnectBankDialog(): void {
+    const dialogRef = this.dialog.open(ConnectBankDialogComponent, {
+      width: '480px',
+      maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(connected => {
+      if (connected === true) {
+        this.onboardingService.setBankLinked(true);
+      }
+    });
+  }
+
+  openTradeDialog(action: 'buy' | 'sell'): void {
+    const dialogRef = this.dialog.open(TradeDialogComponent, {
+      width: '480px',
+      maxHeight: '90vh',
+      data: {
+        action,
+        brokerageBalance: this.brokerageBalance,
+        currentDate: this.currentDate,
+        holdings: this.holdings
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((trade: TradeData | undefined) => {
+      if (trade) {
+        this.processTrade(trade);
+        if (this.tabGroup) {
+          this.tabGroup.selectedIndex = 2; // jump to Activity to show the trade
+        }
       }
     });
   }
@@ -595,6 +709,11 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       asset.type
     );
     
+    this.notificationsService.add(
+      `${tradeData.action} order filled: ${tradeData.shares.toFixed(4)} shares of ${asset.name}`,
+      '/investing',
+      this.currentDate
+    );
     console.log('Trade processed successfully');
   }
 
@@ -608,6 +727,11 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   getAssetType(assetId: string): string {
     const asset = this.dataService.getAssetById(assetId);
     return asset ? asset.type : '';
+  }
+
+  // Realized gain + short/long-term flag for a sell transaction (null for buys)
+  getRealizedGain(tx: any): { gain: number; term: string } | null {
+    return this.realizedSalesMap.get(`${tx.assetId}|${tx.date}|${tx.time}`) || null;
   }
 
   // Get running balance for this asset up to this transaction
@@ -646,38 +770,27 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Calculate asset type allocation percentages
   calculateAssetTypeAllocation(): void {
-    // Get all asset types from the centralized service
-    const allAssetTypes = this.dataService.getAllAssetTypes();
-    
-    // Initialize all types with 0 values
-    const typeTotals: { [type: string]: number } = {};
-    allAssetTypes.forEach(type => {
-      typeTotals[type] = 0;
-    });
-    
-    let totalValue = 0;
+    // Bucket holdings into the Stocks / Bonds / Cash lens (target-date funds split
+    // via their stockBondSplit). Cash is the brokerage settlement balance.
+    const { stocks, bonds } = this.dataService.getAssetClassTotals(this.holdings);
 
-    // Calculate totals for holdings that exist
-    for (const holding of this.holdings) {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (asset) {
-        const type = asset.type;
-        typeTotals[type] += holding.value;
-        totalValue += holding.value;
-      }
-    }
+    // Holdings Value is the invested amount (Stocks + Bonds); cash is shown separately.
+    this.holdingsValue = stocks + bonds;
 
-    // Set the total holdings value
-    this.holdingsValue = totalValue;
+    const cash = this.brokerageBalance;
+    const totalWithCash = this.holdingsValue + cash;
 
-    // Calculate percentages and create allocation array for all types
-    this.assetTypeAllocation = Array.from(allAssetTypes)
-      .map(type => ({
-        type,
-        value: typeTotals[type],
-        percentage: totalValue > 0 ? (typeTotals[type] / totalValue) * 100 : 0
-      }))
-      .sort((a, b) => b.value - a.value); // Sort by value descending
+    this.assetTypeAllocation = [
+      { type: 'Stocks', value: stocks },
+      { type: 'Bonds', value: bonds },
+      { type: 'Cash', value: cash }
+    ].map(entry => ({
+      type: entry.type,
+      value: entry.value,
+      percentage: totalWithCash > 0 ? (entry.value / totalWithCash) * 100 : 0
+    }));
+
+    this.recomputeAccountSummary();
     
     // Update chart if it exists and we're on dashboard tab and there are holdings
     if (this.chart && this.isDashboardTab && this.holdingsValue > 0) {
@@ -694,17 +807,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Handle trade completion - navigate to Activity tab
-  onTradeCompleted(): void {
-    // Switch to Activity tab (index 2: Dashboard=0, Place Trade=1, Activity=2)
-    this.tabGroup.selectedIndex = 2;
-  }
-
-  // Navigate to Activity tab from dashboard
+  // Navigate to Activity tab (tab order: Overview=0, Holdings=1, Activity=2, Statements=3)
   goToActivityTab(): void {
-    // Switch to Activity tab (index 2: Dashboard=0, Place Trade=1, Activity=2)
     this.tabGroup.selectedIndex = 2;
-    // Scroll to top of the container
     this.scrollToTop();
   }
 
@@ -832,15 +937,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // Navigation methods
-  goToProfileTab(): void {
-    this.tabGroup.selectedIndex = 4; // Profile tab is index 4
-    // Scroll to top of the container
-    this.scrollToTop();
-  }
-
   goToHoldingsTab(): void {
-    this.tabGroup.selectedIndex = 2; // Holdings tab is index 2
-    // Scroll to top of the container
+    this.tabGroup.selectedIndex = 1; // Holdings tab is index 1
     this.scrollToTop();
   }
 
@@ -877,17 +975,21 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private generateQuarterlyStatements(): void {
-    const quarters = [
-      { start: '2024-10-01', end: '2024-12-31', label: 'Q4 2024', period: 'October 1 - December 31, 2024' },
-      { start: '2025-01-01', end: '2025-03-31', label: 'Q1 2025', period: 'January 1 - March 31, 2025' },
-      { start: '2025-04-01', end: '2025-06-30', label: 'Q2 2025', period: 'April 1 - June 30, 2025' },
-      { start: '2025-07-01', end: '2025-09-30', label: 'Q3 2025', period: 'July 1 - September 30, 2025' },
-      { start: '2025-10-01', end: '2025-12-31', label: 'Q4 2025', period: 'October 1 - December 31, 2025' }
-    ];
+    // Derive the statement quarters from the single quarter source (quarters.data):
+    // the playable quarters only (the Opening period and the single-day Year-End
+    // Review get no statements).
+    const fmt = new EvergreenDatePipe();
+    const quarters = QUARTERS.quarters
+      .filter(q => q.startDate >= SIM_YEAR_START && q.startDate !== q.endDate)
+      .map(q => ({
+        start: q.startDate,
+        end: q.endDate,
+        label: q.label,
+        period: `${fmt.transform(q.startDate)} – ${fmt.transform(q.endDate)}`
+      }));
 
     this.quarterlyStatements = quarters
       .filter(quarter => quarter.end <= this.currentDate) // Only show quarters up to current date
-      .slice(1) // Always hide the first quarter (Q4 2024)
       .map(quarter => ({
         ...quarter,
         quarter: quarter.label,

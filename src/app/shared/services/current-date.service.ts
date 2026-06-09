@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { QUARTERS } from '../data/quarters.data';
+import { QUARTERS, SIM_YEAR_START } from '../data/quarters.data';
 
 @Injectable({
   providedIn: 'root'
@@ -53,8 +53,8 @@ export class CurrentDateService {
       console.warn('Error reading current date from localStorage:', error);
     }
     
-    // Default to Quarter 1 (January 1, 2025)
-    return '2025-01-01';
+    // Default to the first playable quarter
+    return SIM_YEAR_START;
   }
 
   /**

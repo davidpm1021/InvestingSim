@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
-import { SplashComponent } from './pages/splash/splash.component';
+import { DesktopComponent } from './pages/desktop/desktop.component';
 import { MainLayoutComponent } from './shared/layout/main-layout/main-layout.component';
-import { HomeComponent } from './features/home/home.component';
 import { BankingComponent } from './features/banking/banking.component';
 import { InvestingComponent } from './features/investing/investing.component';
 import { AdminComponent } from './features/admin/admin.component';
@@ -10,16 +9,12 @@ import { BankSimComponent } from './features/bank-sim/bank-sim.component';
 export const routes: Routes = [
   {
     path: '',
-    component: SplashComponent
+    component: DesktopComponent
   },
   {
     path: '',
     component: MainLayoutComponent,
     children: [
-      {
-        path: 'home',
-        component: HomeComponent
-      },
       {
         path: 'banking',
         component: BankingComponent
@@ -33,6 +28,7 @@ export const routes: Routes = [
         component: AdminComponent
       },
       {
+        // Kept for teachers (reachable by direct URL); not surfaced in the student flow.
         path: 'bank-sim',
         component: BankSimComponent
       }

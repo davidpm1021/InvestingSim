@@ -2,27 +2,33 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { DataService } from '../../shared/services/data.service';
-import { TransactionsService } from '../../shared/services/transactions.service';
+import { TransactionsService, Transaction } from '../../shared/services/transactions.service';
 import { HoldingsService } from '../../shared/services/holdings.service';
+import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
+import { EvergreenDatePipe } from '../../shared/pipes/evergreen-date.pipe';
+import { DefineComponent } from '../../shared/components/define/define.component';
+import { SIM_YEAR_START } from '../../shared/data/quarters.data';
 
 export interface StatementDialogData {
-  quarter: any;
+  quarter: any; // { start, end, label, ... }
   currentDate: string;
 }
 
 @Component({
   selector: 'app-statement-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatCardModule, MatIconModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, AssetTypePipe, EvergreenDatePipe, DefineComponent],
   templateUrl: './statement-dialog.component.html',
   styleUrl: './statement-dialog.component.scss'
 })
 export class StatementDialogComponent implements OnInit {
-  statement: any = {};
-  currentDate: string = '';
+  model: any = null;
+  showHowToRead = false;
+
+  // The simulation "year" begins at the first playable quarter (evergreen: no year shown).
+  private readonly YEAR_START = SIM_YEAR_START;
 
   constructor(
     public dialogRef: MatDialogRef<StatementDialogComponent>,
@@ -33,224 +39,142 @@ export class StatementDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentDate = this.data.currentDate;
-    this.statement = this.generateStatementForQuarter(this.data.quarter);
+    this.model = this.buildStatement(this.data.quarter);
   }
 
   close(): void {
     this.dialogRef.close();
   }
 
-  private generateStatementForQuarter(quarter: any): any {
-    // Get all transactions for this quarter
-    const allTransactions = this.transactionsService.getAllTransactions();
-    const quarterTransactions = allTransactions
-      .filter((tx: any) => tx.date >= quarter.start && tx.date <= quarter.end);
+  private buildStatement(quarter: any): any {
+    const qStart: string = quarter.start;
+    const qEnd: string = quarter.end;
+    const prevEnd = this.dayBefore(qStart);
+    const yearPrevEnd = this.dayBefore(this.YEAR_START);
 
-    // Get trading transactions
-    const trades = quarterTransactions
-      .filter((tx: any) => tx.type === 'trade')
-      .map((tx: any) => ({
-        date: tx.date,
-        action: tx.description.includes('Purchased') ? 'Buy' : 'Sold',
-        asset: this.extractAssetName(tx.description),
-        shares: this.extractShares(tx.description),
-        price: this.extractPrice(tx.description),
-        amount: Math.abs(tx.amount)
-      }));
+    // Account balances (the brokerage account)
+    const startCash = this.transactionsService.getBalanceAtDate('brokerage001', prevEnd);
+    const endCash = this.transactionsService.getBalanceAtDate('brokerage001', qEnd);
+    const startInv = this.holdingsService.getInvestmentsValueAtDate(prevEnd);
+    const endInv = this.holdingsService.getInvestmentsValueAtDate(qEnd);
+    const startValue = startCash + startInv;
+    const endValue = endCash + endInv;
 
-    // Calculate beginning balances (at end of previous quarter)
-    const beginningCashBalance = this.calculateBeginningCashBalance(quarter.start);
-    const beginningHoldingsValue = this.calculateBeginningHoldingsValue(quarter.start);
-    
-    // Calculate ending balances (at end of quarter)
-    const endingCashBalance = this.transactionsService.getBalanceAtDate('brokerage001', quarter.end);
-    const endingHoldingsValue = this.calculateHoldingsValueAtDate(quarter.end);
+    const ytdStartCash = this.transactionsService.getBalanceAtDate('brokerage001', yearPrevEnd);
+    const ytdStartInv = this.holdingsService.getInvestmentsValueAtDate(yearPrevEnd);
+    const ytdStartValue = ytdStartCash + ytdStartInv;
 
-    // Calculate dividends and interest (mock for now - could be enhanced with actual dividend data)
-    const dividends = this.calculateDividendsForQuarter(quarter);
-    const interest = this.calculateInterestForQuarter(quarter);
+    // Cash flows for the quarter and year-to-date
+    const ledger = this.transactionsService.getLedgerAsOf(qEnd).filter(t => t.account === 'brokerage001');
+    const qActivity = ledger.filter(t => t.date >= qStart && t.date <= qEnd);
+    const ytdActivity = ledger.filter(t => t.date >= this.YEAR_START && t.date <= qEnd);
+    const qFlow = this.summarizeFlow(qActivity);
+    const ytdFlow = this.summarizeFlow(ytdActivity);
 
-    // Calculate assets performance for the quarter
-    const assets = this.calculateAssetsPerformance(quarter);
+    const moneyAddedQ = qFlow.deposits - qFlow.withdrawals;
+    const moneyAddedYtd = ytdFlow.deposits - ytdFlow.withdrawals;
 
-    // Calculate total gain/loss from individual assets
-    const totalAssetsGainLoss = assets.reduce((sum, asset) => sum + asset.gainLoss, 0);
-    
-    // Calculate total return percentage based on beginning holdings value
-    const totalAssetsReturn = beginningHoldingsValue > 0 ? (totalAssetsGainLoss / beginningHoldingsValue) * 100 : 0;
-
-    // Calculate performance totals
-    const performance = {
-      holdingsGainLoss: totalAssetsGainLoss,
-      dividends: dividends,
-      interest: interest,
-      total: totalAssetsGainLoss + dividends + interest,
-      totalReturn: totalAssetsReturn
+    // Investment gain/loss is the residual, so Starting + Added + Gain/Loss = Ending always reconciles.
+    const changeInValue = {
+      startingBalance: { q: startValue, ytd: ytdStartValue },
+      moneyAdded: { q: moneyAddedQ, ytd: moneyAddedYtd },
+      gainLoss: { q: endValue - startValue - moneyAddedQ, ytd: endValue - ytdStartValue - moneyAddedYtd },
+      endingBalance: { q: endValue, ytd: endValue }
     };
 
+    const cashActivity = {
+      startingCash: { q: startCash, ytd: ytdStartCash },
+      deposits: { q: qFlow.deposits, ytd: ytdFlow.deposits },
+      withdrawals: { q: qFlow.withdrawals, ytd: ytdFlow.withdrawals },
+      purchased: { q: qFlow.purchased, ytd: ytdFlow.purchased },
+      sold: { q: qFlow.sold, ytd: ytdFlow.sold },
+      dividends: { q: qFlow.dividends, ytd: ytdFlow.dividends },
+      interest: { q: qFlow.interest, ytd: ytdFlow.interest },
+      endingCash: { q: endCash, ytd: endCash }
+    };
+
+    const depositsWithdrawals = qActivity
+      .filter(t => t.type === 'transaction')
+      .map(t => ({
+        date: t.date,
+        type: t.amount >= 0 ? 'Deposit' : 'Withdrawal',
+        description: t.description,
+        amount: t.amount
+      }));
+
+    const holdings = this.holdingsService.getHoldingDetailsAtDate(qEnd).map(h => ({
+      ...h,
+      pctOfPortfolio: endValue > 0 ? (h.value / endValue) * 100 : 0
+    }));
+
+    const { stocks, bonds } = this.dataService.getAssetClassTotals(holdings);
+    const breakdown = [
+      { label: 'Stocks', value: stocks, pct: endValue > 0 ? (stocks / endValue) * 100 : 0 },
+      { label: 'Bonds', value: bonds, pct: endValue > 0 ? (bonds / endValue) * 100 : 0 },
+      { label: 'Cash', value: endCash, pct: endValue > 0 ? (endCash / endValue) * 100 : 0 }
+    ];
+
+    const trades = this.holdingsService.getAllHoldingTransactions()
+      .filter(t => t.date >= qStart && t.date <= qEnd)
+      .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
+      .map(t => {
+        const asset = this.dataService.getAssetById(t.assetId);
+        const total = t.shares * t.price;
+        return {
+          date: t.date,
+          action: t.action === 'buy' ? 'Buy' : 'Sell',
+          name: asset ? asset.name : t.assetId,
+          shares: t.shares,
+          price: t.price,
+          total: t.action === 'buy' ? -total : total
+        };
+      });
+
     return {
-      quarter: quarter.label,
-      period: quarter.period,
-      beginningCashBalance,
-      beginningHoldingsValue,
-      endingCashBalance,
-      endingHoldingsValue,
-      performance,
-      assets,
+      periodStart: qStart,
+      periodEnd: qEnd,
+      generated: this.dayAfter(qEnd),
+      changeInValue,
+      cashAvailable: { start: startCash, end: endCash },
+      investments: { start: startInv, end: endInv },
+      cashActivity,
+      depositsWithdrawals,
+      holdings,
+      breakdown,
       trades
     };
   }
 
-  private extractAssetName(description: string): string {
-    // Extract asset name from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
-    const match = description.match(/of ([^(]+)/);
-    return match ? match[1].trim() : 'Unknown Asset';
-  }
-
-  private extractShares(description: string): number {
-    // Extract shares from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
-    const match = description.match(/(\d+\.?\d*)\s+shares/);
-    return match ? parseFloat(match[1]) : 0;
-  }
-
-  private extractPrice(description: string): number {
-    // Extract price from description like "Purchased 0.36 shares of Apple Inc. (Stock) at $120.00"
-    const match = description.match(/\$(\d+\.?\d*)/);
-    return match ? parseFloat(match[1]) : 0;
-  }
-
-  private calculateHoldingsValueAtDate(date: string): number {
-    // Get holdings at the specified date
-    const holdingsAtDate = this.holdingsService.getHoldingsAtDate(date);
-    
-    // Calculate total holdings value
-    let holdingsValue = 0;
-    holdingsAtDate.forEach(holding => {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (asset) {
-        const price = this.holdingsService.getCurrentPrice(asset, date);
-        holdingsValue += holding.shares * price;
+  private summarizeFlow(activity: Transaction[]): { deposits: number; withdrawals: number; purchased: number; sold: number; dividends: number; interest: number; } {
+    let deposits = 0, withdrawals = 0, purchased = 0, sold = 0, dividends = 0, interest = 0;
+    for (const t of activity) {
+      if (t.type === 'transaction') {
+        if (t.amount >= 0) { deposits += t.amount; } else { withdrawals += -t.amount; }
+      } else if (t.type === 'trade') {
+        if (t.amount < 0) { purchased += t.amount; } else { sold += t.amount; }
+      } else if (t.type === 'income') {
+        dividends += t.amount;
+      } else if (t.type === 'interest') {
+        interest += t.amount;
       }
-    });
-    
-    return holdingsValue;
+    }
+    return { deposits, withdrawals, purchased, sold, dividends, interest };
   }
 
-  private calculateDividendsForQuarter(quarter: any): number {
-    // Mock dividend calculation - could be enhanced with actual dividend data
-    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
-    let totalDividends = 0;
-    
-    holdingsAtEnd.forEach(holding => {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (asset && asset.dividendYield) {
-        const price = this.holdingsService.getCurrentPrice(asset, quarter.end);
-        const quarterlyDividend = (asset.dividendYield / 4) * holding.shares * price;
-        totalDividends += quarterlyDividend;
-      }
-    });
-    
-    return totalDividends;
+  private dayBefore(dateString: string): string {
+    return this.shiftDate(dateString, -1);
   }
 
-  private calculateInterestForQuarter(quarter: any): number {
-    // Mock interest calculation for bond funds
-    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
-    let totalInterest = 0;
-    
-    holdingsAtEnd.forEach(holding => {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (asset && asset.interestRate) {
-        const price = this.holdingsService.getCurrentPrice(asset, quarter.end);
-        const quarterlyInterest = (asset.interestRate / 4) * holding.shares * price;
-        totalInterest += quarterlyInterest;
-      }
-    });
-    
-    return totalInterest;
+  private dayAfter(dateString: string): string {
+    return this.shiftDate(dateString, 1);
   }
 
-  private calculateAssetsPerformance(quarter: any): any[] {
-    // Get holdings at start and end of quarter
-    const holdingsAtStart = this.holdingsService.getHoldingsAtDate(quarter.start);
-    const holdingsAtEnd = this.holdingsService.getHoldingsAtDate(quarter.end);
-    
-    // Calculate the first day of the next quarter for end price
-    const nextQuarterStart = this.getNextQuarterStart(quarter.end);
-    
-    // Create a map of holdings at end for easy lookup
-    const endHoldingsMap = new Map();
-    holdingsAtEnd.forEach(holding => {
-      endHoldingsMap.set(holding.assetId, holding);
-    });
-    
-    // Calculate performance for each asset that was held at the end of the quarter
-    const assetsPerformance = holdingsAtEnd.map(holding => {
-      const asset = this.dataService.getAssetById(holding.assetId);
-      if (!asset) return null;
-      
-      // Get price at start of quarter and first day of next quarter
-      const startPrice = this.holdingsService.getCurrentPrice(asset, quarter.start);
-      const endPrice = this.holdingsService.getCurrentPrice(asset, nextQuarterStart);
-      
-      // Calculate gain/loss
-      const gainLoss = (endPrice - startPrice) * holding.shares;
-      const gainLossPercent = startPrice > 0 ? ((endPrice - startPrice) / startPrice) * 100 : 0;
-      
-      return {
-        assetId: holding.assetId,
-        assetName: asset.name,
-        shares: holding.shares,
-        startPrice: startPrice,
-        endPrice: endPrice,
-        gainLoss: gainLoss,
-        gainLossPercent: gainLossPercent
-      };
-    }).filter(asset => asset !== null);
-    
-    return assetsPerformance;
-  }
-
-  private getNextQuarterStart(dateString: string): string {
-    // Convert date string to Date object, add one day, and return as string
-    const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
-    date.setDate(date.getDate() + 1);
-    
-    // Format back to YYYY-MM-DD string
+  private shiftDate(dateString: string, days: number): string {
+    const date = new Date(dateString + 'T00:00:00');
+    date.setDate(date.getDate() + days);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}`;
-  }
-
-  private calculateBeginningCashBalance(quarterStart: string): number {
-    // Get the last day of the previous quarter
-    const lastDayOfPreviousQuarter = this.getDayBefore(quarterStart);
-    
-    // Return the cash balance at the end of the previous quarter
-    return this.transactionsService.getBalanceAtDate('brokerage001', lastDayOfPreviousQuarter);
-  }
-
-  private calculateBeginningHoldingsValue(quarterStart: string): number {
-    // Get the last day of the previous quarter
-    const lastDayOfPreviousQuarter = this.getDayBefore(quarterStart);
-    
-    // Return the holdings value at the end of the previous quarter
-    return this.calculateHoldingsValueAtDate(lastDayOfPreviousQuarter);
-  }
-
-  private getDayBefore(dateString: string): string {
-    // Convert date string to Date object, subtract one day, and return as string
-    const date = new Date(dateString);
-    date.setDate(date.getDate() - 1);
-    
-    // Format back to YYYY-MM-DD string
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
     return `${year}-${month}-${day}`;
   }
 }

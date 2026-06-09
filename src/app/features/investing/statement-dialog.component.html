@@ -1,136 +1,219 @@
-<div class="statement-dialog">
+<div class="statement" *ngIf="model">
+  <!-- Header -->
   <div class="statement-header">
-    <div class="header-content">
-      <div class="header-info">
-        <h1 class="statement-title">{{ statement.quarter }} Statement</h1>
-        <p class="period">{{ statement.period }}</p>
-        <p class="generated-date">Generated on {{ currentDate | date:'MMMM d, yyyy' }}</p>
-      </div>
-      <button mat-icon-button (click)="close()" class="close-button">
-        <mat-icon>close</mat-icon>
-      </button>
+    <div class="statement-titles">
+      <h2 class="statement-title">Quarterly Statement</h2>
+      <p class="statement-period">{{ model.periodStart | evergreenDate }} – {{ model.periodEnd | evergreenDate }}</p>
     </div>
+    <button mat-icon-button class="close-button" (click)="close()" aria-label="Close statement">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 
-  <div class="statement-content">
-    <!-- Account Summary Section -->
-    <div class="summary-section">
-      <h3>Account Summary</h3>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <label>Cash Balance:</label>
-          <div class="summary-values">
-            <span class="beginning">Beginning: ${{ statement.beginningCashBalance | number:'1.2-2' }}</span>
-            <span class="ending">Ending: ${{ statement.endingCashBalance | number:'1.2-2' }}</span>
-          </div>
-        </div>
-        <div class="summary-item">
-          <label>Holdings:</label>
-          <div class="summary-values">
-            <span class="beginning">Beginning: ${{ statement.beginningHoldingsValue | number:'1.2-2' }}</span>
-            <span class="ending">Ending: ${{ statement.endingHoldingsValue | number:'1.2-2' }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="statement-meta">
+    <div><span class="meta-label">Account name</span><span class="meta-value">Sample Student Account</span></div>
+    <div><span class="meta-label">Account number</span><span class="meta-value">•••• 1234</span></div>
+    <div><span class="meta-label">Account type</span><span class="meta-value">Individual, Cash</span></div>
+    <div><span class="meta-label">Generated</span><span class="meta-value">{{ model.generated | evergreenDate }}</span></div>
+  </div>
 
-    <!-- Performance Section -->
-    <div class="performance-section">
-      <h3>Performance</h3>
-      <div class="performance-table">
-        <div class="performance-row">
-          <div class="performance-label">Holdings</div>
-          <div class="performance-amount" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
-            {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
-          </div>
-        </div>
-        <div class="performance-row">
-          <div class="performance-label">Interest Earned</div>
-          <div class="performance-amount positive">+${{ statement.performance.interest | number:'1.2-2' }}</div>
-        </div>
-        <div class="performance-row">
-          <div class="performance-label">Dividends Earned</div>
-          <div class="performance-amount positive">+${{ statement.performance.dividends | number:'1.2-2' }}</div>
-        </div>
-        <div class="performance-row total">
-          <div class="performance-label">Total</div>
-          <div class="performance-amount" [class.positive]="statement.performance.total > 0" [class.negative]="statement.performance.total < 0">
-            {{ statement.performance.total > 0 ? '+' : '' }}${{ statement.performance.total | number:'1.2-2' }}
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- How to read this statement -->
+  <div class="how-to-read">
+    <button mat-button color="primary" (click)="showHowToRead = !showHowToRead">
+      <mat-icon>{{ showHowToRead ? 'expand_less' : 'help_outline' }}</mat-icon>
+      How to read this statement
+    </button>
+    <p *ngIf="showHowToRead" class="how-to-read-body">
+      <strong>Change in Account Value</strong> shows how your total account moved this quarter and year-to-date.
+      <strong>Cash Available</strong> is your settlement cash; <strong>Investments</strong> is the value of what you own.
+      <strong>Cash Activity</strong> reconciles every dollar in and out of your settlement cash. Your gains aren't real
+      until you sell — see <strong>Your Investments</strong> for what you paid versus what each holding is worth now.
+    </p>
+  </div>
 
-    <!-- Assets Section -->
-    <div class="assets-section">
-      <h3>Assets</h3>
-      <div *ngIf="statement.assets.length === 0" class="no-data">
-        No assets held during this quarter.
-      </div>
-      <div *ngIf="statement.assets.length > 0" class="assets-list">
-        <div class="asset-header">
-          <div class="header-cell">Asset</div>
-          <div class="header-cell">Shares</div>
-          <div class="header-cell">Start Price</div>
-          <div class="header-cell">End Price</div>
-          <div class="header-cell">Gain/Loss</div>
-          <div class="header-cell">Gain/Loss %</div>
-        </div>
-        <div *ngFor="let asset of statement.assets" class="asset-item">
-          <div class="asset-name">{{ asset.assetName }}</div>
-          <div class="asset-shares">{{ asset.shares | number:'1.2-2' }}</div>
-          <div class="asset-start-price">${{ asset.startPrice | number:'1.2-2' }}</div>
-          <div class="asset-end-price">${{ asset.endPrice | number:'1.2-2' }}</div>
-          <div class="asset-gain-loss" [class.positive]="asset.gainLoss > 0" [class.negative]="asset.gainLoss < 0">
-            {{ asset.gainLoss > 0 ? '+' : '' }}${{ asset.gainLoss | number:'1.2-2' }}
-          </div>
-          <div class="asset-gain-loss-percent" [class.positive]="asset.gainLossPercent > 0" [class.negative]="asset.gainLossPercent < 0">
-            {{ asset.gainLossPercent > 0 ? '+' : '' }}{{ asset.gainLossPercent | number:'1.2-2' }}%
-          </div>
-        </div>
-        <div class="asset-total">
-          <div class="asset-name">Total</div>
-          <div class="asset-shares"></div>
-          <div class="asset-start-price"></div>
-          <div class="asset-end-price"></div>
-          <div class="asset-gain-loss" [class.positive]="statement.performance.holdingsGainLoss > 0" [class.negative]="statement.performance.holdingsGainLoss < 0">
-            {{ statement.performance.holdingsGainLoss > 0 ? '+' : '' }}${{ statement.performance.holdingsGainLoss | number:'1.2-2' }}
-          </div>
-          <div class="asset-gain-loss-percent">
-            -
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Change in Account Value -->
+  <section class="statement-section">
+    <h3>Change in Account Value</h3>
+    <table class="statement-table two-col">
+      <thead>
+        <tr><th></th><th>This Quarter</th><th>Year to Date</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Starting balance</td>
+          <td>{{ model.changeInValue.startingBalance.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.changeInValue.startingBalance.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Money you added</td>
+          <td>{{ model.changeInValue.moneyAdded.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.changeInValue.moneyAdded.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Investment gain/loss</td>
+          <td [class.pos]="model.changeInValue.gainLoss.q >= 0" [class.neg]="model.changeInValue.gainLoss.q < 0">
+            {{ model.changeInValue.gainLoss.q | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+          <td [class.pos]="model.changeInValue.gainLoss.ytd >= 0" [class.neg]="model.changeInValue.gainLoss.ytd < 0">
+            {{ model.changeInValue.gainLoss.ytd | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+        </tr>
+        <tr class="total-row">
+          <td>Ending balance</td>
+          <td>{{ model.changeInValue.endingBalance.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.changeInValue.endingBalance.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-    <!-- Trades Section -->
-    <div class="trades-section">
-      <h3>Trades</h3>
-      <div *ngIf="statement.trades.length === 0" class="no-data">
-        No trades during this quarter.
+  <!-- Cash Available + Investments boxes -->
+  <section class="statement-section">
+    <div class="summary-boxes">
+      <div class="summary-box">
+        <div class="box-label"><app-define term="Cash Available"></app-define></div>
+        <div class="box-value">{{ model.cashAvailable.end | currency:'USD':'symbol':'1.2-2' }}</div>
+        <div class="box-sub">Starting {{ model.cashAvailable.start | currency:'USD':'symbol':'1.2-2' }} → Ending {{ model.cashAvailable.end | currency:'USD':'symbol':'1.2-2' }}</div>
       </div>
-      <div *ngIf="statement.trades.length > 0" class="trades-list">
-        <div class="trade-header">
-          <div class="header-cell">Date</div>
-          <div class="header-cell">Action</div>
-          <div class="header-cell">Asset</div>
-          <div class="header-cell">Shares</div>
-          <div class="header-cell">Price</div>
-          <div class="header-cell">Amount</div>
-        </div>
-        <div *ngFor="let trade of statement.trades" class="trade-item">
-          <div class="trade-date">{{ trade.date | date:'M/d/yyyy' }}</div>
-          <div class="trade-action" [class.buy]="trade.action === 'Buy'" [class.sell]="trade.action === 'Sold'">
-            {{ trade.action }}
-          </div>
-          <div class="trade-asset">{{ trade.asset }}</div>
-          <div class="trade-shares">{{ trade.shares | number:'1.2-2' }}</div>
-          <div class="trade-price">${{ trade.price | number:'1.2-2' }}</div>
-          <div class="trade-amount" [class.positive]="trade.action === 'Sold'" [class.negative]="trade.action === 'Buy'">
-            {{ trade.action === 'Sold' ? '+' : '-' }}${{ trade.amount | number:'1.2-2' }}
-          </div>
-        </div>
+      <div class="summary-box">
+        <div class="box-label"><app-define term="Investments"></app-define></div>
+        <div class="box-value">{{ model.investments.end | currency:'USD':'symbol':'1.2-2' }}</div>
+        <div class="box-sub">Starting {{ model.investments.start | currency:'USD':'symbol':'1.2-2' }} → Ending {{ model.investments.end | currency:'USD':'symbol':'1.2-2' }}</div>
       </div>
     </div>
+  </section>
+
+  <!-- Cash Activity -->
+  <section class="statement-section">
+    <h3>Cash Activity</h3>
+    <table class="statement-table two-col">
+      <thead>
+        <tr><th></th><th>This Quarter</th><th>Year to Date</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Starting cash</td>
+          <td>{{ model.cashActivity.startingCash.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.startingCash.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Deposits</td>
+          <td>{{ model.cashActivity.deposits.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.deposits.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Withdrawals</td>
+          <td>{{ -model.cashActivity.withdrawals.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ -model.cashActivity.withdrawals.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Investments purchased</td>
+          <td>{{ model.cashActivity.purchased.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.purchased.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Investments sold</td>
+          <td>{{ model.cashActivity.sold.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.sold.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td><app-define term="Dividend" label="Dividends received"></app-define></td>
+          <td>{{ model.cashActivity.dividends.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.dividends.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td><app-define term="APY" label="Interest earned"></app-define></td>
+          <td>{{ model.cashActivity.interest.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.interest.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr class="total-row">
+          <td>Ending cash</td>
+          <td>{{ model.cashActivity.endingCash.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.cashActivity.endingCash.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Deposits & Withdrawals -->
+  <section class="statement-section" *ngIf="model.depositsWithdrawals.length > 0">
+    <h3>Deposits &amp; Withdrawals</h3>
+    <table class="statement-table">
+      <thead>
+        <tr><th>Date</th><th>Type</th><th>Description</th><th class="num">Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of model.depositsWithdrawals">
+          <td>{{ row.date | evergreenDate }}</td>
+          <td>{{ row.type }}</td>
+          <td>{{ row.description }}</td>
+          <td class="num">{{ row.amount | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Your Investments -->
+  <section class="statement-section">
+    <h3>Your Investments</h3>
+    <p *ngIf="model.holdings.length === 0" class="empty-note">No investments held at the end of this period.</p>
+    <table class="statement-table" *ngIf="model.holdings.length > 0">
+      <thead>
+        <tr>
+          <th>Investment</th><th>Type</th><th class="num">Shares</th><th class="num">Price</th>
+          <th class="num">Current Value</th><th class="num"><app-define term="Cost basis" label="What You Paid"></app-define></th><th class="num"><app-define term="Gain/Loss"></app-define></th><th class="num">% of Portfolio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of model.holdings">
+          <td>{{ h.name }}</td>
+          <td>{{ h.type | assetType }}</td>
+          <td class="num">{{ h.shares | number:'1.2-4' }}</td>
+          <td class="num">{{ h.price | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num">{{ h.value | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num">{{ h.costBasis | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num" [class.pos]="h.gainLoss >= 0" [class.neg]="h.gainLoss < 0">{{ h.gainLoss | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num">{{ h.pctOfPortfolio | number:'1.2-2' }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Portfolio Breakdown -->
+  <section class="statement-section">
+    <h3><app-define term="Asset allocation" label="Portfolio Breakdown"></app-define></h3>
+    <div class="breakdown">
+      <div class="breakdown-row" *ngFor="let b of model.breakdown">
+        <span class="breakdown-label">{{ b.label }}</span>
+        <span class="breakdown-pct">{{ b.pct | number:'1.2-2' }}%</span>
+        <span class="breakdown-value">{{ b.value | currency:'USD':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Your Trades -->
+  <section class="statement-section" *ngIf="model.trades.length > 0">
+    <h3>Your Trades</h3>
+    <table class="statement-table">
+      <thead>
+        <tr><th>Date</th><th>Action</th><th>Investment</th><th class="num">Shares</th><th class="num">Price</th><th class="num">Total Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of model.trades">
+          <td>{{ t.date | evergreenDate }}</td>
+          <td>{{ t.action }}</td>
+          <td>{{ t.name }}</td>
+          <td class="num">{{ t.shares | number:'1.2-4' }}</td>
+          <td class="num">{{ t.price | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num">{{ t.total | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Footer -->
+  <div class="statement-footer">
+    <p>Questions? Call us at 1-800-555-0123 or email support&#64;summitinvest.example</p>
+    <p class="disclaimer">Important: Investments go up and down in value. This statement is for educational purposes only.</p>
   </div>
 </div>

@@ -1,0 +1,34 @@
+<div class="desktop-shell">
+  <app-header></app-header>
+
+  <div class="desktop">
+    <!-- Desktop shortcut icons (top-left, like a real desktop) -->
+    <div class="desktop-icons">
+      <button class="desktop-shortcut" type="button" (click)="openBrowser()" aria-label="Open the web browser">
+        <span class="shortcut-icon">
+          <mat-icon>public</mat-icon>
+        </span>
+        <span class="shortcut-label">Web Browser</span>
+      </button>
+    </div>
+
+    <!-- Friendly hint pointing at the icon -->
+    <div class="desktop-hint">
+      <mat-icon class="hint-arrow">north_west</mat-icon>
+      <span>Open the browser to get started</span>
+    </div>
+
+    <!-- Faux taskbar -->
+    <div class="taskbar">
+      <div class="taskbar-start">
+        <mat-icon>grid_view</mat-icon>
+      </div>
+      <div class="taskbar-spacer"></div>
+      <div class="taskbar-tray">
+        <mat-icon>wifi</mat-icon>
+        <mat-icon>volume_up</mat-icon>
+        <span class="taskbar-clock">9:41 AM</span>
+      </div>
+    </div>
+  </div>
+</div>

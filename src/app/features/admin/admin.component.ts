@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService, AdminOptions } from '../../shared/services/data.service';
+import { CurrentDateService } from '../../shared/services/current-date.service';
+import { MONTHS_SHORT } from '../../shared/pipes/evergreen-date.pipe';
 import { AssetTypePipe } from '../../shared/pipes/asset-type.pipe';
 import { Chart, registerables } from 'chart.js';
 import assetsData from '../../shared/data/assets.json';
@@ -50,6 +52,10 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: 'web_browser', label: 'Web Browser Layout' }
   ];
 
+  // Teacher quarter override
+  quarterOptions: { label: string; value: string }[] = [];
+  selectedQuarterValue = '';
+
   // Asset performance data
   allAssets: any[] = [];
   selectedAsset: any = null;
@@ -67,7 +73,8 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private currentDateService: CurrentDateService
   ) {
     // Register Chart.js components
     Chart.register(...registerables);
@@ -76,6 +83,13 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.loadOptions();
     this.loadAssets();
+    this.quarterOptions = this.currentDateService.getQuarterOptions();
+    this.selectedQuarterValue = this.currentDateService.getCurrentDate();
+  }
+
+  onSetQuarter(value: string): void {
+    this.currentDateService.setCurrentDate(value);
+    this.selectedQuarterValue = value;
   }
 
   ngAfterViewInit(): void {
@@ -130,8 +144,8 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onLayoutChange(): void {
     this.saveOptions();
-    // Redirect to home and force a full browser refresh
-    window.location.href = '/home';
+    // Redirect to the brokerage and force a full browser refresh
+    window.location.href = '/investing';
   }
 
   getOptions(): AdminOptions {
@@ -208,8 +222,7 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
   formatDate(dateString: string): string {
     // Format date string as "MM/YYYY" for monthly display
     const [year, month] = dateString.split('-');
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${monthNames[parseInt(month) - 1]} ${year}`;
+    return MONTHS_SHORT[parseInt(month) - 1];
   }
 
   private getMaxPriceAcrossAllAssets(): number {
@@ -354,8 +367,7 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
     // Format dates as "MM/YYYY" for monthly display
     const labels = sortedDates.map(date => {
       const [year, month] = date.split('-');
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${monthNames[parseInt(month) - 1]} ${year}`;
+      return MONTHS_SHORT[parseInt(month) - 1];
     });
     
     const datasets = this.allAssets.map((asset, index) => {
