@@ -55,7 +55,6 @@ All calculations filter by `date <= currentDate` so only transactions up to the 
 Static JSON files imported as TypeScript constants:
 - `assets.json` / `assets.data.ts` - Asset catalog with `AssetType` union: `'stock' | 'mutual_fund' | 'index_fund' | 'etf' | 'target_date_fund' | 'bond_fund'`
 - `quarters.json` / `quarters.data.ts` - Quarter definitions (Q4 2024 through Q4 2025), helper functions for date-to-quarter mapping
-- `guide.json` / `guide.data.ts` - Per-quarter educational content
 
 ### Routing (`app.routes.ts`)
 
