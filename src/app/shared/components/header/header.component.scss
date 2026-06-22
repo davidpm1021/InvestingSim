@@ -85,3 +85,27 @@
   align-items: center;
   gap: 8px;
 }
+
+// Small screens: the header is a non-wrapping flex row whose intrinsic width
+// (logo + quarter label + Jump/Reset/Account buttons) exceeds a phone viewport
+// and would force the whole document wider than the screen (horizontal scroll +
+// empty gutter). Let it reflow instead. Desktop layout is untouched.
+@media (max-width: 700px) {
+  .header {
+    padding: 0 12px;
+  }
+
+  .header-content {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 60px;
+    padding: 8px 0;
+    row-gap: 8px;
+  }
+
+  .header-controls {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
