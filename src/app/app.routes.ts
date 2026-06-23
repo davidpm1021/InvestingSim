@@ -9,7 +9,8 @@ import { BankSimComponent } from './features/bank-sim/bank-sim.component';
 export const routes: Routes = [
   {
     path: '',
-    component: DesktopComponent
+    component: DesktopComponent,
+    title: 'Investing Sim'
   },
   {
     path: '',
@@ -17,20 +18,24 @@ export const routes: Routes = [
     children: [
       {
         path: 'banking',
-        component: BankingComponent
+        component: BankingComponent,
+        title: 'Evergreen Bank | Investing Sim'
       },
       {
         path: 'investing',
-        component: InvestingComponent
+        component: InvestingComponent,
+        title: 'Summit Invest | Investing Sim'
       },
       {
         path: 'admin',
-        component: AdminComponent
+        component: AdminComponent,
+        title: 'Admin | Investing Sim'
       },
       {
         // Kept for teachers (reachable by direct URL); not surfaced in the student flow.
         path: 'bank-sim',
-        component: BankSimComponent
+        component: BankSimComponent,
+        title: 'Bank Sim | Investing Sim'
       }
     ]
   },

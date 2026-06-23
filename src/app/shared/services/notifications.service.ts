@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 export interface AppNotification {
   message: string;
@@ -20,6 +21,8 @@ export class NotificationsService {
   private subject = new BehaviorSubject<AppNotification[]>(this.load());
   public notifications$: Observable<AppNotification[]> = this.subject.asObservable();
 
+  constructor(private liveAnnouncer: LiveAnnouncer) {}
+
   add(message: string, link?: string, date?: string): void {
     const notification: AppNotification = {
       message,
@@ -30,6 +33,8 @@ export class NotificationsService {
     const next = [notification, ...this.subject.value].slice(0, 50);
     this.subject.next(next);
     this.save(next);
+    // Announce to assistive tech (WCAG 4.1.3 Status Messages).
+    this.liveAnnouncer.announce(message, 'polite');
   }
 
   markAllRead(): void {
