@@ -105,7 +105,7 @@
             <mat-card-content>
               <div *ngIf="isDashboardTab && currentDate">
                 <div class="allocation-chart-container" *ngIf="holdingsValue > 0">
-                  <canvas #chartCanvas></canvas>
+                  <canvas #chartCanvas role="img" aria-label="Portfolio allocation across stocks, bonds, and cash"></canvas>
                 </div>
                 <div class="no-holdings-message" *ngIf="holdingsValue === 0">
                   <p>You haven't purchased any assets yet.</p>
@@ -231,7 +231,7 @@
             </mat-card-header>
             <mat-card-content>
               <div class="daily-movers-grid">
-                <div class="mover-card" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0" (click)="openAssetDetailsDialog(asset)">
+                <div class="mover-card" appClickable [attr.aria-label]="'View details for ' + asset.name" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0" (click)="openAssetDetailsDialog(asset)">
                   <div class="card-header">
                     <div class="asset-symbol-badge">{{ asset.id }}</div>
                     <div class="trend-indicator" [class.up]="getPriceChange(asset) > 0" [class.down]="getPriceChange(asset) < 0">
@@ -261,7 +261,7 @@
               <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
               <app-line-chart [labels]="compareLabels" [series]="compareSeries"
                               [showLegend]="true" yLabel="% change since start" valueFormat="percent"
-                              [height]="320"></app-line-chart>
+                              [height]="320" ariaLabel="Line chart comparing each investment's percent change since the start"></app-line-chart>
             </mat-card-content>
           </mat-card>
           </div>
@@ -354,7 +354,7 @@
             <div class="price-history-section" *ngIf="selectedHolding">
               <h4>Price History</h4>
               <div class="line-chart-container">
-                <canvas #lineChartCanvas></canvas>
+                <canvas #lineChartCanvas role="img" aria-label="Price history line chart"></canvas>
               </div>
             </div>
                   </div>
@@ -430,7 +430,7 @@
             </div>
 
             <div class="statements-grid">
-              <mat-card *ngFor="let statement of quarterlyStatements" class="statement-card" (click)="openStatementDialog(statement)">
+              <mat-card *ngFor="let statement of quarterlyStatements" class="statement-card" appClickable (click)="openStatementDialog(statement)">
                 <mat-card-content>
                   <div class="statement-header">
                     <div class="statement-info">

@@ -314,6 +314,11 @@ p {
   justify-content: start;
 }
 
+.statement-card:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
 .statement-card {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1380,6 +1385,11 @@ h2 {
   .daily-movers-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.mover-card:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
 }
 
 .mover-card {

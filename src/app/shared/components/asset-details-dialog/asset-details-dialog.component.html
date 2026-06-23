@@ -38,7 +38,7 @@
     <div class="price-history-section">
       <h4>Price History</h4>
       <div class="chart-container">
-        <canvas #priceChartCanvas></canvas>
+        <canvas #priceChartCanvas role="img" [attr.aria-label]="(asset?.name || 'Asset') + ' price history'"></canvas>
       </div>
     </div>
   </mat-dialog-content>

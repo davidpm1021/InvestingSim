@@ -28,6 +28,7 @@ import { PageIntroComponent } from '../../shared/components/page-intro/page-intr
 import { NotificationsService } from '../../shared/services/notifications.service';
 import { TradeDialogComponent, TradeData } from './trade-dialog.component';
 import { HoldingsTotalsComponent } from '../../shared/components/holdings-totals/holdings-totals.component';
+import { ClickableDirective } from '../../shared/directives/clickable.directive';
 import { LineChartComponent, LineSeries } from '../../shared/components/line-chart/line-chart.component';
 import { StatementDialogComponent, StatementDialogData } from './statement-dialog.component';
 import { AssetDetailsDialogComponent, AssetDetailsDialogData } from '../../shared/components/asset-details-dialog/asset-details-dialog.component';
@@ -49,7 +50,7 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, MatTooltipModule, FormsModule, AssetTypePipe, EvergreenDatePipe, HoldingsTotalsComponent, LineChartComponent, DefineComponent, PageIntroComponent],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, MatTooltipModule, FormsModule, AssetTypePipe, EvergreenDatePipe, HoldingsTotalsComponent, LineChartComponent, DefineComponent, PageIntroComponent, ClickableDirective],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })

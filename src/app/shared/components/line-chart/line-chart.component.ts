@@ -37,7 +37,7 @@ interface LegendItem {
         <span class="chip-label">{{ item.label }}</span>
       </button>
     </div>
-    <div class="line-chart-wrap" [style.height.px]="height"><canvas #canvas></canvas></div>
+    <div class="line-chart-wrap" [style.height.px]="height"><canvas #canvas role="img" [attr.aria-label]="ariaLabel || yLabel"></canvas></div>
   `,
   styles: [`
     .line-chart-wrap { position: relative; width: 100%; }
@@ -94,6 +94,7 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() showLegend = false;
   @Input() height = 280;
   @Input() valueFormat: 'currency' | 'percent' = 'currency';
+  @Input() ariaLabel = '';
 
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 

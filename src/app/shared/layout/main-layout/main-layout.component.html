@@ -20,26 +20,26 @@
        (click)="isMinimized ? restoreFromMinimized() : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
-      <div class="tab tab-banking"
+      <div class="tab tab-banking" appClickable
            [class.active]="currentRoute === '/banking'"
            (click)="navigateTo('/banking'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">account_balance</mat-icon>
         <span class="tab-text">Evergreen Bank</span>
       </div>
-      <div class="tab tab-investing"
+      <div class="tab tab-investing" appClickable
            [class.active]="currentRoute === '/investing'"
            (click)="navigateTo('/investing'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">trending_up</mat-icon>
         <span class="tab-text">Summit Invest</span>
       </div>
-      <div class="tab tab-admin" 
+      <div class="tab tab-admin" appClickable
            [class.active]="currentRoute === '/admin'"
            [class.hidden]="!hasAccessedAdmin"
            (click)="navigateTo('/admin'); $event.stopPropagation()">
         <mat-icon class="tab-favicon">settings</mat-icon>
         <span class="tab-text">Admin Panel</span>
       </div>
-      <div class="tab tab-bank-sim" 
+      <div class="tab tab-bank-sim" appClickable
            [class.active]="currentRoute === '/bank-sim'"
            [class.hidden]="!hasAccessedBankSim"
            (click)="navigateTo('/bank-sim'); $event.stopPropagation()">

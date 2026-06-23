@@ -4,13 +4,14 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { ClickableDirective } from '../../directives/clickable.directive';
 import { DataService } from '../../services/data.service';
 import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule, MatIconModule],
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule, MatIconModule, ClickableDirective],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
