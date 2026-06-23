@@ -75,22 +75,12 @@ export class TransactionsService {
           balances[accountId] = this.accounts[accountId as keyof typeof this.accounts].initialBalance;
         });
         
-        // Apply transactions
+        // Apply each transaction to the balances it touches: a transfer debits
+        // account_from and credits account_to; a regular entry credits its account.
         filteredTransactions.forEach(transaction => {
-          if (transaction.type === 'transfer') {
-            // Handle transfer transactions
-            if (transaction.account_from && balances.hasOwnProperty(transaction.account_from)) {
-              balances[transaction.account_from] -= transaction.amount;
-            }
-            if (transaction.account_to && balances.hasOwnProperty(transaction.account_to)) {
-              balances[transaction.account_to] += transaction.amount;
-            }
-          } else {
-            // Handle regular transactions
-            if (transaction.account && balances.hasOwnProperty(transaction.account)) {
-              balances[transaction.account] += transaction.amount;
-            }
-          }
+          Object.keys(balances).forEach(accountId => {
+            balances[accountId] += this.signedAmount(transaction, accountId);
+          });
         });
         
         return {
@@ -314,10 +304,7 @@ export class TransactionsService {
    */
   getTransactionsForAccount$(accountId: string): Observable<Transaction[]> {
     return this.accountData$.pipe(
-      map((data: any) => data.transactions.filter((t: Transaction) => 
-        t.account === accountId || 
-        (t.type === 'transfer' && (t.account_from === accountId || t.account_to === accountId))
-      ))
+      map((data: any) => data.transactions.filter((t: Transaction) => this.touchesAccount(t, accountId)))
     );
   }
 
@@ -327,40 +314,28 @@ export class TransactionsService {
   getTransactionsWithRunningBalance$(accountId: string): Observable<Array<Transaction & { runningBalance: number, displayDescription: string }>> {
     return this.accountData$.pipe(
       map((data: any) => {
-        // Get all transactions for this account, sorted in descending order
-        const accountTransactions = data.transactions.filter((t: Transaction) => 
-          t.account === accountId || 
-          (t.type === 'transfer' && (t.account_from === accountId || t.account_to === accountId))
-        );
+        // Transactions touching this account (already newest-first from accountData$).
+        const accountTransactions = data.transactions.filter((t: Transaction) => this.touchesAccount(t, accountId));
 
-        // Calculate running balances (working backwards from current balance)
-        const currentBalance = data.balances[accountId] || 0;
-        let runningBalance = currentBalance;
-        
+        // Running balances, working backwards from the current balance.
+        let runningBalance = data.balances[accountId] || 0;
+
         return accountTransactions.map((transaction: Transaction) => {
-          let transactionAmount = 0;
+          const transactionAmount = this.signedAmount(transaction, accountId);
           let displayDescription = transaction.description;
-          
           if (transaction.type === 'transfer') {
-            if (transaction.account_from === accountId) {
-              transactionAmount = -transaction.amount;
-              displayDescription = transaction.description_from || transaction.description;
-            } else if (transaction.account_to === accountId) {
-              transactionAmount = transaction.amount;
-              displayDescription = transaction.description_to || transaction.description;
-            }
-          } else {
-            transactionAmount = transaction.amount;
+            displayDescription = transaction.account_from === accountId
+              ? (transaction.description_from || transaction.description)
+              : (transaction.description_to || transaction.description);
           }
-          
-          // Calculate running balance after this transaction
+
           const balanceAfterTransaction = runningBalance;
           runningBalance -= transactionAmount;
-          
+
           return {
             ...transaction,
             runningBalance: balanceAfterTransaction,
-            displayDescription: displayDescription
+            displayDescription
           };
         });
       })
@@ -389,10 +364,31 @@ export class TransactionsService {
     return ledger;
   }
 
+  /** True if `tx` affects `accountId` -- as a regular entry on that account, or
+   *  as either leg of a transfer. */
+  private touchesAccount(tx: Transaction, accountId: string): boolean {
+    if (tx.type === 'transfer') {
+      return tx.account_from === accountId || tx.account_to === accountId;
+    }
+    return tx.account === accountId;
+  }
+
+  /** Signed amount `tx` contributes to `accountId`'s balance: a transfer debits
+   *  account_from and credits account_to; a regular entry credits its account.
+   *  The single definition of "how a transaction moves an account's money,"
+   *  shared by the live balances, the as-of balance, and the activity views. */
+  private signedAmount(tx: Transaction, accountId: string): number {
+    if (tx.type === 'transfer') {
+      if (tx.account_from === accountId) return -tx.amount;
+      if (tx.account_to === accountId) return tx.amount;
+      return 0;
+    }
+    return tx.account === accountId ? tx.amount : 0;
+  }
+
   getBalanceAtDate(accountId: string, date: string): number {
     return this.getLedgerAsOf(date)
-      .filter(tx => tx.account === accountId)
-      .reduce((balance, tx) => balance + tx.amount, 0);
+      .reduce((balance, tx) => balance + this.signedAmount(tx, accountId), 0);
   }
 
   /**
