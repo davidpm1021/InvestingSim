@@ -10,6 +10,9 @@ export class AssetTypePipe implements PipeTransform {
   transform(value: AssetType | string | undefined): string {
     if (!value) return '';
     if (value === 'etf') return 'ETF';
+    // "target-date" is a compound modifier of "fund", so it takes a hyphen
+    // (the proper fund NAME, e.g. "Target Date 2070 Fund", stays unhyphenated).
+    if (value === 'target_date_fund') return 'Target-Date Fund';
 
     // Convert underscores to spaces and title case
     return value
