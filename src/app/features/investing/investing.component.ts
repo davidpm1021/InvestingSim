@@ -648,10 +648,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((trade: TradeData | undefined) => {
       if (trade) {
+        // Stay on the current tab (Overview). The reactive subscriptions refresh
+        // holdings, balances, allocation, and the activity feed in place.
         this.processTrade(trade);
-        if (this.tabGroup) {
-          this.tabGroup.selectedIndex = 2; // jump to Activity to show the trade
-        }
       }
     });
   }
