@@ -3,63 +3,72 @@ import { BehaviorSubject } from 'rxjs';
 import { WALKTHROUGH_STEPS, WalkthroughStep } from '../data/walkthrough-steps';
 
 /**
- * Drives the guided walkthrough: which learning moment is showing, whether it is
- * active (auto-starts for a first-time student) and whether it is paused (the
- * student chose to explore on their own). Progress persists to localStorage so a
- * refresh resumes where they left off, and a finished/skipped guide stays closed.
+ * Drives the guided walkthrough. Each step has two states:
+ *   - EXPANDED: a full-screen "learning moment" pop-up the student reads.
+ *   - MINIMIZED: a small docked coach bar, so the student can actually use the
+ *     app to do what the step asked, then click "Next step" to proceed.
+ * Active state, current step, and expanded/minimized all persist to localStorage
+ * so a refresh resumes in place; a finished/skipped guide stays closed.
  */
 @Injectable({ providedIn: 'root' })
 export class WalkthroughService {
   private readonly STEP_KEY = 'investing_sim__walkthrough_step';
   private readonly DONE_KEY = 'investing_sim__walkthrough_done';
-  private readonly PAUSED_KEY = 'investing_sim__walkthrough_paused';
+  private readonly EXPANDED_KEY = 'investing_sim__walkthrough_expanded';
 
   readonly steps: WalkthroughStep[] = WALKTHROUGH_STEPS;
 
   private indexSubject = new BehaviorSubject<number>(this.loadStep());
   private activeSubject = new BehaviorSubject<boolean>(false);
-  private pausedSubject = new BehaviorSubject<boolean>(localStorage.getItem(this.PAUSED_KEY) === '1');
+  // Default to expanded; only minimized if the student explicitly minimized before.
+  private expandedSubject = new BehaviorSubject<boolean>(localStorage.getItem(this.EXPANDED_KEY) !== '0');
 
   readonly active$ = this.activeSubject.asObservable();
-  readonly paused$ = this.pausedSubject.asObservable();
+  readonly expanded$ = this.expandedSubject.asObservable();
   readonly index$ = this.indexSubject.asObservable();
 
   get index(): number { return this.indexSubject.value; }
   get total(): number { return this.steps.length; }
   get current(): WalkthroughStep { return this.steps[this.index]; }
+  get isFirst(): boolean { return this.index === 0; }
   get isLast(): boolean { return this.index >= this.steps.length - 1; }
   get done(): boolean { return localStorage.getItem(this.DONE_KEY) === '1'; }
 
-  /** Show the guide on load for a first-time student (skipped if finished). */
+  /** Show the guide on first visit (skipped once finished). */
   autoStart(): void {
-    if (!this.done) {
-      this.activeSubject.next(true);
-    }
+    if (!this.done) { this.activeSubject.next(true); }
   }
 
-  /** Restart from the beginning (used by a "replay the guide" control). */
+  /** Restart from the top (for a "replay the guide" control). */
   start(): void {
     this.setIndex(0);
     localStorage.removeItem(this.DONE_KEY);
-    this.setPaused(false);
+    this.setExpanded(true);
     this.activeSubject.next(true);
   }
 
+  /** Collapse the current step to the coach bar so the student can try it. */
+  minimize(): void { this.setExpanded(false); }
+  /** Re-open the current step's full pop-up. */
+  expand(): void { this.setExpanded(true); }
+
+  /** Proceed to the next step (re-opens its pop-up), or finish on the last one. */
   next(): void {
     if (this.isLast) { this.finish(); return; }
     this.setIndex(this.index + 1);
+    this.setExpanded(true);
   }
 
   prev(): void {
-    if (this.index > 0) { this.setIndex(this.index - 1); }
+    if (this.index > 0) {
+      this.setIndex(this.index - 1);
+      this.setExpanded(true);
+    }
   }
-
-  pause(): void { this.setPaused(true); }
-  resume(): void { this.setPaused(false); }
 
   finish(): void {
     localStorage.setItem(this.DONE_KEY, '1');
-    this.setPaused(false);
+    this.setExpanded(true); // reset so a future replay starts expanded
     this.activeSubject.next(false);
   }
 
@@ -68,9 +77,9 @@ export class WalkthroughService {
     localStorage.setItem(this.STEP_KEY, String(i));
   }
 
-  private setPaused(p: boolean): void {
-    this.pausedSubject.next(p);
-    localStorage.setItem(this.PAUSED_KEY, p ? '1' : '0');
+  private setExpanded(e: boolean): void {
+    this.expandedSubject.next(e);
+    localStorage.setItem(this.EXPANDED_KEY, e ? '1' : '0');
   }
 
   private loadStep(): number {
