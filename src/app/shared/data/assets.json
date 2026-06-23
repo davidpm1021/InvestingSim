@@ -4,7 +4,7 @@
         "name": "Harvest Foods Co.",
         "type": "stock",
         "sector": "Consumer Staples",
-        "description": "Packaged foods and household staples — a steady, defensive business.",
+        "description": "Packaged foods and household staples.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
@@ -124,7 +124,7 @@
         "name": "Granite Power & Light",
         "type": "stock",
         "sector": "Utilities",
-        "description": "A regulated electric and gas utility with stable, predictable earnings.",
+        "description": "A regulated electric and gas utility.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
@@ -244,7 +244,7 @@
         "name": "Sterling Health",
         "type": "stock",
         "sector": "Healthcare",
-        "description": "A diversified healthcare and medical-products company.",
+        "description": "A healthcare and medical-products company.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
@@ -606,7 +606,7 @@
         "name": "Target Date 2070 Fund",
         "type": "target_date_fund",
         "sector": "Diversified",
-        "description": "A one-fund, diversified portfolio for an investor retiring around 2070 — roughly 90% stocks and 10% bonds.",
+        "description": "A one-fund, diversified portfolio for an investor retiring around 2070, roughly 90% stocks and 10% bonds.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
