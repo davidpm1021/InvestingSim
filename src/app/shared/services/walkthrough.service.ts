@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { filter, skip, distinctUntilChanged } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
 import { WALKTHROUGH_STEPS, WalkthroughStep } from '../data/walkthrough-steps';
+import { OnboardingService } from './onboarding.service';
+import { CurrentDateService } from './current-date.service';
 
 /**
  * Drives the guided walkthrough. Each step has two states:
@@ -26,6 +30,27 @@ export class WalkthroughService {
   readonly active$ = this.activeSubject.asObservable();
   readonly expanded$ = this.expandedSubject.asObservable();
   readonly index$ = this.indexSubject.asObservable();
+
+  constructor(
+    private router: Router,
+    private onboarding: OnboardingService,
+    private currentDate: CurrentDateService,
+  ) {
+    // Auto-advance, but ONLY for steps with one obvious completion event, and
+    // only while the student is minimized on that step (actively doing it).
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+      const url = (e as NavigationEnd).urlAfterRedirects;
+      if (url.startsWith('/investing') || url.startsWith('/banking')) {
+        this.autoAdvance('browser-open');
+      }
+    });
+    this.onboarding.bankLinked$.pipe(skip(1), distinctUntilChanged(), filter(v => v))
+      .subscribe(() => this.autoAdvance('bank-linked'));
+    this.onboarding.hasFunded$.pipe(skip(1), distinctUntilChanged(), filter(v => v))
+      .subscribe(() => this.autoAdvance('funded'));
+    this.currentDate.currentDate$.pipe(skip(1), distinctUntilChanged())
+      .subscribe(() => this.autoAdvance('quarter-advanced'));
+  }
 
   get index(): number { return this.indexSubject.value; }
   get total(): number { return this.steps.length; }
@@ -80,6 +105,13 @@ export class WalkthroughService {
   private setExpanded(e: boolean): void {
     this.expandedSubject.next(e);
     localStorage.setItem(this.EXPANDED_KEY, e ? '1' : '0');
+  }
+
+  /** Advance only if the guide is minimized on the step this trigger belongs to. */
+  private autoAdvance(trigger: string): void {
+    if (this.activeSubject.value && !this.expandedSubject.value && this.current.trigger === trigger) {
+      this.next();
+    }
   }
 
   private loadStep(): number {

@@ -13,6 +13,9 @@ export interface WalkthroughStep {
   action?: string;
   /** Primary button label (defaults to "Continue"). */
   cta?: string;
+  /** Auto-advance trigger, only for steps with one obvious completion event.
+   *  Open-ended steps (buy, sell, explore) have none and proceed manually. */
+  trigger?: 'browser-open' | 'bank-linked' | 'funded' | 'quarter-advanced';
 }
 
 export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
@@ -32,6 +35,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part I · Set up',
     title: 'Open your brokerage',
+    trigger: 'browser-open',
     body: [
       'A brokerage account is where you buy and hold investments: stocks, funds, and bonds. Think of it like online banking, except instead of just parking cash, it puts your money to work.',
       'On the desktop you will see a Web Browser icon. Opening it takes you to Summit Invest, your brand-new brokerage.',
@@ -41,6 +45,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part I · Connect',
     title: 'Connect your bank, and why you have to',
+    trigger: 'bank-linked',
     body: [
       'Before Summit Invest lets you do anything, it asks you to connect a bank account. Here is why: a brokerage holds your investments, but the cash to buy them has to come from somewhere.',
       'Connecting your bank is what lets you move money in to invest, and back out when you want it. The details here are pre-filled and fake. Never use real account info in a simulation.',
@@ -60,6 +65,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part I · Fund it',
     title: 'Move money in',
+    trigger: 'funded',
     body: [
       'You cannot invest cash that is still sitting at the bank. Time to move some over.',
       'On the Overview tab, use Add Funds to transfer an amount of your choice from Evergreen Bank into your Summit Invest settlement account. The same screen has Withdraw Funds to move it back.',
@@ -108,6 +114,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part III · Time',
     title: 'Fast-forward three months',
+    trigger: 'quarter-advanced',
     body: [
       'Your trades are placed. Now let time pass. In the top bar, click Jump to Quarter 2, read the confirmation, and Continue.',
       'Notice the warning: finalize your trades first, because time only moves one way and you cannot go back. Real markets work the same way. It makes you commit to your decisions, just like a real investor has to.',
