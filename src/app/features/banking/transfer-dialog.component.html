@@ -56,6 +56,11 @@
                placeholder="Enter amount to transfer">
         <mat-hint>Maximum: ${{ data.maxAmount | number:'1.2-2' }}</mat-hint>
       </mat-form-field>
+
+      <div class="transfer-timing-note">
+        <mat-icon>schedule</mat-icon>
+        <span>Transfers are instant in this simulation. In real life, a bank transfer can take a few days to process.</span>
+      </div>
     </div>
   </div>
 </mat-dialog-content>

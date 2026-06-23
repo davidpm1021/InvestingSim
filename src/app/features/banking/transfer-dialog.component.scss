@@ -120,6 +120,27 @@ mat-dialog-content {
   }
 }
 
+.transfer-timing-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  color: #1565c0;
+  font-size: 13px;
+  line-height: 1.4;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
 mat-dialog-actions {
   padding: 16px 24px 24px 24px;
   margin: 0;
