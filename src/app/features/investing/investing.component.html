@@ -224,21 +224,8 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Compare Investments (Chunk 5) -->
-          <mat-card class="compare-card mb-3">
-            <mat-card-header>
-              <mat-card-title>Compare Investments</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
-              <app-line-chart [labels]="compareLabels" [series]="compareSeries"
-                              [showLegend]="true" yLabel="% change since start" valueFormat="percent"
-                              [height]="320"></app-line-chart>
-            </mat-card-content>
-          </mat-card>
-
           <!-- Daily Movers Section -->
-          <mat-card class="daily-movers-card">
+          <mat-card class="daily-movers-card mb-3">
             <mat-card-header>
               <mat-card-title>Daily Movers</mat-card-title>
             </mat-card-header>
@@ -262,6 +249,19 @@
                   </div>
                 </div>
               </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Compare Investments (Chunk 5) -->
+          <mat-card class="compare-card">
+            <mat-card-header>
+              <mat-card-title>Compare Investments</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
+              <app-line-chart [labels]="compareLabels" [series]="compareSeries"
+                              [showLegend]="true" yLabel="% change since start" valueFormat="percent"
+                              [height]="320"></app-line-chart>
             </mat-card-content>
           </mat-card>
           </div>
