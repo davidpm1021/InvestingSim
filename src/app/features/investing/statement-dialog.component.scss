@@ -17,7 +17,7 @@
   margin: 0;
   font-size: 1.6rem;
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
 }
 
 .statement-period {
@@ -42,7 +42,7 @@
 
   .meta-label {
     font-size: 0.75rem;
-    color: #999;
+    color: #666;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -89,7 +89,7 @@
   }
 
   thead th {
-    color: #888;
+    color: #666;
     font-weight: 600;
     border-bottom: 2px solid #e0e0e0;
   }
@@ -131,7 +131,7 @@
 
   .box-label {
     font-size: 0.85rem;
-    color: #888;
+    color: #666;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -139,13 +139,13 @@
   .box-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1976d2;
+    color: #1565c0;
     margin: 4px 0;
   }
 
   .box-sub {
     font-size: 0.8rem;
-    color: #777;
+    color: #666;
   }
 }
 
@@ -168,7 +168,7 @@
 }
 
 .empty-note {
-  color: #888;
+  color: #666;
   font-style: italic;
 }
 
@@ -177,7 +177,7 @@
   padding-top: 12px;
   border-top: 1px solid #e0e0e0;
   font-size: 0.8rem;
-  color: #888;
+  color: #666;
 
   p { margin: 2px 0; }
 

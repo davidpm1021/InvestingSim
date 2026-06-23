@@ -32,7 +32,7 @@
 }
 
 .account-icon {
-  color: #1976d2;
+  color: #1565c0;
   font-size: 32px;
   width: 32px;
   height: 32px;
@@ -111,7 +111,7 @@ h2 {
           margin: 0 0 16px 0;
           font-size: 1.5rem;
           font-weight: 600;
-          color: #28a745;
+          color: #2e7d32;
         }
 
         .transfer-button {
@@ -163,15 +163,15 @@ h2 {
   text-align: right;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 
   &.neutral {
-    color: #6c757d;
+    color: #5c636a;
     font-weight: 500;
   }
 }
@@ -209,7 +209,7 @@ h2 {
 }
 
 .help-link {
-  color: #1976d2;
+  color: #1565c0;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;

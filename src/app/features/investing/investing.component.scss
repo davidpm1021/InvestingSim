@@ -33,7 +33,7 @@
 }
 
 .account-icon {
-  color: #1976d2;
+  color: #1565c0;
   font-size: 32px;
   width: 32px;
   height: 32px;
@@ -93,7 +93,7 @@ p {
 .balance-amount {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
   text-align: center;
   margin: 16px 0;
 }
@@ -120,7 +120,7 @@ p {
 .balance-row .balance-amount {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
   margin: 0;
   text-align: right;
 }
@@ -141,22 +141,22 @@ p {
 
 // Gain/Loss column styling
 .holdings-table .positive {
-  color: #28a745;
+  color: #2e7d32;
   font-weight: 600;
 }
 
 .holdings-table .negative {
-  color: #dc3545;
+  color: #c62828;
   font-weight: 600;
 }
 
 .gain-positive {
-  color: #28a745;
+  color: #2e7d32;
   font-weight: 600;
 }
 
 .gain-negative {
-  color: #dc3545;
+  color: #c62828;
   font-weight: 600;
 }
 
@@ -171,7 +171,7 @@ p {
 
 .chart-placeholder p {
   margin: 8px 0;
-  color: #6c757d;
+  color: #5c636a;
 }
 
 .chart-subtitle {
@@ -235,11 +235,11 @@ p {
   text-align: left;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -343,7 +343,7 @@ p {
   
   .quarter-name {
     margin: 0 0 4px 0;
-    color: #1976d2;
+    color: #1565c0;
     font-size: 1.3rem;
     font-weight: 600;
   }
@@ -380,16 +380,16 @@ p {
   }
   
   .total-return.positive .amount {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   .total-return.negative .amount {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
 .open-icon {
-  color: #1976d2;
+  color: #1565c0;
   margin-left: 8px;
 }
 
@@ -425,7 +425,7 @@ p {
 
 .ending-balance {
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
 }
 
 .statement-content {
@@ -481,11 +481,11 @@ p {
       font-size: 1.1rem;
       
       &.positive {
-        color: #28a745;
+        color: #2e7d32;
       }
       
       &.negative {
-        color: #dc3545;
+        color: #c62828;
       }
     }
   }
@@ -517,11 +517,11 @@ p {
     font-size: 1.1rem;
     
     &.positive {
-      color: #28a745;
+      color: #2e7d32;
     }
     
     &.negative {
-      color: #dc3545;
+      color: #c62828;
     }
   }
   
@@ -616,11 +616,11 @@ p {
   font-weight: 600;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -768,14 +768,14 @@ h2 {
 .portfolio-change {
   margin: 0;
   font-size: 1rem;
-  color: #28a745;
+  color: #2e7d32;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -823,11 +823,11 @@ h2 {
   text-align: left;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -857,7 +857,7 @@ h2 {
 
 // Buy/Sell action styles
 .buy-action {
-  color: #4caf50;
+  color: #2e7d32;
   font-weight: 600;
 }
 
@@ -931,7 +931,7 @@ h2 {
   align-items: baseline;
   padding: 2px 0;
 
-  .av-label { color: #777; }
+  .av-label { color: #666; }
   .av-value { font-variant-numeric: tabular-nums; }
 
   &.positive .av-value { color: #1e7e34; }
@@ -996,11 +996,11 @@ h2 {
   text-align: left;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -1028,7 +1028,7 @@ h2 {
 
 .allocation-percentage {
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
   font-size: 1.1rem;
 }
 
@@ -1062,7 +1062,7 @@ h2 {
 
   .message-hint {
     font-size: 0.9rem;
-    color: #999;
+    color: #666;
     font-weight: 400;
     font-style: italic;
   }
@@ -1091,7 +1091,7 @@ h2 {
 }
 
 .asset-name-cell {
-  color: #1976d2;
+  color: #1565c0;
   font-weight: 600;
 }
 
@@ -1125,7 +1125,7 @@ h2 {
 
       .stat-value {
         font-weight: 600;
-        color: #1976d2;
+        color: #1565c0;
         font-size: 1rem;
       }
     }
@@ -1181,11 +1181,11 @@ h2 {
             font-weight: 700;
 
             &.positive {
-              color: #28a745;
+              color: #2e7d32;
             }
 
             &.negative {
-              color: #dc3545;
+              color: #c62828;
             }
           }
         }
@@ -1235,7 +1235,7 @@ h2 {
 
 .holding-value {
   font-weight: 600;
-  color: #1976d2;
+  color: #1565c0;
 }
 
 .asset-details {
@@ -1334,11 +1334,11 @@ h2 {
   font-size: 1rem;
   
   &.positive {
-    color: #28a745;
+    color: #2e7d32;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #c62828;
   }
 }
 
@@ -1511,13 +1511,13 @@ h2 {
 }
 
 .price-change.positive {
-  color: #28a745;
+  color: #2e7d32;
   background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(30, 126, 52, 0.15));
   border: 1px solid rgba(40, 167, 69, 0.2);
 }
 
 .price-change.negative {
-  color: #dc3545;
+  color: #c62828;
   background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(200, 35, 51, 0.15));
   border: 1px solid rgba(220, 53, 69, 0.2);
 }
