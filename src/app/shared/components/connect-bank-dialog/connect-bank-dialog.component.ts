@@ -24,7 +24,7 @@ export class ConnectBankDialogComponent {
   // Pre-filled fictional details (verify-only — no typing). Account-type naming
   // (Checking → Savings) is intentionally generic here; renames land in Chunk 2.
   readonly bankDetails = {
-    accountHolder: 'Sample Student',
+    accountHolder: 'Buck Moneybags',
     bankName: 'Evergreen Bank',
     routingNumber: '021000021',
     accountNumber: '•••• 1234',
