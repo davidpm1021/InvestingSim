@@ -125,7 +125,7 @@ export class TransactionsService {
           amount: 5000,
           date: "2024-12-01",
           time: "00:00:00",
-          description: "Initial deposit"
+          description: "Starting balance"
         }
       ];
       this.transactionsSubject.next(defaultTransactions);

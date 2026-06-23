@@ -14,7 +14,7 @@
   </div>
 
   <app-page-intro pageKey="bank"
-    text="This is your Evergreen Bank savings account — separate from your brokerage. Money you invest leaves here, and your savings earns interest, paid monthly.">
+    text="Your Evergreen Bank savings account earns interest, paid monthly.">
   </app-page-intro>
 
   <div class="banking-content">
@@ -43,9 +43,10 @@
                           <div class="transaction-description">{{ transaction.displayDescription }}</div>
                           <div class="transaction-date">{{ transaction.date | evergreenDate:'short' }}</div>
                           <div class="transaction-amount" 
-                               [class.positive]="getTransactionAmount(transaction) > 0" 
-                               [class.negative]="getTransactionAmount(transaction) < 0">
-                            {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+                               [class.positive]="!isStartingBalance(transaction) && getTransactionAmount(transaction) > 0" 
+                               [class.negative]="getTransactionAmount(transaction) < 0"
+                               [class.neutral]="isStartingBalance(transaction)">
+                            {{ !isStartingBalance(transaction) && getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
                           </div>
                           <div class="transaction-balance">
                             {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
