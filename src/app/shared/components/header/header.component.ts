@@ -108,23 +108,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onReset(): void {
     // Clear all transactions first
     this.transactionsService.clearAllTransactions();
-    
-    // Clear only investing_sim__ localStorage keys
-    const keysToRemove = [
-      'investing_sim__admin_options',
-      'investing_sim__current_date',
-      'investing_sim__holding_transactions',
-      'investing_sim__transactions',
-      'investing_sim__onboarding',
-      'investing_sim__notifications',
-      'investing_sim__visited_pages'
-    ];
-    
-    keysToRemove.forEach(key => {
-      localStorage.removeItem(key);
-    });
-    
-    // Reload the page
+
+    // Hard reset: wipe EVERY investing_sim__ key so the app reopens exactly like
+    // a first-time student visiting the site (fresh storage) -- including the
+    // guided walkthrough, onboarding, and first-visit callouts. Iterating by
+    // prefix avoids a hardcoded list going stale as new keys are added.
+    Object.keys(localStorage)
+      .filter(key => key.startsWith('investing_sim__'))
+      .forEach(key => localStorage.removeItem(key));
+
+    // Reload into the brand-new-student state.
     window.location.reload();
   }
 
