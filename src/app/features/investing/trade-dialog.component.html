@@ -53,13 +53,15 @@
 
     <div class="avail">
       <span *ngIf="action === 'buy'">Cash available: ${{ data.brokerageBalance | number:'1.2-2' }}</span>
-      <span *ngIf="action === 'sell' && getHolding(selectedAssetId)">Shares held: {{ getHolding(selectedAssetId).shares | number:'1.2-4' }}</span>
+      <span *ngIf="action === 'sell' && getHolding(selectedAssetId)">Shares held: {{ getHolding(selectedAssetId).shares | number:'1.2-4' }}
+        <button mat-button type="button" class="sell-all-btn" (click)="sellAll()">Sell all</button>
+      </span>
     </div>
 
     <div *ngIf="validationMessage()" id="trade-amount-error" role="alert" class="validation-error">{{ validationMessage() }}</div>
 
     <p class="trade-note">
-      <app-define term="Commission-free"></app-define> — no fee to buy or sell. Trades are instant in this simulation;
+      <app-define term="Commission-free"></app-define>: no fee to buy or sell. Trades are instant in this simulation;
       in real life cash from a sale typically <app-define term="Settlement" label="settles"></app-define> the next
       business day (T+1).
     </p>

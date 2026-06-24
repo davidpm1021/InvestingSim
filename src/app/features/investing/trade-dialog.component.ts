@@ -53,6 +53,11 @@ export class TradeDialogComponent {
   inputAmount: number | null = null;
   currentPrice = 0;
   readonly minPurchase = 1;
+  // Shares are fractional and accumulate as floats, so the true position can sit
+  // a hair below the 4-decimal figure shown in the table (e.g. 9.21149999 vs
+  // "9.2115"). Accept a sell within this tolerance of the held amount, then clamp
+  // the actual order to what's held so a "sell everything" never reads as oversell.
+  private readonly SELL_EPS = 1e-4;
 
   stocks: Asset[] = [];
   funds: Asset[] = [];
@@ -116,7 +121,7 @@ export class TradeDialogComponent {
       return dollars >= this.minPurchase && dollars <= this.data.brokerageBalance;
     }
     const holding = this.getHolding(this.selectedAssetId);
-    return !!holding && this.getCalculatedShares() <= this.getMaxSellable(this.selectedAssetId);
+    return !!holding && this.getCalculatedShares() <= this.getMaxSellable(this.selectedAssetId) + this.SELL_EPS;
   }
 
   validationMessage(): string {
@@ -127,19 +132,31 @@ export class TradeDialogComponent {
       if (dollars > this.data.brokerageBalance) return `Insufficient cash. Available: $${this.data.brokerageBalance.toFixed(2)}`;
     } else {
       const maxSellable = this.getMaxSellable(this.selectedAssetId);
-      if (this.getCalculatedShares() > maxSellable) {
+      if (this.getCalculatedShares() > maxSellable + this.SELL_EPS) {
         return `Insufficient shares. You can sell up to ${maxSellable.toFixed(4)}.`;
       }
     }
     return '';
   }
 
+  /** Fill the input with the entire held position so a student can sell all of it. */
+  sellAll(): void {
+    this.inputType = 'shares';
+    // Show the same 4-decimal figure as the table; submit() clamps to the exact held amount.
+    this.inputAmount = Math.round(this.getMaxSellable(this.selectedAssetId) * 1e4) / 1e4;
+  }
+
   submit(): void {
     if (!this.isValid()) return;
     const asset = this.dataService.getAssetById(this.selectedAssetId);
     if (!asset) return;
-    const shares = this.getCalculatedShares();
-    const dollars = this.getCalculatedDollars();
+    let shares = this.getCalculatedShares();
+    let dollars = this.getCalculatedDollars();
+    if (this.action === 'sell') {
+      // Clamp to the true held amount so rounding can never record an oversell.
+      shares = Math.min(shares, this.getMaxSellable(this.selectedAssetId));
+      dollars = Math.round(shares * this.currentPrice * 100) / 100;
+    }
 
     const confirmationData: ConfirmationDialogData = {
       title: `Confirm ${this.action === 'buy' ? 'Buy' : 'Sell'} Order`,
