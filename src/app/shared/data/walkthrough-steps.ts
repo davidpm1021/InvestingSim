@@ -162,9 +162,9 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part III · Income',
     title: 'Money that shows up on its own',
     body: [
-      'Interest posts monthly; dividends and bond income post each quarter as cash. Nice, but a dividend can arrive even while a price falls.',
+      'Interest posts monthly; dividends and bond income post each quarter as cash into your settlement account, not as trades. Nice, but a dividend can arrive even while a price falls.',
     ],
-    action: 'Check Recent Transactions at Evergreen Bank, then the Activity at Summit Invest.',
+    action: 'Check Recent Transactions at Evergreen Bank, then on the Summit Invest Overview.',
   },
   {
     part: 'Part III · Statement',

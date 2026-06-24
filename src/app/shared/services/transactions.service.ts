@@ -513,7 +513,7 @@ export class TransactionsService {
           amount,
           date: quarterEnd,
           time: '23:59:58',
-          description: isBond ? `Bond fund income — ${asset.name}` : `Dividend — ${asset.name}`
+          description: isBond ? `Bond fund income: ${asset.name}` : `Dividend: ${asset.name}`
         });
       }
     }
