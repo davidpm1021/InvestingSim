@@ -74,9 +74,6 @@ interface Rect { top: number; left: number; width: number; height: number; }
 
       <!-- ===== MINIMIZED: coach bar (click anywhere on the bar to expand) ===== -->
       <div class="wt-coach" *ngIf="!(svc.expanded$ | async)" (click)="svc.expand()">
-        <button class="wt-coach-expand" type="button" aria-label="Show the full step">
-          <mat-icon>unfold_more</mat-icon>
-        </button>
         <div class="wt-coach-text">
           <span class="wt-chip sm">{{ svc.current.part }}</span>
           <span class="wt-coach-action">{{ svc.current.action || svc.current.title }}</span>
@@ -164,16 +161,11 @@ interface Rect { top: number; left: number; width: number; height: number; }
       position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
       z-index: 2500; display: flex; align-items: center; gap: 14px;
       width: min(720px, calc(100vw - 32px));
-      padding: 10px 12px 10px 8px; background: #fff; border: 1px solid #e3e8ef;
+      padding: 10px 12px 10px 18px; background: #fff; border: 1px solid #e3e8ef;
       border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
       font-family: 'Montserrat', sans-serif; animation: wt-rise 0.2s ease; cursor: pointer;
     }
     @keyframes wt-rise { from { transform: translate(-50%, 12px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
-    .wt-coach-expand {
-      flex-shrink: 0; border: none; background: #e3f2fd; color: #1565c0; cursor: pointer;
-      width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    }
-    .wt-coach-expand:hover { background: #cfe6fb; }
     .wt-coach-text { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
     .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
