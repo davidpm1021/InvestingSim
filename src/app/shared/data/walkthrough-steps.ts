@@ -183,12 +183,20 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'Sell part of a holding, then open the Activity tab.',
   },
   {
-    part: 'Part IV · The year',
-    title: 'Live through a year',
+    part: 'Part IV · Your move',
+    title: 'Read the market, then act',
     body: [
-      'Keep advancing through Quarter 4. Watch the Compare chart (stocks swing, bonds stay calm) and your Portfolio Value, which will not only go up.',
+      "Look at the Compare chart and each holding's Gain/Loss. Something down that you still believe in? Up more than you'd like? Make at least one trade: buy a dip, add to a winner, or trim a position.",
     ],
-    action: 'Advance through the quarters and watch the charts.',
+    action: 'Analyze your holdings, then buy or sell at least once.',
+  },
+  {
+    part: 'Part IV · The year',
+    title: 'Play out the year',
+    body: [
+      'Jump a quarter, then open your statement and the Compare chart: which holdings carried you, which dragged, and did the stocks swing more than the bond fund? Trade, advance, and repeat through Quarter 4.',
+    ],
+    action: 'Trade, advance a quarter, and review, repeating through Quarter 4.',
   },
   {
     part: 'Part IV · Cash out',
