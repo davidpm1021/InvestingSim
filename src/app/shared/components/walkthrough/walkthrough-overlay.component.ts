@@ -72,9 +72,9 @@ interface Rect { top: number; left: number; width: number; height: number; }
         </div>
       </div>
 
-      <!-- ===== MINIMIZED: coach bar ===== -->
-      <div class="wt-coach" *ngIf="!(svc.expanded$ | async)">
-        <button class="wt-coach-expand" type="button" (click)="svc.expand()" aria-label="Show the full step">
+      <!-- ===== MINIMIZED: coach bar (click anywhere on the bar to expand) ===== -->
+      <div class="wt-coach" *ngIf="!(svc.expanded$ | async)" (click)="svc.expand()">
+        <button class="wt-coach-expand" type="button" aria-label="Show the full step">
           <mat-icon>unfold_more</mat-icon>
         </button>
         <div class="wt-coach-text">
@@ -82,11 +82,11 @@ interface Rect { top: number; left: number; width: number; height: number; }
           <span class="wt-coach-action">{{ svc.current.action || svc.current.title }}</span>
         </div>
         <div class="wt-coach-actions">
-          <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
-          <button mat-raised-button color="primary" type="button" (click)="svc.next()">
+          <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev(); $event.stopPropagation()">Back</button>
+          <button mat-raised-button color="primary" type="button" (click)="svc.next(); $event.stopPropagation()">
             {{ svc.isLast ? 'Finish' : 'Next step' }}
           </button>
-          <button class="wt-coach-end" type="button" (click)="svc.finish()" aria-label="End the guide">
+          <button class="wt-coach-end" type="button" (click)="svc.finish(); $event.stopPropagation()" aria-label="End the guide">
             <mat-icon>close</mat-icon>
           </button>
         </div>
@@ -166,7 +166,7 @@ interface Rect { top: number; left: number; width: number; height: number; }
       width: min(720px, calc(100vw - 32px));
       padding: 10px 12px 10px 8px; background: #fff; border: 1px solid #e3e8ef;
       border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-      font-family: 'Montserrat', sans-serif; animation: wt-rise 0.2s ease;
+      font-family: 'Montserrat', sans-serif; animation: wt-rise 0.2s ease; cursor: pointer;
     }
     @keyframes wt-rise { from { transform: translate(-50%, 12px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
     .wt-coach-expand {
