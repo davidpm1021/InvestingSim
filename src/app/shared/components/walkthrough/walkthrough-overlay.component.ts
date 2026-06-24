@@ -154,6 +154,7 @@ interface Rect { top: number; left: number; width: number; height: number; }
       background: #fff; border-radius: 14px; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
       padding: 16px 18px 12px; font-family: 'Montserrat', sans-serif;
       animation: wt-pop 0.2s cubic-bezier(0.2, 0.7, 0.3, 1);
+      transition: top 0.2s ease, left 0.2s ease;
     }
     .wt-ct-title { margin: 0 0 6px; font-size: 1.1rem; font-weight: 700; color: #1d2733; }
     .wt-ct-body { margin: 0 0 8px; font-size: 0.9rem; line-height: 1.5; color: #41494f; }
@@ -238,13 +239,17 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     return { top: top + 'px', left: left + 'px', width: width + 'px' };
   }
 
-  /** On step change: scroll the target into view, then measure as it settles. */
+  /**
+   * On step change: scroll the target into view, then measure as it settles.
+   * The previous box is kept until the new one is measured, so the dim never
+   * disappears between steps (the CSS transition slides the spotlight over).
+   */
   private refreshTarget(): void {
-    this.spotRect = null;
     const sel = this.svc.active && this.svc.expanded ? this.svc.current.target : undefined;
-    if (!sel) { return; }
+    if (!sel) { this.measure(); return; } // leaving the tour: clear the spotlight
     const el = document.querySelector(sel) as HTMLElement | null;
     if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    this.measure(); // move to the new box right away
     [60, 220, 450, 800].forEach(t => setTimeout(() => this.measure(), t));
   }
 
@@ -253,9 +258,9 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     const sel = this.svc.active && this.svc.expanded ? this.svc.current.target : undefined;
     if (!sel) { if (this.spotRect) { this.spotRect = null; this.cdr.detectChanges(); } return; }
     const el = document.querySelector(sel) as HTMLElement | null;
-    this.spotRect = el
-      ? (() => { const r = el.getBoundingClientRect(); return { top: r.top, left: r.left, width: r.width, height: r.height }; })()
-      : null;
+    if (!el) { return; } // target not rendered yet: keep the current box, don't flash
+    const r = el.getBoundingClientRect();
+    this.spotRect = { top: r.top, left: r.left, width: r.width, height: r.height };
     this.cdr.detectChanges();
   }
 }
