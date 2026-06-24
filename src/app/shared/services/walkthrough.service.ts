@@ -58,6 +58,8 @@ export class WalkthroughService {
   get isFirst(): boolean { return this.index === 0; }
   get isLast(): boolean { return this.index >= this.steps.length - 1; }
   get done(): boolean { return localStorage.getItem(this.DONE_KEY) === '1'; }
+  get active(): boolean { return this.activeSubject.value; }
+  get expanded(): boolean { return this.expandedSubject.value; }
 
   /** Show the guide on first visit (skipped once finished). */
   autoStart(): void {

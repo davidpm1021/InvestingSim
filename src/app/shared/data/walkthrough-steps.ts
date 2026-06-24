@@ -16,6 +16,9 @@ export interface WalkthroughStep {
   /** Auto-advance trigger, only for steps with one obvious completion event.
    *  Open-ended steps (buy, sell, explore) have none and proceed manually. */
   trigger?: 'browser-open' | 'bank-linked' | 'funded' | 'quarter-advanced';
+  /** CSS selector to spotlight for a page-tour step: the overlay highlights the
+   *  element and anchors a small callout to it instead of centering a modal. */
+  target?: string;
 }
 
 export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
@@ -36,6 +39,49 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'A brokerage is where you buy and hold investments. Open the browser to reach yours, Summit Invest.',
     ],
     action: 'Open the Web Browser on the desktop.',
+  },
+  // --- Page tour: highlight the parts of Summit Invest before connecting ---
+  {
+    part: 'Tour',
+    title: 'A quick look around',
+    target: '.browser-tabs',
+    body: ['These two tabs switch between Evergreen Bank (your cash) and Summit Invest (your investments).'],
+  },
+  {
+    part: 'Tour',
+    title: 'Overview tab',
+    target: '.tour-tab-overview',
+    body: ['Your home base: balances, the Daily Movers, and where you Buy and Sell.'],
+  },
+  {
+    part: 'Tour',
+    title: 'Holdings tab',
+    target: '.tour-tab-holdings',
+    body: ['Everything you own, plus your portfolio value over time.'],
+  },
+  {
+    part: 'Tour',
+    title: 'Activity tab',
+    target: '.tour-tab-activity',
+    body: ['Every trade, dividend, and interest payment, listed out.'],
+  },
+  {
+    part: 'Tour',
+    title: 'Statements tab',
+    target: '.tour-tab-statements',
+    body: ['Your quarterly statements show up here, once each quarter ends.'],
+  },
+  {
+    part: 'Tour',
+    title: 'Daily Movers',
+    target: '.daily-movers-card',
+    body: ['The investments you can buy, with live prices. Click any one to read about it.'],
+  },
+  {
+    part: 'Tour',
+    title: 'Compare Investments',
+    target: '.compare-card',
+    body: ['And this chart shows how every investment has moved over time.'],
   },
   {
     part: 'Part I · Connect',

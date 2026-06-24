@@ -18,7 +18,7 @@
   </app-page-intro>
 
   <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Overview">
+    <mat-tab label="Overview" labelClass="tour-tab-overview">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="row">
@@ -270,7 +270,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Holdings">
+    <mat-tab label="Holdings" labelClass="tour-tab-holdings">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="row">
@@ -371,7 +371,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Activity">
+    <mat-tab label="Activity" labelClass="tour-tab-activity">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="activity-section">
@@ -418,7 +418,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Statements">
+    <mat-tab label="Statements" labelClass="tour-tab-statements">
       <div class="tab-content">
         <div class="container-fluid">
           <div class="statements-section">
