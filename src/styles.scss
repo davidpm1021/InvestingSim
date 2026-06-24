@@ -56,3 +56,73 @@ html, body {
   }
 }
 
+// Notifications dropdown. The menu renders in the CDK overlay, so it is styled
+// globally. Each item stacks the message over a muted date and wraps cleanly
+// instead of being squeezed onto one truncated line.
+.notif-menu.mat-mdc-menu-panel {
+  min-width: 320px;
+  max-width: 360px;
+  border-radius: 12px;
+  background: #fff;
+
+  .mat-mdc-menu-content { padding: 0; }
+
+  .notif-header {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1d2733;
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid #eceff3;
+  }
+
+  .notif-empty {
+    padding: 24px 18px;
+    color: #5c636a;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .notif-item.mat-mdc-menu-item {
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    border-bottom: 1px solid #f2f4f7;
+
+    &:last-of-type { border-bottom: none; }
+    &:hover,
+    &.cdk-focused,
+    &:focus { background: #f5f9ff; }
+
+    // The Material focus ring is inset and gets clipped to a stray blue edge
+    // sliver by the rounded panel; the background tint above conveys focus.
+    &.mat-focus-indicator::before { border-color: transparent !important; }
+
+    .mat-mdc-menu-item-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      width: 100%;
+      padding: 12px 18px;
+      white-space: normal;
+      line-height: 1.4;
+    }
+  }
+
+  .notif-msg {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2a3340;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .notif-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.76rem;
+    color: #5c636a;
+  }
+}
+
