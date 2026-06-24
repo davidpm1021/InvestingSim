@@ -18,14 +18,14 @@ import { CurrentDateService } from './current-date.service';
 export class WalkthroughService {
   private readonly STEP_KEY = 'investing_sim__walkthrough_step';
   private readonly DONE_KEY = 'investing_sim__walkthrough_done';
-  private readonly EXPANDED_KEY = 'investing_sim__walkthrough_expanded';
 
   readonly steps: WalkthroughStep[] = WALKTHROUGH_STEPS;
 
   private indexSubject = new BehaviorSubject<number>(this.loadStep());
   private activeSubject = new BehaviorSubject<boolean>(false);
-  // Default to expanded; only minimized if the student explicitly minimized before.
-  private expandedSubject = new BehaviorSubject<boolean>(localStorage.getItem(this.EXPANDED_KEY) !== '0');
+  // A step always arrives maximized; minimizing is session-only and does not
+  // persist, so advancing to (or reloading on) any step shows its pop-up first.
+  private expandedSubject = new BehaviorSubject<boolean>(true);
 
   readonly active$ = this.activeSubject.asObservable();
   readonly expanded$ = this.expandedSubject.asObservable();
@@ -104,7 +104,6 @@ export class WalkthroughService {
 
   private setExpanded(e: boolean): void {
     this.expandedSubject.next(e);
-    localStorage.setItem(this.EXPANDED_KEY, e ? '1' : '0');
   }
 
   /** Advance only if the guide is minimized on the step this trigger belongs to. */
