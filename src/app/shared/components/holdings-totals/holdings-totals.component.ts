@@ -92,8 +92,16 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
     for (const holding of this.holdings) {
       const asset = this.dataService.getAssetById(holding.assetId);
       if (!asset) continue;
-      current += holding.shares * this.holdingsService.getCurrentPrice(asset, this.currentDate);
-      previous += holding.shares * this.holdingsService.getCurrentPrice(asset, startDate);
+      const cur = holding.shares * this.holdingsService.getCurrentPrice(asset, this.currentDate);
+      // If the asset has no price on or before the window start, getCurrentPrice can only
+      // return a forward/fallback price; treat that holding as 0% change for the window
+      // (use its current value as the baseline) rather than inventing a return.
+      const hasStartPrice = asset.historicalPerformance.some((p: any) => p.date <= startDate);
+      const prev = hasStartPrice
+        ? holding.shares * this.holdingsService.getCurrentPrice(asset, startDate)
+        : cur;
+      current += cur;
+      previous += prev;
     }
     if (previous === 0) {
       this.performance = { percentage: 0, amount: 0 };
@@ -108,8 +116,15 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
   private windowStart(): string {
     if (this.range === 'YTD') return this.YEAR_START;
     if (this.range === 'All') return '2024-01-01';
+    const months = this.range === '1M' ? 1 : 3;
     const d = new Date(this.currentDate + 'T00:00:00');
-    d.setMonth(d.getMonth() - (this.range === '1M' ? 1 : 3));
+    const dayOfMonth = d.getDate();
+    // Step the month from the 1st to avoid the setMonth day-overflow (e.g. Mar 31 minus
+    // one month is not Feb 31), then clamp the day to the target month's length.
+    d.setDate(1);
+    d.setMonth(d.getMonth() - months);
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(dayOfMonth, lastDay));
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
