@@ -966,10 +966,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         ...quarter,
         quarter: quarter.label,
         endingCashBalance: this.calculateEndingCashBalance(quarter.end),
-        endingHoldingsValue: this.calculateEndingHoldingsValue(quarter.end),
-        performance: {
-          totalReturn: this.calculateTotalReturn(quarter.end)
-        }
+        endingHoldingsValue: this.calculateEndingHoldingsValue(quarter.end)
       }));
   }
 
@@ -983,23 +980,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // match never works here: prices are month-start but quarter ends are 03-31/etc.,
     // so the old find() always returned nothing and the value was always 0.
     return this.holdingsService.getInvestmentsValueAtDate(endDate);
-  }
-
-  private calculateTotalReturn(endDate: string): number {
-    // Calculate total return based on actual holdings performance
-    const holdingsValue = this.calculateEndingHoldingsValue(endDate);
-    const cashBalance = this.calculateEndingCashBalance(endDate);
-    const totalValue = holdingsValue + cashBalance;
-    
-    // For now, return 0 if no holdings (this could be enhanced with actual performance calculation)
-    if (totalValue === 0) return 0;
-    
-    // Simple calculation based on holdings performance - return dollar amount
-    // This could be enhanced to calculate actual returns based on purchase prices
-    const daysSinceStart = Math.floor((new Date(endDate).getTime() - new Date('2024-10-01').getTime()) / (1000 * 60 * 60 * 24));
-    const dailyReturn = 0.0005; // 0.05% daily return (more conservative)
-    const returnPercentage = Math.min(daysSinceStart * dailyReturn, 0.10); // Cap at 10% for demo
-    return totalValue * returnPercentage; // Return dollar amount instead of percentage
   }
 
   openAssetDetailsDialog(asset: any): void {
