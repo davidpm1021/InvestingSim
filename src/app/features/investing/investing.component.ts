@@ -232,9 +232,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onTabChange(event: any): void {
-    console.log('Investing tab change:', event.index);
-    console.log('selectedHolding:', this.selectedHolding);
-    console.log('holdings length:', this.holdings?.length);
     
     // Update tab tracking
     this.isDashboardTab = event.index === 0; // Overview is the first tab
@@ -249,7 +246,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Re-initialize chart if switching to dashboard (only if there are holdings)
     if (this.isDashboardTab && this.holdingsValue > 0 && this.holdings.length > 0) {
-      console.log('Switching to Dashboard - initializing pie chart');
       setTimeout(() => {
         this.initializeChart();
       }, 100);
@@ -257,11 +253,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // If switching to Holdings tab and no holding is selected, select the first one
     if (this.isHoldingsTab && !this.selectedHolding && this.holdings && this.holdings.length > 0) {
-      console.log('Switching to Holdings - auto-selecting first holding');
       this.selectHolding(this.holdings[0]);
       // The selectHolding method will handle chart initialization
     } else if (this.isHoldingsTab && this.selectedHolding) {
-      console.log('Switching to Holdings - re-initializing chart for existing holding');
       // Re-initialize line chart if switching to holdings and we already have a selected holding
       setTimeout(() => {
         this.initializeLineChart();
@@ -399,7 +393,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     
-    console.log('Max price across all assets:', maxPrice);
     return maxPrice;
   }
 
@@ -438,13 +431,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeLineChart(): void {
-    console.log('initializeLineChart called');
-    console.log('lineChartCanvas:', this.lineChartCanvas);
-    console.log('isHoldingsTab:', this.isHoldingsTab);
-    console.log('selectedHolding:', this.selectedHolding);
     
     if (!this.lineChartCanvas) {
-      console.log('No lineChartCanvas found - chart will not initialize');
       return;
     }
 
@@ -456,8 +444,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // Get admin options for Y-axis scaling
     const adminOptions = this.dataService.getOptions();
     const useConsistentYAxis = adminOptions.lineGraphYAxis === 'consistent';
-    console.log('Admin options:', adminOptions);
-    console.log('Use consistent Y-axis:', useConsistentYAxis);
 
     this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
       type: 'line',
@@ -511,19 +497,13 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateLineChart(): void {
-    console.log('updateLineChart called');
-    console.log('lineChart:', this.lineChart);
-    console.log('selectedHolding:', this.selectedHolding);
     
     if (!this.lineChart || !this.selectedHolding) {
-      console.log('Missing lineChart or selectedHolding - chart will not update');
       return;
     }
 
     const asset = this.dataService.getAssetById(this.selectedHolding.assetId);
-    console.log('asset:', asset);
     if (!asset) {
-      console.log('No asset found for selectedHolding');
       return;
     }
 
@@ -537,9 +517,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter((point: any) => point.date <= this.currentDate && point.date >= twelveMonthsAgoString)
       .sort((a: any, b: any) => a.date.localeCompare(b.date));
     
-    console.log('currentDate:', this.currentDate);
-    console.log('twelveMonthsAgoString:', twelveMonthsAgoString);
-    console.log('historicalData:', historicalData);
 
     const labels = historicalData.map((point: any) => {
       // Format date string as "MM/YYYY" for monthly display
@@ -548,8 +525,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const data = historicalData.map((point: any) => point.value);
     
-    console.log('labels:', labels);
-    console.log('data:', data);
 
     // Get admin options for Y-axis scaling
     const adminOptions = this.dataService.getOptions();
@@ -668,12 +643,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmitTrade(tradeData: TradeData): void {
-    console.log('Trade submitted:', tradeData);
     // TODO: Integrate with HoldingsService to process the trade
   }
 
   processTrade(tradeData: TradeData): void {
-    console.log('Processing trade:', tradeData);
     
     // Get the asset and current price
     const asset = this.dataService.getAssetById(tradeData.assetId);
@@ -714,7 +687,6 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       '/investing',
       this.currentDate
     );
-    console.log('Trade processed successfully');
   }
 
   // Get asset name for holding transaction
@@ -1007,26 +979,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private calculateEndingHoldingsValue(endDate: string): number {
-    // Calculate holdings value as of the end date
-    let totalValue = 0;
-    
-    // Get holdings as of the end date
-    const holdingsAtDate = this.holdingsService.getHoldingsAtDate(endDate);
-    
-    for (const holding of holdingsAtDate) {
-      if (holding.shares > 0) {
-        // Get the asset price as of the end date
-        const asset = this.dataService.assets.find(a => a.id === holding.assetId);
-        if (asset) {
-          const priceData = asset.historicalPerformance.find(p => p.date === endDate);
-          if (priceData) {
-            totalValue += holding.shares * priceData.value;
-          }
-        }
-      }
-    }
-    
-    return totalValue;
+    // Value all holdings via the shared price resolver. A direct exact-date price
+    // match never works here: prices are month-start but quarter ends are 03-31/etc.,
+    // so the old find() always returned nothing and the value was always 0.
+    return this.holdingsService.getInvestmentsValueAtDate(endDate);
   }
 
   private calculateTotalReturn(endDate: string): number {
