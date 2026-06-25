@@ -19,6 +19,9 @@ export interface WalkthroughStep {
   /** CSS selector to spotlight for a page-tour step: the overlay highlights the
    *  element and anchors a small callout to it instead of centering a modal. */
   target?: string;
+  /** Scroll the page back to the top when this step opens (the tour leaves the
+   *  page scrolled down at the lower cards). */
+  scrollTop?: boolean;
 }
 
 export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
@@ -87,6 +90,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part I · Connect',
     title: 'Connect your bank',
     trigger: 'bank-linked',
+    scrollTop: true,
     body: [
       'A brokerage holds investments, but the cash to buy them comes from your bank. Connecting it lets you move money in and out.',
     ],

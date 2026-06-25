@@ -238,7 +238,15 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
    */
   private refreshTarget(): void {
     const sel = this.svc.active && this.svc.expanded ? this.svc.current.target : undefined;
-    if (!sel) { this.measure(); return; } // leaving the tour: clear the spotlight
+    if (!sel) {
+      this.measure(); // leaving the tour: clear the spotlight
+      // After the tour scrolled down, bring steps that ask for it back to the top.
+      if (this.svc.active && this.svc.expanded && this.svc.current.scrollTop) {
+        document.querySelector('.browser-content')?.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
     const el = document.querySelector(sel) as HTMLElement | null;
     if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     this.measure(); // move to the new box right away
