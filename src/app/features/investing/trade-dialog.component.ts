@@ -121,7 +121,10 @@ export class TradeDialogComponent {
       return dollars >= this.minPurchase && dollars <= this.data.brokerageBalance;
     }
     const holding = this.getHolding(this.selectedAssetId);
-    return !!holding && this.getCalculatedShares() <= this.getMaxSellable(this.selectedAssetId) + this.SELL_EPS;
+    const shares = this.getCalculatedShares();
+    // Must be a positive amount: a number input still accepts typed negatives,
+    // and a 0/negative sell would otherwise grow the position and drain cash.
+    return !!holding && shares > 0 && shares <= this.getMaxSellable(this.selectedAssetId) + this.SELL_EPS;
   }
 
   validationMessage(): string {
@@ -131,8 +134,10 @@ export class TradeDialogComponent {
       if (dollars > 0 && dollars < this.minPurchase) return `Minimum purchase is $${this.minPurchase.toFixed(2)}.`;
       if (dollars > this.data.brokerageBalance) return `Insufficient cash. Available: $${this.data.brokerageBalance.toFixed(2)}`;
     } else {
+      const shares = this.getCalculatedShares();
+      if (shares <= 0) return 'Enter an amount greater than zero.';
       const maxSellable = this.getMaxSellable(this.selectedAssetId);
-      if (this.getCalculatedShares() > maxSellable + this.SELL_EPS) {
+      if (shares > maxSellable + this.SELL_EPS) {
         return `Insufficient shares. You can sell up to ${maxSellable.toFixed(4)}.`;
       }
     }
