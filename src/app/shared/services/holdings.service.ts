@@ -159,8 +159,11 @@ export class HoldingsService {
    */
   addHoldingTransaction(assetId: string, action: 'buy' | 'sell', shares: number, price: number, date: string): void {
     const now = new Date();
-    const timeString = now.toTimeString().split(' ')[0]; // Get HH:MM:SS format
-    
+    // Millisecond precision: two sells of the same asset in the same wall-clock second
+    // would otherwise share an assetId|date|time key and collide in the realized-gain
+    // feed, so one row would show the other sale's gain/loss.
+    const timeString = `${now.toTimeString().split(' ')[0]}.${String(now.getMilliseconds()).padStart(3, '0')}`;
+
     const holdingTransaction: HoldingTransaction = {
       assetId: assetId,
       action: action,
