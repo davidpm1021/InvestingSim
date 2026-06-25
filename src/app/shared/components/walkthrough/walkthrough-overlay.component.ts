@@ -186,6 +186,7 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   spotRect: Rect | null = null;
   // The current step's body, pre-split so glossary terms render with hover definitions.
   bodySegments: Segment[][] = [];
+  private calloutHeight = 0; // measured height of the tour callout, for on-screen clamping
   private sub = new Subscription();
   private readonly onScroll = () => this.measure();
   private readonly onResize = () => this.measure();
@@ -270,12 +271,17 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
       return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: width + 'px' };
     }
     const s = this.spotRect;
-    const vh = window.innerHeight, vw = window.innerWidth, estH = 170;
-    const top = (s.top + s.height + 16 + estH < vh)
-      ? s.top + s.height + 16
-      : Math.max(12, s.top - 16 - estH);
+    const vh = window.innerHeight, vw = window.innerWidth;
+    const h = this.calloutHeight || 200; // measured callout height (fallback before first measure)
+    const gap = 14, margin = 12;
+    // Prefer below the spotlight; flip above when there isn't room.
+    let top = (s.top + s.height + gap + h + margin <= vh)
+      ? s.top + s.height + gap
+      : s.top - gap - h;
+    // Final clamp: keep the whole callout (and its Back/Next buttons) on-screen.
+    top = Math.max(margin, Math.min(top, vh - h - margin));
     let left = s.left + s.width / 2 - width / 2;
-    left = Math.max(12, Math.min(left, vw - width - 12));
+    left = Math.max(margin, Math.min(left, vw - width - margin));
     return { top: top + 'px', left: left + 'px', width: width + 'px' };
   }
 
@@ -309,6 +315,8 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     if (!el) { return; } // target not rendered yet: keep the current box, don't flash
     const r = el.getBoundingClientRect();
     this.spotRect = { top: r.top, left: r.left, width: r.width, height: r.height };
+    const callout = document.querySelector('.wt-callout') as HTMLElement | null;
+    if (callout) { this.calloutHeight = callout.offsetHeight; }
     this.cdr.detectChanges();
   }
 }
