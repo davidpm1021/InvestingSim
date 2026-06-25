@@ -2,10 +2,13 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
+import { GLOSSARY } from '../../data/glossary';
 
 interface Rect { top: number; left: number; width: number; height: number; }
+interface Segment { t: string; def: string | null; }
 
 /**
  * The guided walkthrough UI, with three presentations:
@@ -18,7 +21,7 @@ interface Rect { top: number; left: number; width: number; height: number; }
 @Component({
   selector: 'app-walkthrough-overlay',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
   template: `
     <ng-container *ngIf="svc.active$ | async">
 
@@ -58,7 +61,7 @@ interface Rect { top: number; left: number; width: number; height: number; }
             <span class="wt-step">Step {{ svc.index + 1 }} of {{ svc.total }}</span>
           </div>
           <h2 class="wt-title">{{ svc.current.title }}</h2>
-          <p class="wt-body" *ngFor="let p of svc.current.body">{{ p }}</p>
+          <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><span *ngIf="seg.def" class="wt-def" [matTooltip]="seg.def" matTooltipPosition="above" tabindex="0">{{ seg.t }}</span><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
           <div class="wt-action" *ngIf="svc.current.action">
             <mat-icon>touch_app</mat-icon>
             <span>{{ svc.current.action }}</span>
@@ -123,6 +126,7 @@ interface Rect { top: number; left: number; width: number; height: number; }
 
     .wt-title { margin: 0 0 12px; font-size: 1.5rem; font-weight: 700; color: #1d2733; }
     .wt-body { margin: 0 0 12px; font-size: 0.98rem; line-height: 1.55; color: #41494f; }
+    .wt-def { border-bottom: 1px dotted #1565c0; cursor: help; }
 
     .wt-action {
       display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 8px;
@@ -180,9 +184,15 @@ interface Rect { top: number; left: number; width: number; height: number; }
 })
 export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   spotRect: Rect | null = null;
+  // The current step's body, pre-split so glossary terms render with hover definitions.
+  bodySegments: Segment[][] = [];
   private sub = new Subscription();
   private readonly onScroll = () => this.measure();
   private readonly onResize = () => this.measure();
+
+  // Terms to auto-define in the copy, most specific first (so "bond fund" wins over the
+  // bare "fund", and the verb in "Add Funds" is skipped via the lookbehind).
+  private readonly termRe = /(target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
 
   constructor(public svc: WalkthroughService, private cdr: ChangeDetectorRef) {}
 
@@ -191,8 +201,46 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     window.addEventListener('resize', this.onResize);
     this.sub.add(
       combineLatest([this.svc.active$, this.svc.index$, this.svc.expanded$])
-        .subscribe(() => this.refreshTarget())
+        .subscribe(() => {
+          this.bodySegments = (this.svc.current?.body || []).map(p => this.defineSegments(p));
+          this.refreshTarget();
+        })
     );
+  }
+
+  /** Split a paragraph into plain text and glossary-term segments (term carries its definition). */
+  private defineSegments(text: string): Segment[] {
+    const out: Segment[] = [];
+    let last = 0;
+    this.termRe.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = this.termRe.exec(text)) !== null) {
+      if (m.index > last) { out.push({ t: text.slice(last, m.index), def: null }); }
+      out.push({ t: m[0], def: this.defFor(m[0]) });
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) { out.push({ t: text.slice(last), def: null }); }
+    return out;
+  }
+
+  /** Glossary definition for a matched term (null if unknown). */
+  private defFor(matched: string): string | null {
+    const m = matched.toLowerCase();
+    const key =
+      m.includes('target-date fund') ? 'Target-date fund' :
+      m.includes('bond fund') ? 'Bond fund' :
+      m.includes('mutual fund') ? 'Mutual fund' :
+      m.includes('index fund') ? 'Index fund' :
+      m.startsWith('etf') ? 'ETF' :
+      m.startsWith('stock') ? 'Stock' :
+      m.startsWith('fund') ? 'Fund' :
+      m.startsWith('dividend') ? 'Dividend' :
+      m.startsWith('diversification') ? 'Diversification' :
+      m.startsWith('brokerage') ? 'Brokerage account' :
+      m.startsWith('settlement') ? 'Cash Settlement Account' :
+      m.startsWith('compounding') ? 'Compounding' :
+      m.startsWith('volatility') ? 'Volatility' : '';
+    return key ? (GLOSSARY[key] || null) : null;
   }
 
   ngOnDestroy(): void {

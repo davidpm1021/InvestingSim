@@ -14,6 +14,7 @@ export const GLOSSARY: { [term: string]: string } = {
   'Compounding': 'Earning returns on your past returns, so growth builds on itself over time.',
 
   // Investment types
+  'Fund': 'A basket of many investments bundled together, so a single purchase spreads your money across lots of holdings at once.',
   'Stock': 'A share of ownership in a single company. Prices can swing a lot, so individual stocks are riskier than diversified funds.',
   'ETF': 'Exchange-Traded Fund — a basket of investments that trades on an exchange throughout the day, like a stock.',
   'Mutual fund': 'A professionally managed basket of investments that prices once per day, after the market closes.',
