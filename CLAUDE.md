@@ -53,13 +53,13 @@ All calculations filter by `date <= currentDate` so only transactions up to the 
 ### Data Layer (`src/app/shared/data/`)
 
 Static JSON files imported as TypeScript constants:
-- `assets.json` / `assets.data.ts` - Asset catalog with `AssetType` union: `'stock' | 'mutual_fund' | 'index_fund' | 'etf' | 'target_date_fund' | 'bond_fund'`
+- `assets.json` / `assets.data.ts` - Asset catalog with `AssetType` union: `'stock' | 'mutual_fund' | 'etf' | 'target_date_fund' | 'bond_fund'`
 - `quarters.json` / `quarters.data.ts` - Quarter definitions (Q4 2024 through Q4 2025), helper functions for date-to-quarter mapping
 
 ### Routing (`app.routes.ts`)
 
-- `/` - Splash page
-- `MainLayoutComponent` shell wraps all feature routes: `/home`, `/banking`, `/investing`, `/admin`, `/bank-sim`
+- `/` - Desktop splash (`DesktopComponent`)
+- `MainLayoutComponent` shell wraps the feature routes: `/banking`, `/investing`, `/admin`, `/bank-sim`
 - `MainLayoutComponent` includes header (quarter nav) + sidebar (navigation)
 
 ### Layout Modes
