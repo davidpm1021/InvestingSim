@@ -357,9 +357,11 @@ export class TransactionsService {
       return cached;
     }
     const base = this.transactionsSubject.value;
-    const interest = this.generateInterestTransactions(base, date);
+    // Income first, so settlement-cash interest accrues on dividend/bond income that is
+    // sitting in the account too (it credits brokerage001 like any other cash).
     const income = this.generateIncomeTransactions(date);
-    const ledger = [...base, ...interest, ...income].filter(t => t.date <= date);
+    const interest = this.generateInterestTransactions([...base, ...income], date);
+    const ledger = [...base, ...income, ...interest].filter(t => t.date <= date);
     this.ledgerCache.set(date, ledger);
     return ledger;
   }
@@ -420,7 +422,10 @@ export class TransactionsService {
 
     (Object.keys(this.accounts) as Array<keyof typeof this.accounts>).forEach(accountId => {
       const account = this.accounts[accountId];
-      const monthlyRate = account.apy / 12;
+      // True APY: the monthly rate that compounds to EXACTLY the advertised annual
+      // rate, (1 + apy)^(1/12) - 1. The nominal apy/12 compounds to slightly above
+      // apy, so a student checking "1.50% APY on $5,000" would see too much interest.
+      const monthlyRate = Math.pow(1 + account.apy, 1 / 12) - 1;
       if (monthlyRate <= 0) {
         return;
       }
