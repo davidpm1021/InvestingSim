@@ -50,6 +50,11 @@
           <td>{{ model.changeInValue.moneyAdded.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
         </tr>
         <tr>
+          <td>Income (dividends + interest)</td>
+          <td>{{ model.changeInValue.income.q | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ model.changeInValue.income.ytd | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
           <td>Investment gain/loss</td>
           <td [class.pos]="model.changeInValue.gainLoss.q >= 0" [class.neg]="model.changeInValue.gainLoss.q < 0">
             {{ model.changeInValue.gainLoss.q | currency:'USD':'symbol':'1.2-2' }}

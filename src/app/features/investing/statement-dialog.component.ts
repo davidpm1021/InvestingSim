@@ -73,12 +73,17 @@ export class StatementDialogComponent implements OnInit {
 
     const moneyAddedQ = qFlow.deposits - qFlow.withdrawals;
     const moneyAddedYtd = ytdFlow.deposits - ytdFlow.withdrawals;
+    const incomeQ = qFlow.dividends + qFlow.interest;
+    const incomeYtd = ytdFlow.dividends + ytdFlow.interest;
 
-    // Investment gain/loss is the residual, so Starting + Added + Gain/Loss = Ending always reconciles.
+    // Investment gain/loss is price change ONLY: the residual minus the income (dividends
+    // + interest) already itemized in Cash Activity, so income is not double-counted as
+    // appreciation. Starting + Added + Income + Gain/Loss = Ending still reconciles.
     const changeInValue = {
       startingBalance: { q: startValue, ytd: ytdStartValue },
       moneyAdded: { q: moneyAddedQ, ytd: moneyAddedYtd },
-      gainLoss: { q: endValue - startValue - moneyAddedQ, ytd: endValue - ytdStartValue - moneyAddedYtd },
+      income: { q: incomeQ, ytd: incomeYtd },
+      gainLoss: { q: endValue - startValue - moneyAddedQ - incomeQ, ytd: endValue - ytdStartValue - moneyAddedYtd - incomeYtd },
       endingBalance: { q: endValue, ytd: endValue }
     };
 
