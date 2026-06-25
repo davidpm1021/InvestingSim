@@ -48,8 +48,8 @@ export class ConfirmationDialogComponent {
 
   getAccountName(accountId: string): string {
     const accountNames: { [key: string]: string } = {
-      'banking001': 'Banking Account',
-      'brokerage001': 'Brokerage Account'
+      'banking001': 'Savings',
+      'brokerage001': 'Cash Settlement Account'
     };
     return accountNames[accountId] || accountId;
   }
