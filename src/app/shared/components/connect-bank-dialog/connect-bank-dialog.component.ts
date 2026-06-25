@@ -37,6 +37,9 @@ export class ConnectBankDialogComponent {
 
   connect(): void {
     this.status = 'connecting';
+    // Lock the dialog once connecting starts: an ESC/backdrop dismissal mid-animation
+    // would resolve undefined and leave the bank unlinked (guide stuck on this step).
+    this.dialogRef.disableClose = true;
     setTimeout(() => {
       this.status = 'connected';
       setTimeout(() => this.dialogRef.close(true), 900);
