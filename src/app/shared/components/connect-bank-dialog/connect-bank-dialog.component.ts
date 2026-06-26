@@ -4,6 +4,7 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 type ConnectStatus = 'review' | 'connecting' | 'connected';
 
@@ -33,15 +34,22 @@ export class ConnectBankDialogComponent {
 
   status: ConnectStatus = 'review';
 
-  constructor(private dialogRef: MatDialogRef<ConnectBankDialogComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<ConnectBankDialogComponent>,
+    private live: LiveAnnouncer,
+  ) {}
 
   connect(): void {
     this.status = 'connecting';
     // Lock the dialog once connecting starts: an ESC/backdrop dismissal mid-animation
     // would resolve undefined and leave the bank unlinked (guide stuck on this step).
     this.dialogRef.disableClose = true;
+    // The status text is swapped in by *ngIf without moving focus, so announce each
+    // transition for screen readers (WCAG 4.1.3 Status Messages).
+    this.live.announce(`Securely connecting to ${this.bankDetails.bankName}`, 'polite');
     setTimeout(() => {
       this.status = 'connected';
+      this.live.announce(`Connected to ${this.bankDetails.bankName}`, 'assertive');
       setTimeout(() => this.dialogRef.close(true), 900);
     }, 1300);
   }

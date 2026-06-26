@@ -293,6 +293,9 @@
                     <div class="holding-item"
                          *ngFor="let holding of holdings"
                          (click)="selectHolding(holding)"
+                         role="button"
+                         [attr.aria-pressed]="selectedHolding?.assetId === holding.assetId"
+                         [attr.aria-label]="'Show details for ' + holding.name"
                          [class.selected]="selectedHolding?.assetId === holding.assetId">
                       <div class="holding-name">{{ holding.name }}</div>
                       <div class="holding-shares">{{ holding.shares | number:'1.2-2' }} shares</div>
@@ -315,7 +318,8 @@
                 </mat-card-header>
                 <mat-card-content>
                   <app-line-chart [labels]="compareLabels" [series]="portfolioSeries"
-                                  yLabel="Value ($)" [height]="240"></app-line-chart>
+                                  yLabel="Value ($)" ariaLabel="Line chart of your total portfolio value over time"
+                                  [height]="240"></app-line-chart>
                 </mat-card-content>
               </mat-card>
             </div>
@@ -379,19 +383,19 @@
           <div *ngIf="holdingTransactions.length === 0" class="no-transactions">
             <p>No trading activity yet.</p>
           </div>
-          <div *ngIf="holdingTransactions.length > 0" class="transactions-list">
-            <div class="transaction-header">
-              <div class="header-date">Date</div>
-              <div class="header-action">Action</div>
-              <div class="header-asset">Asset</div>
-              <div class="header-asset-type">Asset Type</div>
-              <div class="header-shares">Shares</div>
-              <div class="header-price">Price</div>
-              <div class="header-balance">Balance</div>
+          <div *ngIf="holdingTransactions.length > 0" class="transactions-list" role="table" aria-label="Trading activity">
+            <div class="transaction-header" role="row">
+              <div class="header-date" role="columnheader">Date</div>
+              <div class="header-action" role="columnheader">Action</div>
+              <div class="header-asset" role="columnheader">Asset</div>
+              <div class="header-asset-type" role="columnheader">Asset Type</div>
+              <div class="header-shares" role="columnheader">Shares</div>
+              <div class="header-price" role="columnheader">Price</div>
+              <div class="header-balance" role="columnheader">Balance</div>
             </div>
-            <div *ngFor="let transaction of holdingTransactions" class="transaction-item">
-              <div class="transaction-date">{{ transaction.date | evergreenDate:'short' }}</div>
-              <div class="transaction-action"
+            <div *ngFor="let transaction of holdingTransactions" class="transaction-item" role="row">
+              <div class="transaction-date" role="cell">{{ transaction.date | evergreenDate:'short' }}</div>
+              <div class="transaction-action" role="cell"
                    [class.buy-action]="transaction.action === 'buy'"
                    [class.sell-action]="transaction.action === 'sell'">
                 {{ transaction.action | titlecase }}
@@ -402,15 +406,15 @@
                   {{ r.term === 'long' ? 'LT' : 'ST' }} {{ r.gain >= 0 ? '+' : '' }}{{ r.gain | currency:'USD':'symbol':'1.2-2' }}
                 </span>
               </div>
-              <div class="transaction-asset">{{ getAssetName(transaction.assetId) }}</div>
-              <div class="transaction-asset-type">{{ getAssetType(transaction.assetId) | assetType }}</div>
-              <div class="transaction-shares">{{ transaction.shares | number:'1.2-2' }}</div>
-              <div class="transaction-price"
+              <div class="transaction-asset" role="cell">{{ getAssetName(transaction.assetId) }}</div>
+              <div class="transaction-asset-type" role="cell">{{ getAssetType(transaction.assetId) | assetType }}</div>
+              <div class="transaction-shares" role="cell">{{ transaction.shares | number:'1.2-2' }}</div>
+              <div class="transaction-price" role="cell"
                    [class.positive]="transaction.action === 'buy'"
                    [class.negative]="transaction.action === 'sell'">
                 {{ transaction.action === 'buy' ? '+' : '-' }}${{ transaction.price | number:'1.2-2' }}
               </div>
-              <div class="transaction-balance">{{ getRunningBalance(transaction) | number:'1.2-2' }} shares</div>
+              <div class="transaction-balance" role="cell">{{ getRunningBalance(transaction) | number:'1.2-2' }} shares</div>
             </div>
           </div>
         </div>

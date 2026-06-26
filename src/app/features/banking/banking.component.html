@@ -32,23 +32,23 @@
               <div *ngIf="transactions.length === 0" class="no-transactions">
                 <p>No transactions yet.</p>
               </div>
-                      <div *ngIf="transactions.length > 0" class="transactions-list">
-                        <div class="transaction-header">
-                          <div class="header-description">Description</div>
-                          <div class="header-date">Date</div>
-                          <div class="header-amount">Amount</div>
-                          <div class="header-balance">Balance</div>
+                      <div *ngIf="transactions.length > 0" class="transactions-list" role="table" aria-label="Recent transactions">
+                        <div class="transaction-header" role="row">
+                          <div class="header-description" role="columnheader">Description</div>
+                          <div class="header-date" role="columnheader">Date</div>
+                          <div class="header-amount" role="columnheader">Amount</div>
+                          <div class="header-balance" role="columnheader">Balance</div>
                         </div>
-                        <div *ngFor="let transaction of transactions" class="transaction-item">
-                          <div class="transaction-description">{{ transaction.displayDescription }}</div>
-                          <div class="transaction-date">{{ transaction.date | evergreenDate:'short' }}</div>
-                          <div class="transaction-amount" 
-                               [class.positive]="!isStartingBalance(transaction) && getTransactionAmount(transaction) > 0" 
+                        <div *ngFor="let transaction of transactions" class="transaction-item" role="row">
+                          <div class="transaction-description" role="cell">{{ transaction.displayDescription }}</div>
+                          <div class="transaction-date" role="cell">{{ transaction.date | evergreenDate:'short' }}</div>
+                          <div class="transaction-amount" role="cell"
+                               [class.positive]="!isStartingBalance(transaction) && getTransactionAmount(transaction) > 0"
                                [class.negative]="getTransactionAmount(transaction) < 0"
                                [class.neutral]="isStartingBalance(transaction)">
                             {{ !isStartingBalance(transaction) && getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
                           </div>
-                          <div class="transaction-balance">
+                          <div class="transaction-balance" role="cell">
                             {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}
                           </div>
                         </div>

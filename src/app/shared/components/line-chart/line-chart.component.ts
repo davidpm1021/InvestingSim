@@ -38,9 +38,38 @@ interface LegendItem {
       </button>
     </div>
     <div class="line-chart-wrap" [style.height.px]="height"><canvas #canvas role="img" [attr.aria-label]="ariaLabel || yLabel"></canvas></div>
+    <!-- Visually-hidden text equivalent of the plotted data (WCAG 1.1.1): a canvas
+         alone conveys the trend only visually, so expose the same points as a table.
+         Wrapped in a block .sr-only so the table's intrinsic width is clipped and
+         cannot contribute layout/overflow. -->
+    <div class="sr-only" *ngIf="labels.length && series.length">
+      <table>
+        <caption>{{ ariaLabel || yLabel }} (data table)</caption>
+        <thead>
+          <tr><th scope="col">Period</th><th scope="col" *ngFor="let s of series">{{ s.label }}</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let label of labels; let i = index">
+            <th scope="row">{{ label }}</th>
+            <td *ngFor="let s of series">{{ formatValue(s.data[i]) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   `,
   styles: [`
     .line-chart-wrap { position: relative; width: 100%; }
+
+    /* Visually hidden but exposed to assistive tech (data-table equivalent of the chart). */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     .chart-legend {
       display: flex;
@@ -143,6 +172,14 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private seriesColor(s: LineSeries, i: number): string {
     return s.color || this.palette[i % this.palette.length];
+  }
+
+  /** Format a value for the visually-hidden data table, matching the chart tooltip. */
+  formatValue(v: number | undefined): string {
+    if (v == null || Number.isNaN(v)) { return ''; }
+    return this.valueFormat === 'percent'
+      ? `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`
+      : `$${v.toFixed(2)}`;
   }
 
   private sameStructure(): boolean {

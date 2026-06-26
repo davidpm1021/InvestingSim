@@ -104,10 +104,13 @@
                         <div class="asset-list" *ngIf="allAssets.length > 0; else noAssets">
                           <div class="asset-group" *ngFor="let group of groupedAssets">
                             <div class="asset-type-header">{{ group.type | assetType }}</div>
-                            <div class="asset-item" 
-                                 *ngFor="let asset of group.assets" 
+                            <div class="asset-item"
+                                 *ngFor="let asset of group.assets"
                                  [class.selected]="selectedAsset?.id === asset.id"
-                                 (click)="selectAsset(asset)">
+                                 (click)="selectAsset(asset)"
+                                 role="button"
+                                 [attr.aria-pressed]="selectedAsset?.id === asset.id"
+                                 [attr.aria-label]="'Select ' + asset.name">
                               <div class="asset-info">
                                 <div class="asset-name">{{ asset.name }}</div>
                                 <div class="asset-symbol">({{ asset.id }})</div>
@@ -169,18 +172,18 @@
                         <!-- Performance Table -->
                         <div class="performance-table-section">
                           <h4>Historical Performance</h4>
-                          <div class="performance-table">
-                            <div class="table-header">
-                              <div class="header-cell">Date</div>
-                              <div class="header-cell">Value</div>
-                              <div class="header-cell">Gain/Loss</div>
+                          <div class="performance-table" role="table" aria-label="Historical performance">
+                            <div class="table-header" role="row">
+                              <div class="header-cell" role="columnheader">Date</div>
+                              <div class="header-cell" role="columnheader">Value</div>
+                              <div class="header-cell" role="columnheader">Gain/Loss</div>
                             </div>
-                            <div class="table-body">
-                              <div class="table-row" *ngFor="let point of selectedAssetPerformanceData; let i = index">
-                                <div class="table-cell date-cell">{{ formatDate(point.date) }}</div>
-                                <div class="table-cell value-cell">${{ point.value | number:'1.2-2' }}</div>
-                                <div class="table-cell gain-cell" 
-                                     [class.positive]="point.gainLoss >= 0" 
+                            <div class="table-body" role="rowgroup">
+                              <div class="table-row" role="row" *ngFor="let point of selectedAssetPerformanceData; let i = index">
+                                <div class="table-cell date-cell" role="cell">{{ formatDate(point.date) }}</div>
+                                <div class="table-cell value-cell" role="cell">${{ point.value | number:'1.2-2' }}</div>
+                                <div class="table-cell gain-cell" role="cell"
+                                     [class.positive]="point.gainLoss >= 0"
                                      [class.negative]="point.gainLoss < 0">
                                   <span *ngIf="i > 0">{{ point.gainLoss >= 0 ? '+' : '' }}{{ point.gainLoss | number:'1.2-2' }}%</span>
                                   <span *ngIf="i === 0">-</span>
