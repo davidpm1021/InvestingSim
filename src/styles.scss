@@ -45,6 +45,14 @@ html, body {
   }
 }
 
+// CDK overlay container (Material dialogs, menus, selects, snackbars, tooltips)
+// defaults to z-index 1000, which sits BEHIND the walkthrough overlay (scrim/card
+// at 3000-3002). That hid the glossary hover tooltips inside the walkthrough modal.
+// Raise the container above the walkthrough so those tooltips show; real dialogs
+// never coexist with the expanded modal (it minimizes to the coach bar first), so
+// this only changes what is visible on top, not the interaction order.
+.cdk-overlay-container { z-index: 3100; }
+
 // Respect the OS "reduce motion" setting (WCAG 2.3.3): neutralize the
 // browser-window / connecting / transition animations for users who opt out.
 @media (prefers-reduced-motion: reduce) {
