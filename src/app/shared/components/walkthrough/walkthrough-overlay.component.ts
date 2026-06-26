@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { A11yModule } from '@angular/cdk/a11y';
 import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
 import { GLOSSARY } from '../../data/glossary';
@@ -21,7 +22,7 @@ interface Segment { t: string; def: string | null; }
 @Component({
   selector: 'app-walkthrough-overlay',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule, A11yModule],
   template: `
     <ng-container *ngIf="svc.active$ | async">
 
@@ -32,6 +33,7 @@ interface Segment { t: string; def: string | null; }
              [style.top.px]="spotRect.top - 6" [style.left.px]="spotRect.left - 6"
              [style.width.px]="spotRect.width + 12" [style.height.px]="spotRect.height + 12"></div>
         <div class="wt-callout" [ngStyle]="calloutStyle" role="dialog" aria-modal="true"
+             cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="svc.finish()"
              [attr.aria-label]="svc.current.title">
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
@@ -43,7 +45,7 @@ interface Segment { t: string; def: string | null; }
             <button mat-button type="button" class="wt-skip" (click)="svc.finish()">Skip</button>
             <span class="wt-spacer"></span>
             <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
-            <button mat-raised-button color="primary" type="button" (click)="svc.next()">Next</button>
+            <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="svc.next()">Next</button>
           </div>
         </div>
       </ng-container>
@@ -51,7 +53,8 @@ interface Segment { t: string; def: string | null; }
       <!-- ===== LEARNING moment: centered pop-up ===== -->
       <div class="wt-scrim" *ngIf="(svc.expanded$ | async) && !svc.current.target"
            role="dialog" aria-modal="true" [attr.aria-label]="svc.current.title">
-        <div class="wt-card">
+        <div class="wt-card" cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
+             (keydown.escape)="svc.minimize()">
           <button class="wt-close" type="button" (click)="svc.minimize()"
                   aria-label="Minimize so you can try it">
             <mat-icon>remove</mat-icon>
@@ -70,7 +73,7 @@ interface Segment { t: string; def: string | null; }
           <div class="wt-actions">
             <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
             <span class="wt-spacer"></span>
-            <button mat-raised-button color="primary" type="button" (click)="primary()">{{ primaryLabel }}</button>
+            <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="primary()">{{ primaryLabel }}</button>
           </div>
         </div>
       </div>
