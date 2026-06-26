@@ -143,7 +143,7 @@ interface Segment { t: string; def: string | null; }
 
     .wt-actions { display: flex; align-items: center; gap: 8px; }
     .wt-spacer { flex: 1; }
-    .wt-skip { color: #9aa3ad !important; }
+    .wt-skip { color: #5c636a !important; } /* darker grey for >=4.5:1 contrast on the white callout */
 
     /* ---------- tour spotlight ---------- */
     .wt-block { position: fixed; inset: 0; z-index: 3000; background: transparent; }

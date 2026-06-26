@@ -132,7 +132,7 @@ mat-dialog-content {
     }
 
     &.positive {
-      color: #2e7d32;
+      color: #1b5e20; // darker green for >=4.5:1 on the tinted (non-white) pill background
       background-color: rgba(40, 167, 69, 0.1);
     }
 
