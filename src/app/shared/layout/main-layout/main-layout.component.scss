@@ -118,6 +118,13 @@
   }
 }
 
+// Keyboard focus on the minimized window (it becomes a button only when minimized,
+// so a keyboard user can restore it); mouse clicks show nothing new.
+.browser-window.minimized:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: -2px;
+}
+
 // Browser Tabs
 .browser-tabs {
   display: flex;

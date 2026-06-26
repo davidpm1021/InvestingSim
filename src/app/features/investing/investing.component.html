@@ -290,10 +290,9 @@
                       <div class="holding-value">${{ brokerageBalance | number:'1.2-2' }}</div>
                     </div>
                     <!-- Investment holdings -->
-                    <div class="holding-item"
+                    <div class="holding-item" appClickable
                          *ngFor="let holding of holdings"
                          (click)="selectHolding(holding)"
-                         role="button"
                          [attr.aria-pressed]="selectedHolding?.assetId === holding.assetId"
                          [attr.aria-label]="'Show details for ' + holding.name"
                          [class.selected]="selectedHolding?.assetId === holding.assetId">

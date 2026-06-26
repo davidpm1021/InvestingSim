@@ -1221,6 +1221,12 @@ h2 {
   border-color: #1976d2;
 }
 
+// Keyboard focus only (matches .mover-card / .statement-card); mouse clicks show nothing new.
+.holding-item:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
 .holding-name {
   font-weight: 600;
   color: #333;

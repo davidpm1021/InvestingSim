@@ -17,7 +17,12 @@
        [class.minimized]="isMinimized"
        [class.closing]="isClosing"
        [class.opening]="justOpened"
-       (click)="isMinimized ? restoreFromMinimized() : null">
+       (click)="isMinimized ? restoreFromMinimized() : null"
+       (keydown.enter)="isMinimized ? restoreFromMinimized() : null"
+       (keydown.space)="isMinimized ? restoreFromMinimized() : null"
+       [attr.role]="isMinimized ? 'button' : null"
+       [attr.tabindex]="isMinimized ? 0 : null"
+       [attr.aria-label]="isMinimized ? 'Restore the Investing Sim browser window' : null">
     <!-- Browser Tabs -->
     <div class="browser-tabs">
       <div class="tab tab-banking" appClickable
