@@ -42,7 +42,7 @@ interface Segment { t: string; def: string | null; }
           <h3 class="wt-ct-title">{{ svc.current.title }}</h3>
           <p class="wt-ct-body" *ngFor="let p of svc.current.body">{{ p }}</p>
           <div class="wt-actions">
-            <button mat-button type="button" class="wt-skip" (click)="svc.finish()">Skip</button>
+            <button mat-button type="button" class="wt-skip" (click)="svc.skipTour()">Skip tour</button>
             <span class="wt-spacer"></span>
             <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
             <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="svc.next()">Next</button>

@@ -93,6 +93,19 @@ export class WalkthroughService {
     }
   }
 
+  /**
+   * Skip just the page tour: jump past the contiguous spotlight steps to the
+   * next real task, instead of ending the whole guide. Finishes only if the
+   * tour is the very last thing left.
+   */
+  skipTour(): void {
+    let i = this.index;
+    while (i < this.steps.length && this.steps[i].target) { i++; }
+    if (i >= this.steps.length) { this.finish(); return; }
+    this.setIndex(i);
+    this.setExpanded(true);
+  }
+
   finish(): void {
     localStorage.setItem(this.DONE_KEY, '1');
     this.setExpanded(true); // reset so a future replay starts expanded
