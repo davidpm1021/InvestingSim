@@ -6,6 +6,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { A11yModule } from '@angular/cdk/a11y';
 import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
+import { ResponsesService } from '../../services/responses.service';
+import { CfuQuestion } from '../../data/walkthrough-steps';
 import { GLOSSARY } from '../../data/glossary';
 
 interface Rect { top: number; left: number; width: number; height: number; }
@@ -37,7 +39,6 @@ interface Segment { t: string; def: string | null; }
              [attr.aria-label]="svc.current.title">
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
-            <span class="wt-step">{{ svc.index + 1 }} / {{ svc.total }}</span>
           </div>
           <h3 class="wt-ct-title">{{ svc.current.title }}</h3>
           <p class="wt-ct-body" *ngFor="let p of svc.current.body">{{ p }}</p>
@@ -53,7 +54,8 @@ interface Segment { t: string; def: string | null; }
       <!-- ===== LEARNING moment: centered pop-up ===== -->
       <div class="wt-scrim" *ngIf="(svc.expanded$ | async) && !svc.current.target"
            role="dialog" aria-modal="true" [attr.aria-label]="svc.current.title">
-        <div class="wt-card" cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
+        <div class="wt-card" [class.wt-card--quiz]="svc.current.kind === 'question'"
+             cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
              (keydown.escape)="svc.minimize()">
           <button class="wt-close" type="button" (click)="svc.minimize()"
                   aria-label="Minimize so you can try it">
@@ -61,20 +63,60 @@ interface Segment { t: string; def: string | null; }
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
-            <span class="wt-step">Step {{ svc.index + 1 }} of {{ svc.total }}</span>
           </div>
-          <h2 class="wt-title">{{ svc.current.title }}</h2>
-          <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><span *ngIf="seg.def" class="wt-def" [matTooltip]="seg.def" matTooltipPosition="above" tabindex="0">{{ seg.t }}</span><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
-          <div class="wt-action" *ngIf="svc.current.action">
-            <mat-icon>touch_app</mat-icon>
-            <span>{{ svc.current.action }}</span>
-          </div>
-          <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
-          <div class="wt-actions">
-            <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
-            <span class="wt-spacer"></span>
-            <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="primary()">{{ primaryLabel }}</button>
-          </div>
+          <!-- ===== QUESTION screen: its own step, notebook / paper look ===== -->
+          <ng-container *ngIf="svc.current.kind === 'question'; else instruction">
+            <div class="wt-cfu-head">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+              <span>Check yourself</span>
+            </div>
+            <div class="wt-cfu" *ngFor="let q of svc.current.questions">
+              <fieldset class="wt-cfu-mc" *ngIf="q.kind === 'mc'">
+                <legend class="wt-cfu-q">{{ q.prompt }}</legend>
+                <label class="wt-choice" *ngFor="let c of q.choices; let i = index"
+                       [class.selected]="isSelected(q, i)"
+                       [class.correct]="isAnswered(q) && c.correct"
+                       [class.wrong]="isAnswered(q) && isSelected(q, i) && !c.correct">
+                  <input type="radio" [name]="q.id" [checked]="isSelected(q, i)" (change)="selectChoice(q, i)">
+                  <span class="wt-choice-text">{{ c.text }}</span>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && c.correct">check</mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, i) && !c.correct">close</mat-icon>
+                </label>
+                <p class="wt-cfu-exp" *ngIf="isAnswered(q)" [class.right]="isSelectedCorrect(q)">
+                  <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
+                </p>
+              </fieldset>
+              <div class="wt-cfu-free" *ngIf="q.kind === 'free'">
+                <label class="wt-cfu-q" [attr.for]="q.id">{{ q.prompt }}</label>
+                <textarea [id]="q.id" class="wt-cfu-text" rows="4" [value]="textFor(q)"
+                          (input)="saveText(q, $event)" placeholder="Type your answer..."></textarea>
+              </div>
+            </div>
+            <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
+            <div class="wt-actions">
+              <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
+              <span class="wt-spacer"></span>
+              <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="svc.next()">
+                {{ svc.isLast ? 'Finish' : 'Continue' }}
+              </button>
+            </div>
+          </ng-container>
+
+          <!-- ===== INSTRUCTION screen ===== -->
+          <ng-template #instruction>
+            <h2 class="wt-title">{{ svc.current.title }}</h2>
+            <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><span *ngIf="seg.def" class="wt-def" [matTooltip]="seg.def" matTooltipPosition="above" tabindex="0">{{ seg.t }}</span><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
+            <div class="wt-action" *ngIf="svc.current.action">
+              <mat-icon>touch_app</mat-icon>
+              <span>{{ svc.current.action }}</span>
+            </div>
+            <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
+            <div class="wt-actions">
+              <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
+              <span class="wt-spacer"></span>
+              <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="primary()">{{ primaryLabel }}</button>
+            </div>
+          </ng-template>
         </div>
       </div>
 
@@ -125,7 +167,6 @@ interface Segment { t: string; def: string | null; }
       letter-spacing: 0.3px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;
     }
     .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; }
-    .wt-step { font-size: 0.78rem; color: #666; font-weight: 500; }
 
     .wt-title { margin: 0 0 12px; font-size: 1.5rem; font-weight: 700; color: #1d2733; }
     .wt-body { margin: 0 0 12px; font-size: 0.98rem; line-height: 1.55; color: #41494f; }
@@ -140,6 +181,55 @@ interface Segment { t: string; def: string | null; }
 
     .wt-progress { height: 4px; background: #eceff3; border-radius: 999px; margin: 18px 0 14px; overflow: hidden; }
     .wt-bar { display: block; height: 100%; background: #1565c0; border-radius: 999px; transition: width 0.3s ease; }
+
+    /* ---------- check-for-understanding: its own step, notebook / paper look ---------- */
+    .wt-card--quiz {
+      background: #fffdf5; border: 1px solid #e5d9b6;
+      box-shadow: 0 16px 48px rgba(70, 58, 24, 0.32);
+    }
+    /* a torn strip of tape at the top corner, to sell the notecard feel */
+    .wt-card--quiz::before {
+      content: ''; position: absolute; top: -10px; left: 30px; width: 76px; height: 20px;
+      background: rgba(214, 199, 143, 0.6); border: 1px solid rgba(190, 172, 108, 0.5);
+      transform: rotate(-3deg); border-radius: 2px;
+    }
+    .wt-cfu-head {
+      display: flex; align-items: center; gap: 8px; margin: 4px 0 14px;
+      font-family: 'Caveat', 'Comic Sans MS', cursive; font-weight: 700;
+      font-size: 1.9rem; line-height: 1; color: #6b5d2f;
+    }
+    .wt-cfu-head mat-icon { color: #a08a3f; font-size: 24px; width: 24px; height: 24px; }
+    .wt-cfu + .wt-cfu { margin-top: 18px; padding-top: 16px; border-top: 1px dashed #e2d6ad; }
+    .wt-cfu-mc { border: none; margin: 0; padding: 0; min-width: 0; }
+    .wt-cfu-q { font-size: 0.98rem; font-weight: 700; color: #1d2733; padding: 0; margin: 0 0 10px; line-height: 1.4; }
+    .wt-choice {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 8px;
+      background: #fff; border: 1.5px solid #d7dde5; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .wt-choice:hover { background: #f5f8fc; }
+    .wt-choice:focus-within { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .wt-choice input { margin: 2px 0 0; flex-shrink: 0; width: 16px; height: 16px; accent-color: #1565c0; }
+    .wt-choice-text { flex: 1; font-size: 0.92rem; line-height: 1.45; color: #41494f; }
+    .wt-choice-mark { flex-shrink: 0; font-size: 20px; width: 20px; height: 20px; }
+    .wt-choice.selected { border-color: #1565c0; }
+    .wt-choice.correct { border-color: #1b7a2f; background: #e9f6ec; }
+    .wt-choice.correct .wt-choice-mark { color: #1b7a2f; }
+    .wt-choice.wrong { border-color: #c0392b; background: #fbecea; }
+    .wt-choice.wrong .wt-choice-mark { color: #c0392b; }
+    .wt-cfu-exp {
+      margin: 4px 2px 0; font-size: 0.88rem; line-height: 1.5; color: #41494f;
+      background: #f0f4f9; border-left: 4px solid #1565c0; border-radius: 8px; padding: 10px 12px;
+    }
+    .wt-cfu-exp.right { background: #eef6ee; border-left-color: #1b7a2f; }
+    .wt-cfu-exp strong { color: #1d2733; }
+    .wt-cfu-free { display: flex; flex-direction: column; gap: 8px; }
+    .wt-cfu-text {
+      width: 100%; box-sizing: border-box; resize: vertical; min-height: 84px;
+      background: #fff; border: 1.5px solid #d7dde5; border-radius: 10px; padding: 10px 12px;
+      font-family: 'Montserrat', sans-serif; font-size: 0.92rem; line-height: 1.5; color: #1d2733;
+    }
+    .wt-cfu-text:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15); }
 
     .wt-actions { display: flex; align-items: center; gap: 8px; }
     .wt-spacer { flex: 1; }
@@ -198,7 +288,32 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   // bare "fund", and the verb in "Add Funds" is skipped via the lookbehind).
   private readonly termRe = /(target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
 
-  constructor(public svc: WalkthroughService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    public svc: WalkthroughService,
+    private responses: ResponsesService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  // ----- Check-for-understanding question state (persisted via ResponsesService) -----
+  isSelected(q: CfuQuestion, i: number): boolean {
+    return this.responses.get(q.id)?.choiceIndex === i;
+  }
+  isAnswered(q: CfuQuestion): boolean {
+    return this.responses.get(q.id)?.choiceIndex !== undefined;
+  }
+  isSelectedCorrect(q: CfuQuestion): boolean {
+    const i = this.responses.get(q.id)?.choiceIndex;
+    return i !== undefined && !!q.choices?.[i]?.correct;
+  }
+  selectChoice(q: CfuQuestion, i: number): void {
+    this.responses.setChoice(q.id, i);
+  }
+  textFor(q: CfuQuestion): string {
+    return this.responses.get(q.id)?.text ?? '';
+  }
+  saveText(q: CfuQuestion, ev: Event): void {
+    this.responses.setText(q.id, (ev.target as HTMLTextAreaElement).value);
+  }
 
   ngOnInit(): void {
     window.addEventListener('scroll', this.onScroll, true); // capture: catch inner scroll

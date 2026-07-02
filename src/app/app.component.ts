@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { WalkthroughOverlayComponent } from './shared/components/walkthrough/walkthrough-overlay.component';
+import { NotebookChecklistComponent } from './shared/components/notebook-checklist/notebook-checklist.component';
 import { WalkthroughService } from './shared/services/walkthrough.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WalkthroughOverlayComponent],
+  imports: [RouterOutlet, WalkthroughOverlayComponent, NotebookChecklistComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

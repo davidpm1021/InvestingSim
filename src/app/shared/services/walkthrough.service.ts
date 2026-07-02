@@ -7,6 +7,27 @@ import { OnboardingService } from './onboarding.service';
 import { CurrentDateService } from './current-date.service';
 
 /**
+ * Split any step that carries questions into two runtime steps: the instruction
+ * itself, then a follow-up "Check yourself" question screen. Keeps authoring
+ * compact (questions live next to their instruction) while the student sees the
+ * question as its own step, reached by clicking Next.
+ */
+function expandSteps(source: WalkthroughStep[]): WalkthroughStep[] {
+  const out: WalkthroughStep[] = [];
+  for (const step of source) {
+    if (step.questions?.length) {
+      const instruction: WalkthroughStep = { ...step };
+      delete instruction.questions;
+      out.push(instruction);
+      out.push({ part: step.part, title: 'Check yourself', body: [], kind: 'question', questions: step.questions });
+    } else {
+      out.push(step);
+    }
+  }
+  return out;
+}
+
+/**
  * Drives the guided walkthrough. Each step has two states:
  *   - EXPANDED: a full-screen "learning moment" pop-up the student reads.
  *   - MINIMIZED: a small docked coach bar, so the student can actually use the
@@ -19,7 +40,7 @@ export class WalkthroughService {
   private readonly STEP_KEY = 'investing_sim__walkthrough_step';
   private readonly DONE_KEY = 'investing_sim__walkthrough_done';
 
-  readonly steps: WalkthroughStep[] = WALKTHROUGH_STEPS;
+  readonly steps: WalkthroughStep[] = expandSteps(WALKTHROUGH_STEPS);
 
   private indexSubject = new BehaviorSubject<number>(this.loadStep());
   private activeSubject = new BehaviorSubject<boolean>(false);
@@ -130,6 +151,6 @@ export class WalkthroughService {
 
   private loadStep(): number {
     const s = parseInt(localStorage.getItem(this.STEP_KEY) || '0', 10);
-    return Number.isNaN(s) || s < 0 || s >= WALKTHROUGH_STEPS.length ? 0 : s;
+    return Number.isNaN(s) || s < 0 || s >= this.steps.length ? 0 : s;
   }
 }

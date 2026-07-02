@@ -35,6 +35,7 @@ import { AssetDetailsDialogComponent, AssetDetailsDialogData } from '../../share
 import { Chart, registerables } from 'chart.js';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout.component';
 import { OnboardingService } from '../../shared/services/onboarding.service';
+import { ChecklistService } from '../../shared/services/checklist.service';
 import { QUARTERS, SIM_YEAR_START } from '../../shared/data/quarters.data';
 import { ConnectBankDialogComponent } from '../../shared/components/connect-bank-dialog/connect-bank-dialog.component';
 
@@ -120,6 +121,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     public onboardingService: OnboardingService,
     private notificationsService: NotificationsService,
+    private checklistService: ChecklistService,
     @Optional() private mainLayout: MainLayoutComponent
   ) {
     // Register Chart.js components
@@ -635,11 +637,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '80%',
       maxWidth: '1200px',
       maxHeight: '90vh',
-      data: { 
+      data: {
         quarter: statement,
         currentDate: this.currentDate
       } as StatementDialogData
     });
+
+    // Opening a statement counts as reading it (no other data trace exists).
+    this.checklistService.complete('statement');
   }
 
   onSubmitTrade(tradeData: TradeData): void {
