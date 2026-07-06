@@ -38,7 +38,7 @@ import { DataService } from '../../services/data.service';
         </div>
         <div class="nb-paper">
           <div class="nb-head">
-            <span class="nb-title">My Checklist</span>
+            <span class="nb-title" role="heading" aria-level="2">My Checklist</span>
             <button type="button" class="nb-collapse" (click)="toggle()"
                     [attr.aria-expanded]="true" aria-label="Collapse the notebook checklist">
               <mat-icon>chevron_left</mat-icon>

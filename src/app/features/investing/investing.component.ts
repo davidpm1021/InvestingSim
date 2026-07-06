@@ -79,6 +79,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   
   // Asset type allocation percentages
   assetTypeAllocation: Array<{type: string, percentage: number, value: number}> = [];
+  // Allocation card: show the data table instead of the pie chart (WCAG 1.1.1 toggle).
+  showAllocationTable = false;
   
   // Recent activity for dashboard (last 3 transactions)
   recentActivity: any[] = [];

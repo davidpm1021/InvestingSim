@@ -27,7 +27,7 @@
             <!-- Account Balance Card -->
             <mat-card class="balance-card mb-3">
             <mat-card-header>
-              <mat-card-title>Portfolio Summary</mat-card-title>
+              <h2 mat-card-title>Portfolio Summary</h2>
             </mat-card-header>
             <mat-card-content>
               <div class="balance-row">
@@ -100,12 +100,36 @@
           <!-- Allocation Section -->
           <mat-card class="allocation-card mb-3">
             <mat-card-header>
-              <mat-card-title><app-define term="Asset allocation" label="Allocation"></app-define></mat-card-title>
+              <h2 mat-card-title><app-define term="Asset allocation" label="Allocation"></app-define></h2>
             </mat-card-header>
             <mat-card-content>
               <div *ngIf="isDashboardTab && currentDate">
-                <div class="allocation-chart-container" *ngIf="holdingsValue > 0">
-                  <canvas #chartCanvas role="img" aria-label="Portfolio allocation across stocks, bonds, and cash"></canvas>
+                <div *ngIf="holdingsValue > 0">
+                  <div class="chart-toolbar">
+                    <button type="button" class="chart-toggle"
+                            (click)="showAllocationTable = !showAllocationTable"
+                            [attr.aria-pressed]="showAllocationTable">
+                      {{ showAllocationTable ? 'Show chart' : 'Show table' }}
+                    </button>
+                  </div>
+                  <div class="allocation-chart-container" [style.display]="showAllocationTable ? 'none' : 'block'">
+                    <canvas #chartCanvas role="img" aria-label="Portfolio allocation across stocks, bonds, and cash"></canvas>
+                  </div>
+                  <div class="allocation-table-wrap" [class.sr-only]="!showAllocationTable" [attr.tabindex]="showAllocationTable ? 0 : null">
+                    <table class="chart-table">
+                      <caption>Portfolio allocation</caption>
+                      <thead>
+                        <tr><th scope="col">Category</th><th scope="col">Value</th><th scope="col">Share</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let a of assetTypeAllocation">
+                          <th scope="row">{{ a.type }}</th>
+                          <td>${{ a.value | number:'1.2-2' }}</td>
+                          <td>{{ a.percentage | number:'1.1-1' }}%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <div class="no-holdings-message" *ngIf="holdingsValue === 0">
                   <p>You haven't purchased any assets yet.</p>
@@ -121,7 +145,7 @@
           <!-- Recent Trade Activity Section -->
           <mat-card class="recent-activity-card mb-3">
             <mat-card-header>
-              <mat-card-title>Recent Trade Activity</mat-card-title>
+              <h2 mat-card-title>Recent Trade Activity</h2>
             </mat-card-header>
             <mat-card-content>
               <div class="recent-activity-list" *ngIf="recentActivity.length > 0">
@@ -153,7 +177,7 @@
           <!-- Recent Transactions (cash) — folded in from the old Profile tab (Chunk 7) -->
           <mat-card class="recent-activity-card mb-3">
             <mat-card-header>
-              <mat-card-title>Recent Transactions</mat-card-title>
+              <h2 mat-card-title>Recent Transactions</h2>
             </mat-card-header>
             <mat-card-content>
               <div class="no-recent-activity" *ngIf="transactions.length === 0">
@@ -180,7 +204,7 @@
             <!-- Holdings Table -->
           <mat-card class="holdings-card mb-3">
             <mat-card-header>
-              <mat-card-title>Holdings</mat-card-title>
+              <h2 mat-card-title>Holdings</h2>
             </mat-card-header>
             <mat-card-content>
               <table mat-table [dataSource]="holdings" class="holdings-table">
@@ -214,7 +238,12 @@
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectHoldingAndNavigate(row)" class="clickable-row"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    (click)="selectHoldingAndNavigate(row)"
+                    (keydown.enter)="selectHoldingAndNavigate(row)"
+                    (keydown.space)="selectHoldingAndNavigate(row); $event.preventDefault()"
+                    tabindex="0" [attr.aria-label]="'View details for ' + row.name"
+                    class="clickable-row"></tr>
               </table>
               <div class="view-all-holdings-link">
                 <button mat-button color="primary" (click)="goToHoldingsTab()">
@@ -227,7 +256,7 @@
           <!-- Daily Movers Section -->
           <mat-card class="daily-movers-card mb-3">
             <mat-card-header>
-              <mat-card-title>Daily Movers</mat-card-title>
+              <h2 mat-card-title>Daily Movers</h2>
             </mat-card-header>
             <mat-card-content>
               <div class="daily-movers-grid">
@@ -255,7 +284,7 @@
           <!-- Compare Investments (Chunk 5) -->
           <mat-card class="compare-card">
             <mat-card-header>
-              <mat-card-title>Compare Investments</mat-card-title>
+              <h2 mat-card-title>Compare Investments</h2>
             </mat-card-header>
             <mat-card-content>
               <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
@@ -279,7 +308,7 @@
               <!-- Current Holdings Card -->
               <mat-card class="holdings-list-card mb-3">
                 <mat-card-header>
-                  <mat-card-title>Current Holdings</mat-card-title>
+                  <h2 mat-card-title>Current Holdings</h2>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="holdings-list">
@@ -313,7 +342,7 @@
               <!-- Portfolio Value Over Time (Chunk 5) -->
               <mat-card class="portfolio-chart-card mb-3">
                 <mat-card-header>
-                  <mat-card-title>Portfolio Value Over Time</mat-card-title>
+                  <h2 mat-card-title>Portfolio Value Over Time</h2>
                 </mat-card-header>
                 <mat-card-content>
                   <app-line-chart [labels]="compareLabels" [series]="portfolioSeries"
@@ -327,7 +356,7 @@
             <div class="col-md-8">
               <mat-card class="asset-details-card">
                 <mat-card-header>
-                  <mat-card-title>Asset Details</mat-card-title>
+                  <h2 mat-card-title>Asset Details</h2>
                 </mat-card-header>
                 <mat-card-content>
                   <div *ngIf="selectedHolding; else noSelection" class="asset-details">

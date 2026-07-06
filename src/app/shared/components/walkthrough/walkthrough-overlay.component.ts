@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { A11yModule } from '@angular/cdk/a11y';
+import { DefineComponent } from '../define/define.component';
 import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
 import { ResponsesService } from '../../services/responses.service';
@@ -24,7 +24,7 @@ interface Segment { t: string; def: string | null; }
 @Component({
   selector: 'app-walkthrough-overlay',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule, A11yModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, A11yModule, DefineComponent],
   template: `
     <ng-container *ngIf="svc.active$ | async">
 
@@ -39,6 +39,7 @@ interface Segment { t: string; def: string | null; }
              [attr.aria-label]="svc.current.title">
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
+            <span class="wt-step">{{ svc.index + 1 }} / {{ svc.total }}</span>
           </div>
           <h3 class="wt-ct-title">{{ svc.current.title }}</h3>
           <p class="wt-ct-body" *ngFor="let p of svc.current.body">{{ p }}</p>
@@ -63,6 +64,7 @@ interface Segment { t: string; def: string | null; }
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
+            <span class="wt-step">Step {{ svc.index + 1 }} of {{ svc.total }}</span>
           </div>
           <!-- ===== QUESTION screen: its own step, notebook / paper look ===== -->
           <ng-container *ngIf="svc.current.kind === 'question'; else instruction">
@@ -105,7 +107,7 @@ interface Segment { t: string; def: string | null; }
           <!-- ===== INSTRUCTION screen ===== -->
           <ng-template #instruction>
             <h2 class="wt-title">{{ svc.current.title }}</h2>
-            <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><span *ngIf="seg.def" class="wt-def" [matTooltip]="seg.def" matTooltipPosition="above" tabindex="0">{{ seg.t }}</span><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
+            <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
             <div class="wt-action" *ngIf="svc.current.action">
               <mat-icon>touch_app</mat-icon>
               <span>{{ svc.current.action }}</span>
@@ -122,10 +124,11 @@ interface Segment { t: string; def: string | null; }
 
       <!-- ===== MINIMIZED: coach bar (click anywhere on the bar to expand) ===== -->
       <div class="wt-coach" *ngIf="!(svc.expanded$ | async)" (click)="svc.expand()">
-        <div class="wt-coach-text">
+        <!-- Real button so the step is re-openable by keyboard, not just mouse. -->
+        <button type="button" class="wt-coach-text" (click)="svc.expand()" aria-label="Open the current step">
           <span class="wt-chip sm">{{ svc.current.part }}</span>
           <span class="wt-coach-action">{{ svc.current.action || svc.current.title }}</span>
-        </div>
+        </button>
         <div class="wt-coach-actions">
           <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev(); $event.stopPropagation()">Back</button>
           <button mat-raised-button color="primary" type="button" (click)="svc.next(); $event.stopPropagation()">
@@ -167,10 +170,10 @@ interface Segment { t: string; def: string | null; }
       letter-spacing: 0.3px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;
     }
     .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; }
+    .wt-step { font-size: 0.78rem; color: #666; font-weight: 500; }
 
     .wt-title { margin: 0 0 12px; font-size: 1.5rem; font-weight: 700; color: #1d2733; }
     .wt-body { margin: 0 0 12px; font-size: 0.98rem; line-height: 1.55; color: #41494f; }
-    .wt-def { border-bottom: 1px dotted #1565c0; cursor: help; }
 
     .wt-action {
       display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 8px;
@@ -263,7 +266,12 @@ interface Segment { t: string; def: string | null; }
       font-family: 'Montserrat', sans-serif; animation: wt-rise 0.2s ease; cursor: pointer;
     }
     @keyframes wt-rise { from { transform: translate(-50%, 12px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
-    .wt-coach-text { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
+    .wt-coach-text {
+      flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;
+      border: none; background: transparent; padding: 4px; margin: -4px; cursor: pointer;
+      font: inherit; color: inherit; text-align: left; border-radius: 8px;
+    }
+    .wt-coach-text:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
     .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
     .wt-coach-actions .mat-mdc-raised-button { border-radius: 999px; }

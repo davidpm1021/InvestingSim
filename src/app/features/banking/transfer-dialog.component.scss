@@ -2,6 +2,12 @@
   width: 100%;
 }
 
+.validation-error {
+  color: #c62828;
+  font-size: 0.9rem;
+  margin: 4px 0 8px;
+}
+
 mat-dialog-content {
   padding: 20px 24px;
   max-height: 500px;

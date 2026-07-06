@@ -1,7 +1,8 @@
 <div class="desktop-shell">
   <app-header></app-header>
 
-  <div class="desktop">
+  <main class="desktop">
+    <h1 class="sr-only">Desktop</h1>
     <!-- Desktop shortcut icons (top-left, like a real desktop) -->
     <div class="desktop-icons">
       <button class="desktop-shortcut" type="button" (click)="openBrowser()" aria-label="Open the web browser">
@@ -30,5 +31,5 @@
         <span class="taskbar-clock">9:41 AM</span>
       </div>
     </div>
-  </div>
+  </main>
 </div>

@@ -68,6 +68,17 @@ export class TransferDialogComponent {
     return this.transferAmount !== null && this.transferAmount > 0 && this.transferAmount <= this.data.maxAmount;
   }
 
+  /** Programmatic error text so keyboard/screen-reader users learn why the transfer
+   *  is blocked (3.3.1 / 3.3.3), instead of only seeing the button disabled. */
+  validationMessage(): string {
+    if (this.transferAmount === null) { return ''; }
+    if (this.transferAmount <= 0) { return 'Enter an amount greater than zero.'; }
+    if (this.transferAmount > this.data.maxAmount) {
+      return `Amount exceeds your available balance. Maximum: $${this.data.maxAmount.toFixed(2)}.`;
+    }
+    return '';
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }

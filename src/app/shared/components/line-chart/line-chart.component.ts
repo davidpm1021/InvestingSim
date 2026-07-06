@@ -25,7 +25,12 @@ interface LegendItem {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="chart-legend" *ngIf="showLegend && legendItems.length > 1">
+    <div class="chart-toolbar" *ngIf="labels.length && series.length">
+      <button type="button" class="chart-toggle" (click)="showTable = !showTable" [attr.aria-pressed]="showTable">
+        {{ showTable ? 'Show chart' : 'Show table' }}
+      </button>
+    </div>
+    <div class="chart-legend" *ngIf="!showTable && showLegend && legendItems.length > 1">
       <button type="button"
               class="legend-chip"
               *ngFor="let item of legendItems; let i = index"
@@ -37,13 +42,12 @@ interface LegendItem {
         <span class="chip-label">{{ item.label }}</span>
       </button>
     </div>
-    <div class="line-chart-wrap" [style.height.px]="height"><canvas #canvas role="img" [attr.aria-label]="ariaLabel || yLabel"></canvas></div>
-    <!-- Visually-hidden text equivalent of the plotted data (WCAG 1.1.1): a canvas
-         alone conveys the trend only visually, so expose the same points as a table.
-         Wrapped in a block .sr-only so the table's intrinsic width is clipped and
-         cannot contribute layout/overflow. -->
-    <div class="sr-only" *ngIf="labels.length && series.length">
-      <table>
+    <div class="line-chart-wrap" [style.height.px]="height" [style.display]="showTable ? 'none' : 'block'"><canvas #canvas role="img" [attr.aria-label]="ariaLabel || yLabel"></canvas></div>
+    <!-- Text equivalent of the plotted data (WCAG 1.1.1). Kept in the DOM even in
+         chart mode (clipped via .sr-only) so assistive tech always has the data;
+         the toggle reveals it visually for everyone. -->
+    <div class="chart-table-wrap" [class.sr-only]="!showTable" [attr.tabindex]="showTable ? 0 : null" *ngIf="labels.length && series.length">
+      <table class="chart-table">
         <caption>{{ ariaLabel || yLabel }} (data table)</caption>
         <thead>
           <tr><th scope="col">Period</th><th scope="col" *ngFor="let s of series">{{ s.label }}</th></tr>
@@ -70,6 +74,26 @@ interface LegendItem {
       white-space: nowrap;
       border: 0;
     }
+
+    .chart-toolbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .chart-toggle {
+      border: 1px solid #c5d9f1; background: #f5f9fe; color: #1565c0;
+      border-radius: 16px; padding: 4px 14px; font-family: inherit; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; transition: background 0.12s ease;
+    }
+    .chart-toggle:hover { background: #e8f0fb; }
+    .chart-toggle:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+
+    .chart-table-wrap:not(.sr-only) { overflow-x: auto; }
+    .chart-table-wrap:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    table.chart-table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+    table.chart-table caption { text-align: left; font-weight: 600; color: #333; margin-bottom: 8px; }
+    table.chart-table th, table.chart-table td {
+      border: 1px solid #e0e0e0; padding: 6px 10px; text-align: right; white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    table.chart-table thead th { background: #f5f5f5; }
+    table.chart-table th[scope="row"] { text-align: left; font-weight: 500; }
 
     .chart-legend {
       display: flex;
@@ -128,6 +152,7 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
   legendItems: LegendItem[] = [];
+  showTable = false;
 
   private chart: Chart | null = null;
   private viewReady = false;
