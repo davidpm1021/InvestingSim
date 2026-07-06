@@ -100,6 +100,17 @@ export class TradeDialogComponent {
     return this.holdingsService.getMaxSellableShares(assetId, this.data.currentDate);
   }
 
+  /** Shares currently held of the selected asset (0 if none). */
+  getHeldShares(assetId: string): number {
+    const holding = this.getHolding(assetId);
+    return holding ? holding.shares : 0;
+  }
+
+  /** Dollar value of the held shares at the current price. */
+  getHeldValue(assetId: string): number {
+    return this.getHeldShares(assetId) * this.currentPrice;
+  }
+
   getCalculatedShares(): number {
     if (this.inputAmount === null || this.currentPrice <= 0) return 0;
     return this.inputType === 'dollars'

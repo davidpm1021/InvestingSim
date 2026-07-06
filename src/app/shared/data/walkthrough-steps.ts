@@ -185,7 +185,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-types',
         kind: 'mc',
-        prompt: 'The seven investments fall into a few groups. Which set of types is available?',
+        prompt: 'There are seven investments to choose from. What different types are available?',
         choices: [
           { text: 'Individual stocks, a mutual fund, an ETF, a target-date fund, and a bond fund.', correct: true },
           { text: 'Only individual stocks and individual bonds.' },
@@ -235,19 +235,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'Time moves one way, so finalize your trades first. Then jump ahead.',
     ],
     action: 'Click Jump to Quarter 2 and confirm.',
-    questions: [
-      {
-        id: 'cfu-time-oneway',
-        kind: 'mc',
-        prompt: 'You can jump forward in time but never back. What is the risk of advancing too soon?',
-        choices: [
-          { text: 'You might still have cash uninvested or a trade you meant to make, and you cannot return to fix it.', correct: true },
-          { text: 'Your investments get sold automatically when you advance.' },
-          { text: 'You lose any interest you earned that quarter.' },
-        ],
-        explanation: 'Time moves one way, like real markets. Finalize your trades first, because once you advance you cannot go back to that quarter.',
-      },
-    ],
   },
   {
     part: 'Part III · Alerts',
@@ -256,19 +243,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'A real brokerage sends only facts, like "your statement is ready", never advice. The decisions stay yours.',
     ],
     action: 'Open the Notifications bell.',
-    questions: [
-      {
-        id: 'cfu-alerts',
-        kind: 'mc',
-        prompt: 'What kind of alerts does this brokerage send, and what does it never send?',
-        choices: [
-          { text: 'Only facts, like a statement being ready or a trade confirmation. It never advises what to buy or sell.', correct: true },
-          { text: 'Tips on which investments will go up next.' },
-          { text: 'A warning every time one of your holdings drops in price.' },
-        ],
-        explanation: 'A real brokerage sticks to facts: statements and confirmations. It does not tell you what to buy or sell; those decisions stay yours.',
-      },
-    ],
   },
   {
     part: 'Part III · Income',

@@ -80,7 +80,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onNotificationClick(n: AppNotification): void {
     if (n.link) {
-      this.router.navigate([n.link]);
+      // navigateByUrl (not navigate([...])) so links with a query param, e.g.
+      // '/investing?tab=statements', land on the right tab.
+      this.router.navigateByUrl(n.link);
     }
   }
   
@@ -153,9 +155,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.notificationsService.add('Your Year-End Review is ready.', '/investing', nextQuarter.value);
             this.dialog.open(CapstoneDialogComponent, { width: '640px', maxHeight: '90vh' });
           } else {
-            this.notificationsService.add(`Your ${completedLabel} statement is ready.`, '/investing', nextQuarter.value);
+            this.notificationsService.add(`Your ${completedLabel} statement is ready.`, '/investing?tab=statements', nextQuarter.value);
             this.snackBar.open(`Your ${completedLabel} statement is ready.`, 'View', { duration: 6000 })
-              .onAction().subscribe(() => this.router.navigate(['/investing']));
+              .onAction().subscribe(() => this.router.navigateByUrl('/investing?tab=statements'));
           }
         }
       }

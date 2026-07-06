@@ -53,7 +53,15 @@
 
     <div class="avail">
       <span *ngIf="action === 'buy'">Cash available: ${{ data.brokerageBalance | number:'1.2-2' }}</span>
-      <span *ngIf="action === 'sell' && getHolding(selectedAssetId)">Shares held: {{ getHolding(selectedAssetId).shares | number:'1.2-4' }}
+      <span *ngIf="action === 'sell' && getHolding(selectedAssetId)" class="held">
+        <ng-container *ngIf="inputType === 'shares'">
+          Shares held: <strong>{{ getHeldShares(selectedAssetId) | number:'1.2-4' }}</strong>
+          <span class="held-alt">(≈ ${{ getHeldValue(selectedAssetId) | number:'1.2-2' }})</span>
+        </ng-container>
+        <ng-container *ngIf="inputType === 'dollars'">
+          Value held: <strong>${{ getHeldValue(selectedAssetId) | number:'1.2-2' }}</strong>
+          <span class="held-alt">(≈ {{ getHeldShares(selectedAssetId) | number:'1.2-4' }} shares)</span>
+        </ng-container>
         <button mat-button type="button" class="sell-all-btn" (click)="sellAll()">Sell all</button>
       </span>
     </div>

@@ -36,6 +36,7 @@ import { Chart, registerables } from 'chart.js';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout.component';
 import { OnboardingService } from '../../shared/services/onboarding.service';
 import { ChecklistService } from '../../shared/services/checklist.service';
+import { ActivatedRoute } from '@angular/router';
 import { QUARTERS, SIM_YEAR_START } from '../../shared/data/quarters.data';
 import { ConnectBankDialogComponent } from '../../shared/components/connect-bank-dialog/connect-bank-dialog.component';
 
@@ -57,6 +58,7 @@ export interface Holding {
 })
 export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  private pendingTab: string | null = null;
   @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineChartCanvas', { static: false }) lineChartCanvas!: ElementRef<HTMLCanvasElement>;
   
@@ -122,6 +124,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     public onboardingService: OnboardingService,
     private notificationsService: NotificationsService,
     private checklistService: ChecklistService,
+    private route: ActivatedRoute,
     @Optional() private mainLayout: MainLayoutComponent
   ) {
     // Register Chart.js components
@@ -131,6 +134,15 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     // Initialize all assets for daily movers
     this.allAssets = this.dataService.assets;
+
+    // Deep-link to a tab via ?tab= (e.g. the "statement is ready" notification
+    // opens the Statements tab). Applied once the tab group exists.
+    this.subscription.add(
+      this.route.queryParams.subscribe(params => {
+        this.pendingTab = params['tab'] || null;
+        this.applyPendingTab();
+      })
+    );
 
     // Track bank-link onboarding state (Chunk 1)
     this.subscription.add(
@@ -230,6 +242,20 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     // Initialize chart after view is ready (only if there are holdings)
     if (this.holdingsValue > 0 && this.holdings.length > 0) {
       this.initializeChart();
+    }
+    // The tab group now exists; honor any pending ?tab= deep link.
+    this.applyPendingTab();
+  }
+
+  /** Select a tab requested via ?tab= once the tab group is available. */
+  private applyPendingTab(): void {
+    const tab = this.pendingTab;
+    if (!tab || !this.tabGroup) { return; }
+    const index: { [key: string]: number } = { overview: 0, holdings: 1, activity: 2, statements: 3 };
+    this.pendingTab = null;
+    if (tab in index) {
+      // Defer so we don't change the selected tab mid change-detection.
+      setTimeout(() => { if (this.tabGroup) { this.tabGroup.selectedIndex = index[tab]; } });
     }
   }
 

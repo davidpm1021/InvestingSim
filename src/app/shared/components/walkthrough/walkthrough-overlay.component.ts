@@ -73,14 +73,14 @@ interface Segment { t: string; def: string | null; }
             <div class="wt-cfu" *ngFor="let q of svc.current.questions">
               <fieldset class="wt-cfu-mc" *ngIf="q.kind === 'mc'">
                 <legend class="wt-cfu-q">{{ q.prompt }}</legend>
-                <label class="wt-choice" *ngFor="let c of q.choices; let i = index"
-                       [class.selected]="isSelected(q, i)"
-                       [class.correct]="isAnswered(q) && c.correct"
-                       [class.wrong]="isAnswered(q) && isSelected(q, i) && !c.correct">
-                  <input type="radio" [name]="q.id" [checked]="isSelected(q, i)" (change)="selectChoice(q, i)">
-                  <span class="wt-choice-text">{{ c.text }}</span>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && c.correct">check</mat-icon>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, i) && !c.correct">close</mat-icon>
+                <label class="wt-choice" *ngFor="let opt of shuffledChoices(q)"
+                       [class.selected]="isSelected(q, opt.i)"
+                       [class.correct]="isAnswered(q) && opt.c.correct"
+                       [class.wrong]="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct">
+                  <input type="radio" [name]="q.id" [checked]="isSelected(q, opt.i)" (change)="selectChoice(q, opt.i)">
+                  <span class="wt-choice-text">{{ opt.c.text }}</span>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && opt.c.correct">check</mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct">close</mat-icon>
                 </label>
                 <p class="wt-cfu-exp" *ngIf="isAnswered(q)" [class.right]="isSelectedCorrect(q)">
                   <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
@@ -293,6 +293,23 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     private responses: ResponsesService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  // Stable shuffled display order per question, so the correct answer is not
+  // always the first choice. Keyed by question id; `i` is the ORIGINAL index
+  // (what ResponsesService stores and what correctness checks use).
+  private shuffleCache = new Map<string, { c: { text: string; correct?: boolean }; i: number }[]>();
+
+  shuffledChoices(q: CfuQuestion): { c: { text: string; correct?: boolean }; i: number }[] {
+    const cached = this.shuffleCache.get(q.id);
+    if (cached) { return cached; }
+    const items = (q.choices || []).map((c, i) => ({ c, i }));
+    for (let k = items.length - 1; k > 0; k--) {
+      const j = Math.floor(Math.random() * (k + 1));
+      [items[k], items[j]] = [items[j], items[k]];
+    }
+    this.shuffleCache.set(q.id, items);
+    return items;
+  }
 
   // ----- Check-for-understanding question state (persisted via ResponsesService) -----
   isSelected(q: CfuQuestion, i: number): boolean {
