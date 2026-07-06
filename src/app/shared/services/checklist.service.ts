@@ -72,9 +72,11 @@ export class ChecklistService {
       if (date !== SIM_YEAR_START) this.complete('advance');
     });
 
-    // 7: a withdrawal is a transfer out of the brokerage back to the bank.
+    // 7: a withdrawal (Withdraw Funds) posts a brokerage debit described
+    // "Transfer to banking" (a deposit's brokerage side reads "Transfer from
+    // banking", so this uniquely identifies cashing out).
     this.transactions.transactions$.subscribe(txns => {
-      if (txns.some(t => t.account_from === 'brokerage001' && t.account_to === 'banking001')) {
+      if (txns.some(t => t.account === 'brokerage001' && t.description === 'Transfer to banking')) {
         this.complete('withdraw');
       }
     });

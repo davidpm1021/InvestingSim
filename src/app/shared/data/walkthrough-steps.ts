@@ -293,19 +293,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'Sales are tagged ST or LT. Almost all here are short-term (held under a year); in real life, long-term gains are usually taxed less.',
     ],
     action: 'Sell part of a holding, then open the Activity tab.',
-    questions: [
-      {
-        id: 'cfu-short-term',
-        kind: 'mc',
-        prompt: 'Almost every sale in this sim is tagged short-term (ST). Why, and would it matter in real life?',
-        choices: [
-          { text: 'The sim runs about a year, so holdings are held under a year. In real life, long-term gains are usually taxed less.', correct: true },
-          { text: 'Short-term means you lost money; long-term means you gained.' },
-          { text: 'It is random and does not mean anything.' },
-        ],
-        explanation: 'Short-term means held a year or less. Because the sim covers roughly one year, nearly every sale is short-term. In real life, gains on things held longer than a year are usually taxed at a lower rate.',
-      },
-    ],
   },
   {
     part: 'Part IV · The year',

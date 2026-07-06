@@ -119,8 +119,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .filter(key => key.startsWith('investing_sim__'))
       .forEach(key => localStorage.removeItem(key));
 
-    // Reload into the brand-new-student state.
-    window.location.reload();
+    // Full navigation to the app root (the desktop, where the Web Browser icon
+    // lives), not a reload of the current page -- so a reset returns the student
+    // to the very start, with fresh storage. baseURI honors any <base href>.
+    window.location.href = document.baseURI;
   }
 
   goToAdmin(): void {
