@@ -35,7 +35,7 @@ interface Segment { t: string; def: string | null; }
              [style.top.px]="spotRect.top - 6" [style.left.px]="spotRect.left - 6"
              [style.width.px]="spotRect.width + 12" [style.height.px]="spotRect.height + 12"></div>
         <div class="wt-callout" [ngStyle]="calloutStyle" role="dialog" aria-modal="true"
-             cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="svc.finish()"
+             cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="svc.minimize()"
              [attr.aria-label]="svc.current.title">
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
@@ -133,9 +133,6 @@ interface Segment { t: string; def: string | null; }
           <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev(); $event.stopPropagation()">Back</button>
           <button mat-raised-button color="primary" type="button" (click)="svc.next(); $event.stopPropagation()">
             {{ svc.isLast ? 'Finish' : 'Next step' }}
-          </button>
-          <button class="wt-coach-end" type="button" (click)="svc.finish(); $event.stopPropagation()" aria-label="End the guide">
-            <mat-icon>close</mat-icon>
           </button>
         </div>
       </div>
@@ -275,11 +272,6 @@ interface Segment { t: string; def: string | null; }
     .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
     .wt-coach-actions .mat-mdc-raised-button { border-radius: 999px; }
-    .wt-coach-end {
-      border: none; background: transparent; color: #9aa3ad; cursor: pointer;
-      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    }
-    .wt-coach-end:hover { background: #f0f2f5; color: #5c636a; }
     @media (max-width: 600px) { .wt-coach-action { display: none; } }
   `]
 })
