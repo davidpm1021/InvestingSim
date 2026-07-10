@@ -93,9 +93,9 @@
       </div>
       
       <div class="address-bar">
-        <span class="security-icon" *ngIf="isSecureUrl()">🔒</span>
+        <mat-icon class="security-icon" *ngIf="isSecureUrl()" aria-hidden="true">lock</mat-icon>
         <span class="address-text">{{ getCurrentUrl() }}</span>
-        <span class="loading-indicator" *ngIf="isLoading">⟳</span>
+        <mat-icon class="loading-indicator" *ngIf="isLoading" aria-hidden="true">autorenew</mat-icon>
       </div>
     </div>
 

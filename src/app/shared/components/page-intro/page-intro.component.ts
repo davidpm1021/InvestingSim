@@ -38,10 +38,10 @@ import { FirstVisitService } from '../../services/first-visit.service';
       border-radius: 8px;
       color: #33475b;
     }
-    .intro-icon { color: #1976d2; }
+    .intro-icon { color: #275ce4; }
     .intro-text { flex: 1; line-height: 1.4; }
     .intro-close { margin: -8px -8px -8px 0; }
-    .intro-help { color: #1976d2; }
+    .intro-help { color: #275ce4; }
   `]
 })
 export class PageIntroComponent implements OnInit {

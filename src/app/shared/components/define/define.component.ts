@@ -40,7 +40,7 @@ let nextPopId = 0;
   `,
   styles: [`
     .defined-term {
-      border-bottom: 1px dotted #1976d2;
+      border-bottom: 1px dotted #275ce4;
       cursor: help;
     }
     .define-pop {

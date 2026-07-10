@@ -163,7 +163,7 @@ interface Segment { t: string; def: string | null; }
 
     .wt-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .wt-chip {
-      background: #e3f2fd; color: #1565c0; font-size: 0.72rem; font-weight: 700;
+      background: #e3f2fd; color: #1f3b9b; font-size: 0.72rem; font-weight: 700;
       letter-spacing: 0.3px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;
     }
     .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; }
@@ -180,7 +180,7 @@ interface Segment { t: string; def: string | null; }
     .wt-action mat-icon { color: #2e7d32; flex-shrink: 0; }
 
     .wt-progress { height: 4px; background: #eceff3; border-radius: 999px; margin: 18px 0 14px; overflow: hidden; }
-    .wt-bar { display: block; height: 100%; background: #1565c0; border-radius: 999px; transition: width 0.3s ease; }
+    .wt-bar { display: block; height: 100%; background: #1f3b9b; border-radius: 999px; transition: width 0.3s ease; }
 
     /* ---------- check-for-understanding: its own step, notebook / paper look ---------- */
     .wt-card--quiz {
@@ -208,18 +208,18 @@ interface Segment { t: string; def: string | null; }
       transition: background 0.15s ease, border-color 0.15s ease;
     }
     .wt-choice:hover { background: #f5f8fc; }
-    .wt-choice:focus-within { outline: 2px solid #1976d2; outline-offset: 2px; }
-    .wt-choice input { margin: 2px 0 0; flex-shrink: 0; width: 16px; height: 16px; accent-color: #1565c0; }
+    .wt-choice:focus-within { outline: 2px solid #275ce4; outline-offset: 2px; }
+    .wt-choice input { margin: 2px 0 0; flex-shrink: 0; width: 16px; height: 16px; accent-color: #1f3b9b; }
     .wt-choice-text { flex: 1; font-size: 0.92rem; line-height: 1.45; color: #41494f; }
     .wt-choice-mark { flex-shrink: 0; font-size: 20px; width: 20px; height: 20px; }
-    .wt-choice.selected { border-color: #1565c0; }
+    .wt-choice.selected { border-color: #1f3b9b; }
     .wt-choice.correct { border-color: #1b7a2f; background: #e9f6ec; }
     .wt-choice.correct .wt-choice-mark { color: #1b7a2f; }
     .wt-choice.wrong { border-color: #c0392b; background: #fbecea; }
     .wt-choice.wrong .wt-choice-mark { color: #c0392b; }
     .wt-cfu-exp {
       margin: 4px 2px 0; font-size: 0.88rem; line-height: 1.5; color: #41494f;
-      background: #f0f4f9; border-left: 4px solid #1565c0; border-radius: 8px; padding: 10px 12px;
+      background: #f0f4f9; border-left: 4px solid #1f3b9b; border-radius: 8px; padding: 10px 12px;
     }
     .wt-cfu-exp.right { background: #eef6ee; border-left-color: #1b7a2f; }
     .wt-cfu-exp strong { color: #1d2733; }
@@ -229,7 +229,7 @@ interface Segment { t: string; def: string | null; }
       background: #fff; border: 1.5px solid #d7dde5; border-radius: 10px; padding: 10px 12px;
       font-family: 'Montserrat', sans-serif; font-size: 0.92rem; line-height: 1.5; color: #1d2733;
     }
-    .wt-cfu-text:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15); }
+    .wt-cfu-text:focus { outline: none; border-color: #1f3b9b; box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15); }
 
     .wt-actions { display: flex; align-items: center; gap: 8px; }
     .wt-spacer { flex: 1; }
@@ -239,7 +239,7 @@ interface Segment { t: string; def: string | null; }
     .wt-block { position: fixed; inset: 0; z-index: 3000; background: transparent; }
     .wt-spot {
       position: fixed; z-index: 3001; pointer-events: none;
-      border: 2px solid #1565c0; border-radius: 10px;
+      border: 2px solid #1f3b9b; border-radius: 10px;
       box-shadow: 0 0 0 9999px rgba(15, 30, 55, 0.6);
       transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
     }
@@ -268,7 +268,7 @@ interface Segment { t: string; def: string | null; }
       border: none; background: transparent; padding: 4px; margin: -4px; cursor: pointer;
       font: inherit; color: inherit; text-align: left; border-radius: 8px;
     }
-    .wt-coach-text:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .wt-coach-text:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
     .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
     .wt-coach-actions .mat-mdc-raised-button { border-radius: 999px; }

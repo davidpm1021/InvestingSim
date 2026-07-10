@@ -5,14 +5,14 @@
 // Chart/table toggle (allocation card) — WCAG 1.1.1 text equivalent.
 .chart-toolbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
 .chart-toggle {
-  border: 1px solid #c5d9f1; background: #f5f9fe; color: #1565c0;
+  border: 1px solid #c5d9f1; background: #f5f9fe; color: #1f3b9b;
   border-radius: 16px; padding: 4px 14px; font-family: inherit; font-size: 0.8rem;
   font-weight: 600; cursor: pointer; transition: background 0.12s ease;
 }
 .chart-toggle:hover { background: #e8f0fb; }
-.chart-toggle:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+.chart-toggle:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
 .allocation-table-wrap:not(.sr-only) { overflow-x: auto; }
-.allocation-table-wrap:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+.allocation-table-wrap:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
 table.chart-table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
 table.chart-table caption { text-align: left; font-weight: 600; color: #333; margin-bottom: 8px; }
 table.chart-table th, table.chart-table td {
@@ -53,7 +53,7 @@ table.chart-table th[scope="row"] { text-align: left; font-weight: 500; }
 }
 
 .account-icon {
-  color: #1565c0;
+  color: #1f3b9b;
   font-size: 32px;
   width: 32px;
   height: 32px;
@@ -113,7 +113,7 @@ p {
 .balance-amount {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #1565c0;
+  color: #1f3b9b;
   text-align: center;
   margin: 16px 0;
 }
@@ -140,7 +140,7 @@ p {
 .balance-row .balance-amount {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #1565c0;
+  color: #1f3b9b;
   margin: 0;
   text-align: right;
 }
@@ -335,7 +335,7 @@ p {
 }
 
 .statement-card:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #275ce4;
   outline-offset: 2px;
 }
 
@@ -347,7 +347,7 @@ p {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #1976d2;
+    border-color: #275ce4;
   }
 }
 
@@ -363,7 +363,7 @@ p {
   
   .quarter-name {
     margin: 0 0 4px 0;
-    color: #1565c0;
+    color: #1f3b9b;
     font-size: 1.3rem;
     font-weight: 600;
   }
@@ -409,7 +409,7 @@ p {
 }
 
 .open-icon {
-  color: #1565c0;
+  color: #1f3b9b;
   margin-left: 8px;
 }
 
@@ -445,7 +445,7 @@ p {
 
 .ending-balance {
   font-weight: 600;
-  color: #1565c0;
+  color: #1f3b9b;
 }
 
 .statement-content {
@@ -1048,7 +1048,7 @@ h2 {
 
 .allocation-percentage {
   font-weight: 600;
-  color: #1565c0;
+  color: #1f3b9b;
   font-size: 1.1rem;
 }
 
@@ -1111,18 +1111,18 @@ h2 {
 }
 
 .clickable-row:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #275ce4;
   outline-offset: -2px;
   background-color: #f5f5f5;
 }
 
 .asset-name-cell {
-  color: #1565c0;
+  color: #1f3b9b;
   font-weight: 600;
 }
 
 .clickable-row:hover .asset-name-cell {
-  color: #1565c0;
+  color: #1f3b9b;
 }
 
 // Holdings Tab Styles
@@ -1151,7 +1151,7 @@ h2 {
 
       .stat-value {
         font-weight: 600;
-        color: #1565c0;
+        color: #1f3b9b;
         font-size: 1rem;
       }
     }
@@ -1244,12 +1244,12 @@ h2 {
 
 .holding-item.selected {
   background-color: #e3f2fd;
-  border-color: #1976d2;
+  border-color: #275ce4;
 }
 
 // Keyboard focus only (matches .mover-card / .statement-card); mouse clicks show nothing new.
 .holding-item:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #275ce4;
   outline-offset: 2px;
 }
 
@@ -1267,7 +1267,7 @@ h2 {
 
 .holding-value {
   font-weight: 600;
-  color: #1565c0;
+  color: #1f3b9b;
 }
 
 .asset-details {
@@ -1420,7 +1420,7 @@ h2 {
 }
 
 .mover-card:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #275ce4;
   outline-offset: 2px;
 }
 
@@ -1460,7 +1460,7 @@ h2 {
 }
 
 .asset-symbol-badge {
-  background: linear-gradient(135deg, #1976d2, #1565c0);
+  background: linear-gradient(135deg, #275ce4, #1f3b9b);
   color: white;
   padding: 6px 12px;
   border-radius: 20px;

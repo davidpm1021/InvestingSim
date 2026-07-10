@@ -73,7 +73,7 @@ import { DataService } from '../../services/data.service';
       color: #3a3320;
     }
     .nb-tab:hover { background: #fbefcf; }
-    .nb-tab:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .nb-tab:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
     .nb-tab-icon { color: #7a6a3a; }
     .nb-tab-text { writing-mode: vertical-rl; transform: rotate(180deg);
       font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; }
@@ -111,7 +111,7 @@ import { DataService } from '../../services/data.service';
     .nb-collapse { border: none; background: transparent; cursor: pointer; color: #6b6b6b;
       line-height: 0; padding: 2px; border-radius: 6px; }
     .nb-collapse:hover { background: #eee7cf; color: #333; }
-    .nb-collapse:focus-visible, .nb-item:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .nb-collapse:focus-visible, .nb-item:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
 
     .nb-list { list-style: none; margin: 0; padding: 0; }
     .nb-item { display: flex; align-items: flex-start; gap: 9px; padding: 5px 0; min-height: 32px; }

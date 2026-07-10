@@ -265,7 +265,7 @@ export class AdminComponent implements OnInit, OnDestroy, AfterViewInit {
         datasets: [{
           label: 'Price',
           data: [],
-          borderColor: '#1976d2',
+          borderColor: '#275ce4',
           backgroundColor: 'rgba(25, 118, 210, 0.1)',
           borderWidth: 2,
           fill: true,

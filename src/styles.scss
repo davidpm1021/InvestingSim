@@ -7,6 +7,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 /* Handwriting font for the notebook checklist */
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
+/* NGPF brand title font (PT Sans Bold) — used for page/document titles only. */
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 /* Bootstrap grid only */
 @import 'bootstrap/dist/css/bootstrap-grid.min.css';
@@ -20,6 +22,47 @@ html, body {
 
 * {
   box-sizing: border-box;
+}
+
+/* ============================================================
+   NGPF brand tokens (from docs/ngpf-design/colors_and_type.css)
+   ============================================================ */
+:root {
+  --ngpf-primary-blue: #1f3b9b;   /* True Blue */
+  --ngpf-dark-blue:    #0b1541;   /* Midnight */
+  --ngpf-bright-blue:  #275ce4;   /* Bright Blue — primary CTA / interactive */
+  --ngpf-light-blue:   #1db8e8;   /* Sky */
+  --ngpf-gold:         #f4ad00;
+  --ngpf-orange:       #f78219;
+  --ngpf-pale-blue:    #edfaff;
+  --ngpf-pale-blue-3:  #dfe9ff;
+
+  --ngpf-ink:      #231f20;
+  --ngpf-gray-900: #424242;
+  --ngpf-gray-700: #858585;
+
+  --font-display: 'PT Sans', Helvetica, Arial, sans-serif;   /* titles only */
+  --font-sans:    'Montserrat', Helvetica, Arial, sans-serif; /* everything else */
+
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 6px 20px rgba(11, 21, 65, 0.15);
+
+  /* Retint Angular Material's M3 primary (prebuilt azure) to NGPF Bright Blue,
+     so mat buttons, tabs, form-field focus and badges read on-brand. */
+  --mat-sys-primary: #275ce4;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #dfe9ff;
+  --mat-sys-on-primary-container: #0b1541;
+  --mdc-theme-primary: #275ce4;
+}
+
+/* NGPF reserves PT Sans for the page/document title (upper-and-lower-case). */
+h1, .app-title, .account-name {
+  font-family: var(--font-display);
 }
 
 // Visually hidden but exposed to assistive tech (skip-target headings, labels).

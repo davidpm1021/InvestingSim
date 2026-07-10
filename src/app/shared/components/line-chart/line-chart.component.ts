@@ -77,15 +77,15 @@ interface LegendItem {
 
     .chart-toolbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
     .chart-toggle {
-      border: 1px solid #c5d9f1; background: #f5f9fe; color: #1565c0;
+      border: 1px solid #c5d9f1; background: #f5f9fe; color: #1f3b9b;
       border-radius: 16px; padding: 4px 14px; font-family: inherit; font-size: 0.8rem;
       font-weight: 600; cursor: pointer; transition: background 0.12s ease;
     }
     .chart-toggle:hover { background: #e8f0fb; }
-    .chart-toggle:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .chart-toggle:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
 
     .chart-table-wrap:not(.sr-only) { overflow-x: auto; }
-    .chart-table-wrap:focus-visible { outline: 2px solid #1976d2; outline-offset: 2px; }
+    .chart-table-wrap:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
     table.chart-table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
     table.chart-table caption { text-align: left; font-weight: 600; color: #333; margin-bottom: 8px; }
     table.chart-table th, table.chart-table td {
@@ -156,7 +156,7 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart: Chart | null = null;
   private viewReady = false;
-  private readonly palette = ['#1976d2', '#2e7d32', '#e65100', '#6a1b9a', '#c62828', '#00838f', '#5d4037', '#9e9d24'];
+  private readonly palette = ['#275ce4', '#2e7d32', '#e65100', '#6a1b9a', '#c62828', '#00838f', '#5d4037', '#9e9d24'];
 
   constructor() {
     Chart.register(...registerables);
