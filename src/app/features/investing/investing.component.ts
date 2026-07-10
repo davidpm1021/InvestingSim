@@ -326,14 +326,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     const data = this.assetTypeAllocation.map(item => item.percentage);
     const backgroundColors = [
-      '#FF6384', // Red
-      '#36A2EB', // Blue
-      '#FFCE56', // Yellow
-      '#4BC0C0', // Teal
-      '#9966FF', // Purple
-      '#FF9F40', // Orange
-      '#FF6384', // Pink
-      '#C9CBCF'  // Gray
+      '#275ce4', // Bright Blue
+      '#1f3b9b', // True Blue
+      '#1db8e8', // Sky
+      '#f4ad00', // Gold
+      '#f78219', // Orange
+      '#0b1541', // Midnight
+      '#6b7bc4', // Muted blue
+      '#c3c3c3'  // Gray
     ];
 
     this.chart = new Chart(this.chartCanvas.nativeElement, {
@@ -388,14 +388,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     const data = this.assetTypeAllocation.map(item => item.percentage);
     const backgroundColors = [
-      '#FF6384', // Red
-      '#36A2EB', // Blue
-      '#FFCE56', // Yellow
-      '#4BC0C0', // Teal
-      '#9966FF', // Purple
-      '#FF9F40', // Orange
-      '#FF6384', // Pink
-      '#C9CBCF'  // Gray
+      '#275ce4', // Bright Blue
+      '#1f3b9b', // True Blue
+      '#1db8e8', // Sky
+      '#f4ad00', // Gold
+      '#f78219', // Orange
+      '#0b1541', // Midnight
+      '#6b7bc4', // Muted blue
+      '#c3c3c3'  // Gray
     ];
 
     this.chart.data.labels = labels;

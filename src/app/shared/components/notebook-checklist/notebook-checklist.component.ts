@@ -26,7 +26,7 @@ import { DataService } from '../../services/data.service';
       <!-- Collapsed: a small tab on the left edge -->
       <button *ngIf="!showPanel" type="button" class="nb-tab" (click)="toggle()"
               [attr.aria-expanded]="false" aria-label="Open your notebook checklist">
-        <mat-icon class="nb-tab-icon">menu_book</mat-icon>
+        <mat-icon class="nb-tab-icon" fontIcon="fa-book-open"></mat-icon>
         <span class="nb-tab-text">Notebook</span>
         <span class="nb-tab-count">{{ doneCount }}/{{ total }}</span>
       </button>
@@ -41,13 +41,13 @@ import { DataService } from '../../services/data.service';
             <span class="nb-title" role="heading" aria-level="2">My Checklist</span>
             <button type="button" class="nb-collapse" (click)="toggle()"
                     [attr.aria-expanded]="true" aria-label="Collapse the notebook checklist">
-              <mat-icon>chevron_left</mat-icon>
+              <mat-icon fontIcon="fa-chevron-left"></mat-icon>
             </button>
           </div>
           <ul class="nb-list">
             <li *ngFor="let m of milestones" class="nb-item" [class.done]="isDone(m.key)">
               <span class="nb-box" aria-hidden="true">
-                <mat-icon *ngIf="isDone(m.key)">check</mat-icon>
+                <mat-icon *ngIf="isDone(m.key)" fontIcon="fa-check"></mat-icon>
               </span>
               <span class="nb-label">{{ m.label }}</span>
               <span class="nb-sr" *ngIf="isDone(m.key)"> - done</span>

@@ -14,15 +14,15 @@
                       color="primary" 
                       class="jump-quarter-button" 
                       (click)="onJumpToNextQuarter()">
-                <mat-icon>arrow_forward</mat-icon>
+                <mat-icon fontIcon="fa-arrow-right"></mat-icon>
                 Jump to {{ nextQuarterLabel }}
               </button>
               <button mat-raised-button color="warn" class="reset-button" (click)="onReset()">
-                <mat-icon>refresh</mat-icon>
+                <mat-icon fontIcon="fa-arrows-rotate"></mat-icon>
                 Reset
               </button>
               <button mat-icon-button class="notif-button" [matMenuTriggerFor]="notifMenu" (menuOpened)="onNotificationsOpened()" aria-label="Notifications">
-                <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+                <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn" matBadgeSize="small" fontIcon="fa-bell"></mat-icon>
               </button>
               <mat-menu #notifMenu="matMenu" class="notif-menu" xPosition="before">
                 <div class="notif-header">Notifications</div>
@@ -33,12 +33,12 @@
                 </button>
               </mat-menu>
               <button mat-raised-button color="primary" class="account-button" [matMenuTriggerFor]="accountMenu">
-                <mat-icon>account_circle</mat-icon>
+                <mat-icon fontIcon="fa-circle-user"></mat-icon>
                 Account
               </button>
               <mat-menu #accountMenu="matMenu">
                 <button mat-menu-item (click)="goToAdmin()">
-                  <mat-icon>settings</mat-icon>
+                  <mat-icon fontIcon="fa-gear"></mat-icon>
                   <span>Admin Panel</span>
                 </button>
               </mat-menu>

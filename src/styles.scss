@@ -65,6 +65,40 @@ h1, .app-title, .account-name {
   font-family: var(--font-display);
 }
 
+/* NGPF sub-headings h4-h6 are Montserrat Bold, ALL CAPS with +4% tracking. */
+h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* NGPF buttons are flat — bright-blue solid CTAs, no shadows or gradients. */
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  background-color: var(--ngpf-bright-blue) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-lg);
+}
+.mat-mdc-raised-button.mat-primary:hover,
+.mat-mdc-unelevated-button.mat-primary:hover { background-color: #1f4ec4 !important; }
+.mat-mdc-raised-button.mat-primary:active,
+.mat-mdc-unelevated-button.mat-primary:active { background-color: #1e44a5 !important; }
+/* Remove the residual Material elevation from all buttons (NGPF buttons are flat). */
+.mat-mdc-raised-button,
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button { box-shadow: none !important; }
+
+/* NGPF: don't put a full border on a rounded box — content cards are white with a
+   soft shadow instead. */
+.mat-mdc-card {
+  border: none;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
 // Visually hidden but exposed to assistive tech (skip-target headings, labels).
 .sr-only {
   position: absolute;
@@ -152,11 +186,13 @@ h1, .app-title, .account-name {
     min-height: 0;
     padding: 0;
     border-bottom: 1px solid #f2f4f7;
+    /* NGPF notification style: a 6px brand-blue left rail on white (not a full border). */
+    border-left: 6px solid var(--ngpf-bright-blue);
 
     &:last-of-type { border-bottom: none; }
     &:hover,
     &.cdk-focused,
-    &:focus { background: #f5f9ff; }
+    &:focus { background: var(--ngpf-pale-blue); }
 
     // The Material focus ring is inset and gets clipped to a stray blue edge
     // sliver by the rounded panel; the background tint above conveys focus.

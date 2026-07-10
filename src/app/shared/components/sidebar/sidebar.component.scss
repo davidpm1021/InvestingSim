@@ -1,6 +1,6 @@
 .sidebar {
   width: 250px;
-  background-color: #fafafa;
+  background-color: #edfaff;
   border-right: 1px solid #ddd;
   height: 100%;
 }
@@ -25,7 +25,7 @@ mat-list-item {
   }
   
   &:hover:not(.router-link-active) {
-    background-color: #f5f5f5;
+    background-color: #edfaff;
   }
   
   // Disable focus and click highlighting

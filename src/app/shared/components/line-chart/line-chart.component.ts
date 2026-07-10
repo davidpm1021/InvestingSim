@@ -92,7 +92,7 @@ interface LegendItem {
       border: 1px solid #e0e0e0; padding: 6px 10px; text-align: right; white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
-    table.chart-table thead th { background: #f5f5f5; }
+    table.chart-table thead th { background: #edfaff; }
     table.chart-table th[scope="row"] { text-align: left; font-weight: 500; }
 
     .chart-legend {
@@ -109,7 +109,7 @@ interface LegendItem {
       padding: 4px 12px;
       border: 1px solid #e0e0e0;
       border-radius: 16px;
-      background: #fafafa;
+      background: #edfaff;
       font-family: inherit;
       font-size: 0.8rem;
       color: #424242;
@@ -156,7 +156,8 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart: Chart | null = null;
   private viewReady = false;
-  private readonly palette = ['#275ce4', '#2e7d32', '#e65100', '#6a1b9a', '#c62828', '#00838f', '#5d4037', '#9e9d24'];
+  // NGPF-family series palette (two blues + warm accents), kept distinguishable.
+  private readonly palette = ['#275ce4', '#1f3b9b', '#1db8e8', '#f4ad00', '#f78219', '#0b1541', '#6b7bc4', '#8a5a00'];
 
   constructor() {
     Chart.register(...registerables);

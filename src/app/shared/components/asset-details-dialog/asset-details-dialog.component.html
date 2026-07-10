@@ -2,7 +2,7 @@
   <div class="dialog-header">
     <h2 mat-dialog-title>Asset Details</h2>
     <button mat-icon-button (click)="close()" class="close-button" aria-label="Close">
-      <mat-icon>close</mat-icon>
+      <mat-icon fontIcon="fa-xmark"></mat-icon>
     </button>
   </div>
 
@@ -26,7 +26,7 @@
           <div class="price-row-compact">
             <div class="current-price">${{ currentPrice | number:'1.2-2' }}</div>
             <div class="price-change" [class.positive]="getPriceChange() > 0" [class.negative]="getPriceChange() < 0">
-              <mat-icon>{{ getPriceChange() > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <mat-icon [fontIcon]="getPriceChange() > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></mat-icon>
               {{ getPriceChange() > 0 ? '+' : '' }}{{ getPriceChange() | number:'1.2-2' }}%
             </div>
           </div>

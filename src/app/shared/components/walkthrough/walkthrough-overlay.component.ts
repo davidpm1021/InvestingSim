@@ -60,7 +60,7 @@ interface Segment { t: string; def: string | null; }
              (keydown.escape)="svc.minimize()">
           <button class="wt-close" type="button" (click)="svc.minimize()"
                   aria-label="Minimize so you can try it">
-            <mat-icon>remove</mat-icon>
+            <mat-icon fontIcon="fa-minus"></mat-icon>
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
@@ -69,7 +69,7 @@ interface Segment { t: string; def: string | null; }
           <!-- ===== QUESTION screen: its own step, notebook / paper look ===== -->
           <ng-container *ngIf="svc.current.kind === 'question'; else instruction">
             <div class="wt-cfu-head">
-              <mat-icon aria-hidden="true">edit</mat-icon>
+              <mat-icon aria-hidden="true" fontIcon="fa-pen"></mat-icon>
               <span>Check yourself</span>
             </div>
             <div class="wt-cfu" *ngFor="let q of svc.current.questions">
@@ -81,8 +81,8 @@ interface Segment { t: string; def: string | null; }
                        [class.wrong]="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct">
                   <input type="radio" [name]="q.id" [checked]="isSelected(q, opt.i)" (change)="selectChoice(q, opt.i)">
                   <span class="wt-choice-text">{{ opt.c.text }}</span>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && opt.c.correct">check</mat-icon>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct">close</mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && opt.c.correct" fontIcon="fa-check"></mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="fa-xmark"></mat-icon>
                 </label>
                 <p class="wt-cfu-exp" *ngIf="isAnswered(q)" [class.right]="isSelectedCorrect(q)">
                   <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
@@ -109,7 +109,7 @@ interface Segment { t: string; def: string | null; }
             <h2 class="wt-title">{{ svc.current.title }}</h2>
             <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
             <div class="wt-action" *ngIf="svc.current.action">
-              <mat-icon>touch_app</mat-icon>
+              <mat-icon fontIcon="fa-hand-pointer"></mat-icon>
               <span>{{ svc.current.action }}</span>
             </div>
             <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
