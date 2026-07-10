@@ -1,0 +1,31 @@
+/* preview-card baseline — kept tiny so each card stays focused.
+   Cards target ~700×N px; outer card chrome (title/spacing) comes from the
+   review pane, so each card just paints the swatches / specimens directly. */
+
+@import url("../colors_and_type.css");
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: #fff;
+  color: var(--ngpf-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  width: 700px;
+  padding: 24px 28px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row { display: flex; gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: #424242; }
+.meta { font-family: var(--font-sans); font-size: 11px; color: #858585; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 700; }
+.label { font-family: var(--font-sans); font-size: 13px; color: var(--ngpf-dark-blue); font-weight: 700; }
+.cap-label { font-family: var(--font-sans); font-size: 10px; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; }

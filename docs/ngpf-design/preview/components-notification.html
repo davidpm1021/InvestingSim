@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+  .note { display:flex; background:#fff; border:1px solid #d2d2d2; padding-left:0; overflow:hidden; }
+  .note .rail { width:6px; background:#275ce4; align-self:stretch; }
+  .note.warning .rail { background:#f4ad00; }
+  .note.negative .rail { background:#cc1f1f; }
+  .note .body { padding:14px 16px 14px 16px; flex:1; }
+  .note .title { font-family:var(--font-sans); font-weight:700; font-size:14px; color:#0b1541; }
+  .note .copy  { font-family:var(--font-sans); font-size:13px; color:#0b1541; line-height:1.4; margin-top:2px; }
+  .note .x { color:#858585; padding:14px; cursor:pointer; }
+  .note .lead { padding:14px 0 14px 12px; color:#275ce4; display:flex; align-items:flex-start;}
+  .note.warning .lead { color:#f4ad00; }
+</style></head>
+<body><div class="card">
+  <div class="meta">NOTIFICATION · LEFT-RAIL CALLOUT</div>
+  <div class="note">
+    <div class="rail"></div>
+    <div class="lead"><i class="fas fa-check-circle" style="font-size:20px;"></i></div>
+    <div class="body">
+      <div class="title">Saved to My Resources</div>
+      <div class="copy">Your activity packet is now in <b>My Resources › Personal Finance</b>. You can come back any time.</div>
+    </div>
+    <div class="x"><i class="fas fa-xmark"></i></div>
+  </div>
+  <div class="note warning">
+    <div class="rail"></div>
+    <div class="lead"><i class="fas fa-triangle-exclamation" style="font-size:20px;"></i></div>
+    <div class="body">
+      <div class="title">Update available</div>
+      <div class="copy">A new version of this lesson was published August 14. Want to swap it in?</div>
+    </div>
+    <div class="x"><i class="fas fa-xmark"></i></div>
+  </div>
+  <div class="mono" style="color:#858585;">6px-wide colored rail · white surface · 1px #d2d2d2 outer · never use full borders on rounded boxes</div>
+</div></body></html>

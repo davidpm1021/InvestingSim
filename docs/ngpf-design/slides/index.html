@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NGPF · Sample Slides</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <link rel="stylesheet" href="../deck.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <style>
+    deck-stage:not(:defined) { visibility: hidden; }
+    html, body { margin: 0; background: #1a1a1a; }
+    .ngpf-logo-ko { width: 380px; height: auto; display: block; }
+    /* Cover: bigger icons overlapping the blue panel; larger title + sub */
+    .slide--cover .cover-icons {
+      width: 644px;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .slide--cover .cover-content { max-width: 600px; z-index: 4; }
+    .slide--cover h1 { font-size: 76px; line-height: 1.04; }
+    .slide--cover .cover-sub { font-size: 28px; line-height: 1.3; max-width: 560px; }
+    /* Agenda: enlarge clipboard art + column to hold it */
+    .slide--agenda .agenda-body { grid-template-columns: 540px 1fr; gap: 64px; }
+    .slide--agenda .agenda-art { width: 480px; }
+    .slide--agenda .agenda-list { padding-left: 0; margin-left: -110px; }
+    /* Regular content slide — bump body copy 26 → 36 */
+    .slide--regular .body-copy { font-size: 36px; line-height: 1.45; }
+    .slide--regular .body-copy p + p { margin-top: 28px; }
+  </style>
+  <script src="deck-stage.js"></script>
+</head>
+<body>
+<deck-stage width="1440" height="1080">
+
+  <!-- ────────── 1. COVER ────────── -->
+  <section class="slide slide--cover" data-screen-label="01 Cover">
+    <div class="cover-blue"></div>
+    <div class="cover-content">
+      <img src="../assets/ngpf-horizontal-primary-ko.png" alt="NGPF" class="cover-logo ngpf-logo-ko">
+      <div class="cover-line"></div>
+      <h1>Bringing Joy to Personal Finance Education</h1>
+      <div class="cover-sub">Annual Impact Report · 2025-26 School Year</div>
+    </div>
+    <img src="../assets/cover-icons.png" alt="" class="cover-icons" aria-hidden="true">
+  </section>
+
+  <!-- ────────── 2. AGENDA ────────── -->
+  <section class="slide slide--agenda" data-screen-label="02 Agenda">
+    <div class="slide__titlebar"><div class="slide__tab"></div><h2>What we'll cover today</h2></div>
+    <div class="agenda-body">
+      <div class="agenda-art">
+        <img src="../assets/illustrations/checklist.png" alt="" style="width:450px; height:auto; display:block;">
+      </div>
+      <ol class="agenda-list">
+        <li>Where we stood entering 2025</li>
+        <li>Curriculum reach &amp; classroom adoption</li>
+        <li>Teacher PD: certifications &amp; FinCamps</li>
+        <li>Mission 2030 — advocacy progress</li>
+        <li>Where we go next</li>
+      </ol>
+    </div>
+    <div class="slide__footlogo"></div>
+  </section>
+
+  <!-- ────────── 3. TRANSITION ────────── -->
+  <section class="slide slide--transition ngpf-bg-pattern-primary" data-screen-label="03 Transition" style="background:url('../assets/pattern-primary-blue.png') center/cover no-repeat, #1f3b9b;">
+    <h1>The year we crossed 100,000 teachers.</h1>
+  </section>
+
+  <!-- ────────── 4. REGULAR ────────── -->
+  <section class="slide slide--regular" data-screen-label="04 Regular Body">
+    <div class="slide__titlebar"><div class="slide__tab"></div><h2>Where we stood entering 2025</h2></div>
+    <div class="body-copy">
+      <p>NGPF entered 2025 with curriculum in roughly <b>82,000 classrooms</b> across all 50 states, deepening adoption in the states that had just passed personal-finance graduation requirements.</p>
+      <p>Teacher demand for ready-to-teach materials kept climbing — not just for the 9-unit personal finance course, but for math integrations, on-demand PD modules, and our growing FinCamp event series.</p>
+      <p>This deck walks through what changed over the last twelve months — and where Mission 2030 takes us next.</p>
+    </div>
+    <div class="slide__footlogo"></div>
+  </section>
+
+  <!-- ────────── 5. METRICS ────────── -->
+  <section class="slide slide--metrics" data-screen-label="05 Metrics">
+    <div class="slide__titlebar"><div class="slide__tab"></div><h2>The numbers that mattered this year</h2></div>
+    <div class="metrics-row">
+      <div class="metric">
+        <div class="metric-num">100k+</div>
+        <div class="metric-desc">teachers using NGPF curriculum in 2025-26</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">5.2M</div>
+        <div class="metric-desc">students reached across all 50 states</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">11</div>
+        <div class="metric-desc">new states with personal-finance graduation requirements</div>
+      </div>
+    </div>
+    <div class="slide__footlogo"></div>
+  </section>
+
+  <!-- ────────── 6. TIMELINE ────────── -->
+  <section class="slide slide--timeline" data-screen-label="06 Timeline">
+    <div class="slide__titlebar"><div class="slide__tab"></div><h2>What changed over twelve months</h2></div>
+    <div class="timeline-wrap">
+      <div class="timeline-line"></div>
+      <div class="tl-step">
+        <div class="tl-circle">1</div>
+        <div class="tl-title">Fall 2025</div>
+        <div class="tl-body">Released the revamped Investing unit and expanded Math integrations into Algebra II.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-circle">2</div>
+        <div class="tl-title">Winter 2025-26</div>
+        <div class="tl-body">FinLit Month hit a record 27,000 classrooms participating; certifications crossed 8,500 teachers.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-circle">3</div>
+        <div class="tl-title">Spring 2026</div>
+        <div class="tl-body">Three more states adopted personal-finance graduation requirements; total now sits at 33 states.</div>
+      </div>
+    </div>
+    <div class="slide__footlogo"></div>
+  </section>
+
+  <!-- ────────── 7. FOUR-POINT ────────── -->
+  <section class="slide slide--fourpoint" data-screen-label="07 Four-Point">
+    <div class="slide__titlebar"><div class="slide__tab"></div><h2>Mission 2030 — four priorities</h2></div>
+    <div class="fp-grid">
+      <div class="fp-item">
+        <div class="fp-num">1</div>
+        <div>
+          <div class="fp-title">Universal access</div>
+          <div class="fp-body">Personal finance as a graduation requirement in all 50 states by 2030.</div>
+        </div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-num">2</div>
+        <div>
+          <div class="fp-title">Teacher mastery</div>
+          <div class="fp-body">Certify 25,000 teachers and grow on-demand PD by 3× — without compromising rigor.</div>
+        </div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-num">3</div>
+        <div>
+          <div class="fp-title">Equity in outcomes</div>
+          <div class="fp-body">Close the financial-literacy gap for students at Title I schools, district by district.</div>
+        </div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-num">4</div>
+        <div>
+          <div class="fp-title">Real-world relevance</div>
+          <div class="fp-body">Keep curriculum fresh — investing, AI, credit, housing — as fast as the world changes.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footlogo"></div>
+  </section>
+
+  <!-- ────────── 8. CLOSING ────────── -->
+  <section class="slide slide--transition" data-screen-label="08 Closing" style="background:url('../assets/pattern-primary-blue.png') center/cover no-repeat, #1f3b9b;">
+    <h1>Thank you.</h1>
+  </section>
+
+</deck-stage>
+</body>
+</html>

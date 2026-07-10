@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+  .b { display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:var(--font-sans); font-weight:700; background:#fff; white-space:nowrap; flex-direction:row !important; }
+  .b i { flex:0 0 auto; }
+  .b-std { padding:14px 16px; font-size:18px; border-radius:10px; line-height:1; border:2px solid #275ce4; color:#275ce4; }
+  .b-std.hover { background:#f4f7ff; }
+  .b-std.click { color:#1f3b9b; border-color:#1f3b9b; }
+  .b-sm  { padding:9px 20px; font-size:14px; border-radius:10px; line-height:1; border:2px solid #275ce4; color:#275ce4; }
+  .b-sm.hover { background:#f4f7ff; }
+  .b-sm.click { color:#1f3b9b; border-color:#1f3b9b; }
+  .b-tiny{ padding:4px 9px; font-size:12px; border-radius:8px; line-height:1; border:1px solid #275ce4; color:#275ce4; gap:4px; }
+  .row-label { font-size:10px; color:#858585; letter-spacing:0.06em; text-transform:uppercase; font-weight:700; font-family:var(--font-sans); }
+  .anchor { color:#275ce4; font-family:var(--font-sans); font-weight:700; font-size:16px; text-decoration:underline; text-underline-offset:3px; }
+</style></head>
+<body><div class="card">
+  <div class="meta">OUTLINE & UTILITY BUTTONS</div>
+  <div style="display:grid; grid-template-columns: 70px repeat(3, auto); gap:14px 16px; align-items:center; justify-content:start;">
+    <div class="row-label">Large</div>
+    <button class="b b-std">Learn More</button>
+    <button class="b b-std hover">Learn More</button>
+    <button class="b b-std click">Learn More</button>
+
+    <div class="row-label">+ icon</div>
+    <button class="b b-std"><i class="fas fa-plus"></i> Save Resource</button>
+    <button class="b b-std hover"><i class="fas fa-plus"></i> Save Resource</button>
+    <button class="b b-std click"><i class="fas fa-plus"></i> Save Resource</button>
+
+    <div class="row-label">Small</div>
+    <button class="b b-sm">Details</button>
+    <button class="b b-sm hover">Details</button>
+    <button class="b b-sm click">Details</button>
+  </div>
+  <div style="display:flex; gap:24px; align-items:center; padding-top:8px; border-top:1px solid #e7ebee;">
+    <div class="row-label">Tiny</div>
+    <button class="b b-tiny"><i class="fas fa-download"></i> Download Event</button>
+    <div class="row-label">Anchor link</div>
+    <a href="#" class="anchor">Visit ngpf.org →</a>
+  </div>
+</div></body></html>

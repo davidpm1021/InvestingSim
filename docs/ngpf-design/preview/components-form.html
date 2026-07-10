@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field label { font-family:var(--font-sans); font-weight:700; font-size:13px; color:#0b1541; letter-spacing:0.02em; }
+  .field input, .field select { font-family:var(--font-sans); font-size:15px; padding:11px 12px; border:1px solid #c3c3c3; border-radius:6px; background:#fff; color:#0b1541; outline:none; width:100%; }
+  .field select {
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    padding-right: 44px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10' fill='none' stroke='%231f3b9b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M1 1 L7 8 L13 1'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 13px;
+  }
+  .field input:focus, .field select:focus { border-color:#275ce4; box-shadow: 0 0 0 3px rgba(39,92,228,.15); }
+  .check { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-sans); font-size:14px; color:#0b1541; }
+  .check .box { width:18px; height:18px; border:1.5px solid #275ce4; border-radius:3px; display:inline-flex; align-items:center; justify-content:center; color:#fff; background:#fff; }
+  .check.on .box { background:#275ce4; }
+  .radio { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-sans); font-size:14px; color:#0b1541; }
+  .radio .dot { width:18px; height:18px; border:1.5px solid #275ce4; border-radius:50%; background:#fff; position:relative; }
+  .radio.on .dot::after { content:""; position:absolute; inset:3px; border-radius:50%; background:#275ce4; }
+</style></head>
+<body><div class="card">
+  <div class="meta">FORM CONTROLS</div>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+    <div class="field">
+      <label>School name</label>
+      <input value="Lincoln High School">
+    </div>
+    <div class="field">
+      <label>Subject</label>
+      <select><option>Personal Finance</option><option>Math</option><option>Economics</option></select>
+    </div>
+  </div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <span class="check on"><span class="box"><i class="fas fa-check" style="font-size:11px;"></i></span> Subscribe to FinLit Friday</span>
+    <span class="check"><span class="box"></span> Send me NGPF news</span>
+  </div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <span class="radio on"><span class="dot"></span> High School</span>
+    <span class="radio"><span class="dot"></span> Middle School</span>
+    <span class="radio"><span class="dot"></span> Both</span>
+  </div>
+</div></body></html>

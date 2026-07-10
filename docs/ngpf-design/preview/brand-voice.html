@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  .pill { display:inline-block; font-family:var(--font-sans); font-weight:700; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; }
+  .pill.do  { background:#dbf3e6; color:#1f7a4d; }
+  .pill.no  { background:#fde0e0; color:#a31b1b; }
+  .row { display:grid; grid-template-columns: 56px 1fr 1fr; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid #f3f0f0; }
+  .row:last-child { border-bottom:0; }
+  .row .copy { font-family:var(--font-sans); font-size:13px; color:#0b1541; line-height:1.4; }
+  .row .copy.bad { color:#858585; text-decoration:line-through; }
+</style></head>
+<body><div class="card">
+  <div class="meta">VOICE · TEACHER-FIRST LANGUAGE</div>
+  <div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">Teachers who use NGPF</div>
+      <div class="copy bad">Our teachers</div>
+    </div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">X teachers invested Y hours in NGPF PD</div>
+      <div class="copy bad">NGPF provided X hours of PD</div>
+    </div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">Together, we can achieve Mission 2030</div>
+      <div class="copy bad">NGPF will achieve Mission 2030</div>
+    </div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">no-cost (formal) · free (promo)</div>
+      <div class="copy bad">no cost · non-cost</div>
+    </div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">speculating in cryptocurrency</div>
+      <div class="copy bad">investing in cryptocurrency</div>
+    </div>
+    <div class="row">
+      <div><span class="pill do">Do</span></div>
+      <div class="copy">historically excluded communities</div>
+      <div class="copy bad">underserved · minorities</div>
+    </div>
+    <div class="row">
+      <div><span class="pill no">Avoid</span></div>
+      <div class="copy">delve · utilize · very · really</div>
+      <div class="copy" style="color:#858585; text-decoration:none;">ChatGPT tells + empty intensifiers</div>
+    </div>
+  </div>
+  <div class="mono" style="color:#858585;">Full rules in <code>docs/copywriting-style-guide.txt</code> · Model copy in <code>docs/copy-catalog.txt</code></div>
+</div></body></html>

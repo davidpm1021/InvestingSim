@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+  .b { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; font-family:var(--font-sans); font-weight:700; white-space:nowrap; flex-direction:row !important; }
+  .b i { flex:0 0 auto; }
+  .b-std { padding:16px 18px; font-size:18px; border-radius:10px; line-height:1; }
+  .b-sm  { padding:11px 22px; font-size:14px; border-radius:10px; line-height:1; }
+  .b-tiny{ padding:6px 10px;  font-size:12px; border-radius:8px; line-height:1; }
+  .solid-normal { background:#275ce4; color:#fff; }
+  .solid-hover  { background:#1f4ec4; color:#fff; }
+  .solid-click  { background:#1e44a5; color:#fff; }
+  .row-label { font-size:10px; color:#858585; letter-spacing:0.06em; text-transform:uppercase; font-weight:700; font-family:var(--font-sans); }
+</style></head>
+<body><div class="card">
+  <div class="meta">SOLID BUTTONS · BRIGHT BLUE</div>
+  <div style="display:grid; grid-template-columns: 70px repeat(3, auto); gap:14px 16px; align-items:center; justify-content:start;">
+    <div class="row-label">Large</div>
+    <button class="b b-std solid-normal">Apply now</button>
+    <button class="b b-std solid-hover">Apply now</button>
+    <button class="b b-std solid-click">Apply now</button>
+
+    <div class="row-label">+ icon</div>
+    <button class="b b-std solid-normal"><i class="fas fa-plus"></i> Add Resource</button>
+    <button class="b b-std solid-hover"><i class="fas fa-plus"></i> Add Resource</button>
+    <button class="b b-std solid-click"><i class="fas fa-plus"></i> Add Resource</button>
+
+    <div class="row-label">Small</div>
+    <button class="b b-sm solid-normal">Register</button>
+    <button class="b b-sm solid-hover">Register</button>
+    <button class="b b-sm solid-click">Register</button>
+  </div>
+  <div style="display:grid; grid-template-columns: 70px 80px 80px 80px; gap:14px 16px; align-items:end;">
+    <div></div>
+    <div class="row-label" style="text-align:center;">Normal</div>
+    <div class="row-label" style="text-align:center;">Hover</div>
+    <div class="row-label" style="text-align:center;">Click</div>
+  </div>
+</div></body></html>

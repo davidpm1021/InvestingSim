@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+  .tab { font-family:var(--font-sans); font-weight:700; font-size:13px; line-height:1; padding:10px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; border-radius:7px; }
+  .tab.active { background:#275ce4; color:#fff; }
+  .tab.subtle-active { background:#edfaff; color:#275ce4; }
+  .tab.idle  { color:#231f20; }
+  .badge { background:#ff5656; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; }
+  .group { display:flex; gap:2px; border-bottom:2px solid #e7ebee; padding-bottom:0; }
+  .group .tab { border-radius:0; padding:10px 14px; font-size:13px; }
+  .group .tab.active { background:transparent; color:#275ce4; border-bottom:3px solid #275ce4; margin-bottom:-2px; }
+</style></head>
+<body><div class="card">
+  <div class="meta">TABS</div>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <span class="tab active">Tab</span>
+    <span class="tab subtle-active">Tab</span>
+    <span class="tab idle">Tab <i class="fas fa-check-circle" style="font-size:12px;"></i></span>
+    <span class="tab idle">Tab <span class="badge">1</span></span>
+  </div>
+  <div class="group">
+    <span class="tab active">All Resources</span>
+    <span class="tab idle">Activities</span>
+    <span class="tab idle">Projects</span>
+    <span class="tab idle">Videos</span>
+    <span class="tab idle">Question of the Day</span>
+  </div>
+</div></body></html>

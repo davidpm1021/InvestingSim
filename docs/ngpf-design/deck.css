@@ -1,0 +1,246 @@
+/* NGPF deck UI kit — matches the real deck template.
+   All slides: 1920×1080. Titles PT Sans Bold, body Montserrat.
+   Shared chrome: blue-tab title marker top-left, ngpf parallelogram logo bottom-right. */
+
+.slide {
+  width: 1440px; height: 1080px;
+  font-family: var(--font-sans);
+  color: var(--ngpf-ink);
+  background: #fff;
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+}
+
+/* ----- Title-tab decorator (top-left) -------------------------- */
+/* Shows next to the slide title on regular content slides. It's a
+   small bright-blue parallelogram cut on the right edge. */
+.slide__titlebar {
+  position: absolute; top: 48px; left: 0;
+  display: flex; align-items: flex-start; gap: 20px;
+  right: 260px;
+}
+.slide__tab {
+  width: 48px; height: 48px;
+  background: #275ce4;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.slide__titlebar h1,
+.slide__titlebar h2 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 48px; line-height: 1.1;
+  color: var(--ngpf-dark-blue);
+  margin: 0; text-wrap: pretty;
+  padding-right: 40px;
+}
+
+/* ----- Footer logo (bottom-right) ----------------------------- */
+.slide__footlogo {
+  position: absolute; bottom: 24px; right: 32px;
+  width: 180px; height: auto;
+  background: url('./assets/ngpf-logo-color.png') right center/contain no-repeat;
+  aspect-ratio: 1914 / 837;
+}
+/* legacy rule kept as no-op so existing class variants don't error */
+.slide__footlogo--white {}
+
+/* ----- Cover slide --------------------------------------------- */
+.slide--cover {
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.slide--cover .cover-blue {
+  display: block;
+  position: absolute; inset: 0;
+  width: 66%;
+  background:
+    url('./assets/pattern-primary-blue.png') center/520px repeat,
+    var(--ngpf-primary-blue);
+  background-blend-mode: multiply;
+  /* Stronger diagonal right edge */
+  clip-path: polygon(0 0, 100% 0, calc(100% - 260px) 100%, 0 100%);
+  z-index: 0;
+}
+.slide--cover .cover-content {
+  position: absolute; left: 57px; top: 180px; z-index: 2;
+  color: #fff;
+  max-width: 640px;
+}
+.slide--cover .cover-logo {
+  width: 340px; margin-bottom: 28px;
+  filter: none !important;
+}
+.slide--cover .cover-line {
+  width: 140px; height: 4px; background: #fff; margin: 20px 0 80px;
+}
+.slide--cover h1 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 68px; line-height: 1.05; color: #fff;
+  margin: 0 0 24px; text-wrap: pretty;
+}
+.slide--cover .cover-sub {
+  font-size: 24px; color: #fff; font-weight: 500;
+  line-height: 1.3;
+}
+.slide--cover .cover-icons {
+  position: absolute;
+  right: 20px; top: 50%; transform: translateY(-50%);
+  width: 620px; z-index: 3;
+}
+
+/* ----- Transition slide --------------------------------------- */
+.slide--transition {
+  background: url('./assets/bg-transition.png') center/cover no-repeat, var(--ngpf-primary-blue);
+  color: #fff;
+  align-items: center; justify-content: center; padding: 0 200px;
+}
+.slide--transition h1 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 84px; line-height: 1.1;
+  color: #fff; margin: 0; text-align: center; text-wrap: balance;
+  max-width: 1200px;
+}
+
+/* When the slide uses bg-regular.jpg, the tab + footlogo are baked into the image.
+   Hide our DOM versions so they don't duplicate. */
+.slide--regular.has-baked-bg .slide__tab,
+.slide--regular.has-baked-bg .slide__footlogo {
+  display: none;
+}
+
+/* ----- Regular content slide ---------------------------------- */
+.slide--regular {
+  padding: 170px 80px 160px 80px;
+  flex-direction: column;
+  background: #fff;
+}
+.slide--regular .body-copy {
+  font-family: var(--font-sans); font-weight: 400;
+  font-size: 34px; line-height: 1.5; color: var(--ngpf-ink);
+  max-width: 1200px; margin: 0;
+}
+.slide--regular .body-copy p + p { margin-top: 24px; }
+
+/* ----- Agenda slide -------------------------------------------- */
+.slide--agenda {
+  padding: 170px 80px 160px 80px;
+  flex-direction: column;
+  background: #fff;
+}
+.slide--agenda .agenda-body {
+  display: grid; grid-template-columns: 360px 1fr; gap: 80px;
+  align-items: center; flex: 1;
+}
+.slide--agenda .agenda-art {
+  width: 320px; justify-self: center;
+}
+.slide--agenda .agenda-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.slide--agenda .agenda-list li {
+  display: grid; grid-template-columns: 40px 1fr; gap: 18px;
+  align-items: center;
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 32px; color: var(--ngpf-dark-blue); line-height: 1.2;
+}
+.slide--agenda .agenda-list li::before {
+  content: ""; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ngpf-bright-blue); display: block;
+}
+
+/* ----- Big metrics slide -------------------------------------- */
+.slide--metrics {
+  padding: 170px 60px 160px;
+  flex-direction: column;
+  background: #fff;
+}
+.slide--metrics .metrics-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  flex: 1; align-items: center;
+}
+.slide--metrics .metric {
+  text-align: center; padding: 0 20px;
+}
+.slide--metrics .metric-num {
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 120px; line-height: 1; color: var(--ngpf-bright-blue);
+  letter-spacing: -0.02em;
+}
+.slide--metrics .metric-desc {
+  margin-top: 18px; font-size: 22px; line-height: 1.4;
+  color: var(--ngpf-ink); font-weight: 400;
+  max-width: 300px; margin-left: auto; margin-right: auto;
+}
+
+/* ----- Timeline slide ----------------------------------------- */
+.slide--timeline {
+  padding: 170px 80px 160px;
+  flex-direction: column;
+  background: #fff;
+}
+.slide--timeline .timeline-wrap {
+  position: relative;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  padding-top: 40px;
+}
+.slide--timeline .timeline-line {
+  position: absolute;
+  left: calc(100%/6); right: calc(100%/6);
+  top: 86px;
+  height: 4px; background: var(--ngpf-gray-500); z-index: 0;
+}
+.slide--timeline .tl-step {
+  text-align: center; position: relative; z-index: 1;
+}
+.slide--timeline .tl-circle {
+  width: 108px; height: 108px; border-radius: 50%;
+  background: var(--ngpf-bright-blue); color: #fff;
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 60px; line-height: 1;
+  display: grid; place-items: center;
+  margin: 0 auto 28px;
+  box-shadow: 0 0 0 12px #fff;
+}
+.slide--timeline .tl-title {
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 28px; color: var(--ngpf-bright-blue);
+  line-height: 1.2; margin: 0 0 14px;
+}
+.slide--timeline .tl-body {
+  font-family: var(--font-sans); font-weight: 400;
+  font-size: 22px; line-height: 1.4; color: var(--ngpf-ink);
+}
+
+/* ----- 4-point slide ------------------------------------------ */
+.slide--fourpoint {
+  padding: 170px 80px 160px;
+  flex-direction: column;
+  background: #fff;
+}
+.slide--fourpoint .fp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 44px 56px;
+  flex: 1; align-content: center;
+}
+.slide--fourpoint .fp-item {
+  display: grid; grid-template-columns: 104px 1fr; gap: 24px;
+  align-items: start;
+}
+.slide--fourpoint .fp-num {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: var(--ngpf-bright-blue); color: #fff;
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 54px; line-height: 1;
+  display: grid; place-items: center;
+}
+.slide--fourpoint .fp-title {
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 28px; color: var(--ngpf-bright-blue);
+  line-height: 1.2; margin: 12px 0 12px;
+}
+.slide--fourpoint .fp-body {
+  font-family: var(--font-sans); font-weight: 400;
+  font-size: 22px; line-height: 1.4; color: var(--ngpf-ink);
+}
