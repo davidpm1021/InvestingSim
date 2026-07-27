@@ -500,3 +500,13 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .no-recent-activity p, .no-transactions p, .no-holdings-message p,
   .no-holdings p, .no-data p, .no-selection p { color: #aab4d0 !important; }
 }
+
+// Dialog titles/content -> Montserrat (Material renders mat-dialog-title in Roboto).
+.mat-mdc-dialog-container {
+  font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+  --mat-dialog-subhead-font: 'Montserrat', Helvetica, Arial, sans-serif;
+
+  .mat-mdc-dialog-title, [mat-dialog-title], h1, h2, h3 {
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif !important;
+  }
+}
