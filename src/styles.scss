@@ -280,11 +280,13 @@ $dk-divider: rgba(255, 255, 255, 0.5);
     color: #fff;
   }
 
-  // Tabs: white labels, teal active + underline.
-  .mat-mdc-tab .mdc-tab__text-label { color: #fff; font-weight: 700; letter-spacing: 0.02em; }
-  .mat-mdc-tab:hover .mdc-tab__text-label { color: $dk-teal; }
+  // Tabs: white labels, teal active + underline. !important beats Material's
+  // focused-active label variable (which otherwise shows near-black after a click).
+  .mat-mdc-tab .mdc-tab__text-label { color: #fff !important; font-weight: 700; letter-spacing: 0.02em; }
+  .mat-mdc-tab:hover .mdc-tab__text-label { color: $dk-teal !important; }
   .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
-  .mat-mdc-tab-link.mdc-tab--active .mdc-tab__text-label { color: $dk-teal; }
+  .mat-mdc-tab.mdc-tab--active:focus .mdc-tab__text-label,
+  .mat-mdc-tab-link.mdc-tab--active .mdc-tab__text-label { color: $dk-teal !important; }
   .mdc-tab-indicator__content--underline { border-color: $dk-teal !important; }
   .mat-mdc-tab-header,
   .mat-mdc-tab-group .mat-mdc-tab-header { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
@@ -361,3 +363,80 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .mat-mdc-option .mdc-list-item__primary-text { color: #fff; }
   .mat-mdc-option:hover, .mat-mdc-menu-item:hover { background: rgba(255, 255, 255, 0.08); }
 }
+
+// ============================================================
+//  DARK THEME — contrast fixes (leftover light-theme colors that
+//  failed WCAG AA once the backgrounds went dark). Verified with axe.
+// ============================================================
+.browser-content {
+  // Text + outlined buttons: bright blue (#275ce4) is only ~2.2:1 on navy -> cyan.
+  .mat-mdc-outlined-button,
+  .mat-mdc-outlined-button .mdc-button__label,
+  .mat-mdc-button:not(.mat-mdc-raised-button):not(.mat-mdc-unelevated-button),
+  .mat-mdc-button:not(.mat-mdc-raised-button):not(.mat-mdc-unelevated-button) .mdc-button__label {
+    color: #36ebff !important;
+  }
+  .mat-mdc-outlined-button { border-color: rgba(54, 235, 255, 0.5) !important; }
+
+  // Asset links / balance amounts -> cyan (were True Blue, ~1.3:1 on navy).
+  .asset-name-cell,
+  td.asset,
+  .balance-row .balance-amount { color: #36ebff !important; }
+
+  // Holdings-table gain/loss cells -> bright green / red (transparent-bg text).
+  .mat-mdc-cell.positive, td.positive { color: #01e294 !important; }
+  .mat-mdc-cell.negative, td.negative { color: #ff8087 !important; }
+
+  // Muted captions -> light.
+  .daily-movers-card .daily-movers-note,
+  .daily-movers-card .daily-movers-disclaimer { color: #aab4d0 !important; }
+}
+
+// Banking transaction list on dark.
+.browser-content {
+  .transaction-description { color: #fff !important; }
+  .transaction-date, .no-transactions, .transaction-balance { color: #aab4d0 !important; }
+  .transaction-amount.positive { color: #01e294 !important; }
+  .transaction-amount.negative { color: #ff8087 !important; }
+  .transaction-amount.neutral { color: #cfd9e0 !important; }
+  .transaction-list th, .transaction-list label { color: #aab4d0 !important; }
+}
+
+// Statement dialog: leftover True Blue titles/labels -> light.
+.mat-mdc-dialog-container {
+  .statement-title, .statement-period, .meta-label, .meta-value,
+  .how-to-read-body strong, .breakdown-label { color: #e0e6f2 !important; }
+  .statement-title { color: #fff !important; }
+  .pos { color: #01e294 !important; }
+  .neg { color: #ff8087 !important; }
+}
+
+// ---- Remaining dark contrast fixes (verified with axe) ----
+.browser-content {
+  .account-apy, .account-apy .defined-term { color: #cfd9e0 !important; }
+  .header-description, .header-date, .header-amount, .header-balance { color: #aab4d0 !important; }
+  .statements-section p, .no-statements { color: #cfd9e0 !important; }
+  .statements-section h2 { color: #fff !important; }
+}
+// Glossary terms sit on dark surfaces everywhere now: keep a cyan underline and
+// let the text inherit its (light) surrounding color.
+.browser-content .defined-term,
+.mat-mdc-dialog-container .defined-term { border-bottom-color: #36ebff; }
+
+// Transfer / account dialogs.
+.mat-mdc-dialog-container {
+  .balance-label, .transfer-description, .transfer-timing-note,
+  .transfer-timing-note span, .account-label { color: #cfd9e0 !important; }
+  .balance-amount, .account-value { color: #36ebff !important; }
+  // Text buttons (Cancel) -> cyan; raised primary keeps its white-on-blue.
+  .mat-mdc-button:not(.mat-mdc-raised-button):not(.mat-mdc-unelevated-button) .mdc-button__label { color: #36ebff !important; }
+}
+
+// ---- Dialog light boxes -> dark (so the light text on them is AA) ----
+.mat-mdc-dialog-container {
+  .source-account, .destination-account, .account-balance,
+  .transfer-summary, .transfer-info, .info-box, .summary-box,
+  .statement-meta, .how-to-read-body { background: rgba(255, 255, 255, 0.06) !important; }
+  .no-statements p { color: #cfd9e0 !important; }
+}
+.browser-content .no-statements p { color: #cfd9e0 !important; }

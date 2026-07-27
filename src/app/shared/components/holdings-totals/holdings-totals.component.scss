@@ -91,3 +91,13 @@
     }
   }
 }
+
+// ---- Dark theme (design update) ----
+.stat-value { color: #36ebff !important; }
+label, .performance-label { color: #aab4d0 !important; }
+.performance-heading { color: #fff !important; }
+.performance-card { background-color: rgba(255, 255, 255, 0.06) !important; border-color: rgba(255, 255, 255, 0.14) !important; }
+.performance-card.positive { background-color: rgba(1, 226, 148, 0.14) !important; border-color: rgba(1, 226, 148, 0.5) !important; }
+.performance-card.negative { background-color: rgba(255, 128, 135, 0.14) !important; border-color: rgba(255, 128, 135, 0.5) !important; }
+.performance-value.positive { color: #01e294 !important; }
+.performance-value.negative { color: #ff8087 !important; }

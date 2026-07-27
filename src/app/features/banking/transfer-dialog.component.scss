@@ -160,3 +160,21 @@ mat-dialog-actions button {
 mat-dialog-actions button:first-child {
   margin-left: 0;
 }
+
+// ---- Dark theme (design update) ----
+.source-account, .destination-account {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.account-name { color: #fff !important; }
+.balance-label, .transfer-description, .transfer-timing-note, .transfer-timing-note span { color: #cfd9e0 !important; }
+.balance-amount { color: #36ebff !important; }
+
+// The account cards use a translucent fill, so their parent must be dark too or
+// the fill composites over the old light-blue container and text fails contrast.
+.account-connection { background: transparent !important; border-color: rgba(255, 255, 255, 0.12) !important; }
+.account-card { background: rgba(255, 255, 255, 0.06) !important; border-color: rgba(255, 255, 255, 0.12) !important; box-shadow: none !important; }
+.transfer-summary, .info-box, .transfer-info { background: rgba(255, 255, 255, 0.06) !important; }
+.account-service { color: #cfd9e0 !important; }
+.transfer-timing-note, .transfer-timing-note span { color: #cfd9e0 !important; }
+.transfer-timing-note { background: rgba(255, 255, 255, 0.06) !important; border-color: rgba(255, 255, 255, 0.12) !important; }

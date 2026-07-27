@@ -186,3 +186,12 @@ mat-dialog-actions {
   margin: 0;
 }
 
+
+// ---- Dark theme (design update) ----
+.detail-inline, .detail-block-line, .detail-inline strong, .detail-label, strong { color: #e0e6f2 !important; }
+.price-label { color: #cfd9e0 !important; }
+.current-price { color: #36ebff !important; }
+h1, h2, h3, .asset-title { color: #fff !important; }
+.positive { color: #01e294 !important; background: transparent !important; }
+.negative { color: #ff8087 !important; background: transparent !important; }
+.price-change-period, .asset-description, .asset-subtitle, .asset-type-label { color: #cfd9e0 !important; }

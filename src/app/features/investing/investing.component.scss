@@ -1667,3 +1667,38 @@ h1 { color: #fff; }
 .no-holdings,
 .no-data,
 .no-selection { color: #cfd9e0; }
+
+// Mover change pills: solid pale backgrounds so the green-mid / red text stays AA
+// (the earlier translucent fills sat on the dark ticker card and failed contrast).
+.price-change.positive {
+  background: #f8fff9;
+  color: #157347;
+  border: none;
+}
+.price-change.negative {
+  background: #ffeaea;
+  color: #c92a2a;
+  border: none;
+}
+.balance-row .balance-amount { color: #36ebff; }
+
+// Holdings tab detail + empty states on dark.
+.holding-name, .holding-value { color: #fff !important; }
+.holding-shares { color: #aab4d0 !important; }
+.no-statements { background: transparent !important; }
+.no-statements p, .no-statements { color: #cfd9e0 !important; }
+
+// Activity / Holdings tab: table column headers + detail rows + selected state.
+h2 { color: #fff !important; }
+[class^="header-"], [class*=" header-"] { color: #aab4d0 !important; }
+.detail-item label { color: #aab4d0 !important; }
+.detail-item span { color: #e0e6f2 !important; }
+.holding-item.selected { background: rgba(54, 235, 255, 0.10) !important; }
+.holding-item.selected .holding-name, .holding-item.selected .holding-value { color: #fff !important; }
+.holding-item.selected .holding-shares { color: #cfd9e0 !important; }
+
+// Activity tab data cells + price-history heading on dark.
+.transaction-action, .transaction-asset, .transaction-asset-type,
+.transaction-shares, .transaction-price, .transaction-total, .transaction-status,
+.price-history-section h4 { color: #e0e6f2 !important; }
+.price-history-section h4 { color: #fff !important; }
