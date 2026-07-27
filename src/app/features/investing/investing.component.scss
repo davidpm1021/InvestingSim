@@ -1400,6 +1400,39 @@ h2 {
 }
 
 // Daily Movers - Modern Design
+// These paragraphs are captions, not the big centered body copy that `.tab-content p`
+// forces (40px margins, 1.2rem, centered). The extra `.daily-movers-card` qualifier
+// wins that specificity battle so the title-to-note gap stays tight.
+.daily-movers-card .daily-movers-note {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #5c636a;
+  text-align: left;
+  line-height: 1.4;
+}
+
+// Small print, below the grid. #5c636a on white = 5.8:1 (AA).
+.daily-movers-card .daily-movers-disclaimer {
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #5c636a;
+  text-align: left;
+  line-height: 1.4;
+}
+
+// Performance chart caption — same caption treatment so `.tab-content p` doesn't
+// push it 40px off the title.
+.compare-card .chart-hint {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #5c636a;
+  text-align: left;
+  line-height: 1.4;
+}
+
 .daily-movers-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1531,6 +1564,13 @@ h2 {
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
+}
+
+// "/ share" qualifier next to the price. #666 on white = 5.7:1 (AA).
+.price-unit {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
 }
 
 .price-change {

@@ -13,10 +13,6 @@
     <p>Build and manage your investment portfolio with professional tools and real-time market data.</p>
   </div>
 
-  <app-page-intro pageKey="brokerage"
-    text="This is Summit Invest, your brokerage. Connect your bank, move cash into your settlement account, then use Buy to invest. Remember, gains aren't real until you sell.">
-  </app-page-intro>
-
   <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Overview" labelClass="tour-tab-overview">
       <div class="tab-content">
@@ -63,7 +59,7 @@
               <div class="connect-bank-gate" *ngIf="!bankLinked">
                 <p class="connect-bank-text">Connect your bank to fund your account and start investing.</p>
                 <button mat-raised-button
-                        color="accent"
+                        color="primary"
                         (click)="openConnectBankDialog()"
                         class="connect-bank-button">
                   Connect Your Bank
@@ -76,12 +72,12 @@
                 </div>
                 <div class="button-group">
                   <button mat-raised-button
-                          color="accent"
+                          color="primary"
                           (click)="openAddFundsDialog()"
                           class="add-funds-button">
                     Add Funds
                   </button>
-                  <button mat-raised-button
+                  <button mat-stroked-button
                           color="primary"
                           (click)="openWithdrawDialog()"
                           [disabled]="brokerageBalance <= 0"
@@ -256,9 +252,10 @@
           <!-- Daily Movers Section -->
           <mat-card class="daily-movers-card mb-3">
             <mat-card-header>
-              <h2 mat-card-title>Daily Movers</h2>
+              <h2 mat-card-title>Available Investments</h2>
             </mat-card-header>
             <mat-card-content>
+              <p class="daily-movers-note">The percent change is from the previous quarter.</p>
               <div class="daily-movers-grid">
                 <div class="mover-card" appClickable [attr.aria-label]="'View details for ' + asset.name" *ngFor="let asset of allAssets" [class.positive-trend]="getPriceChange(asset) > 0" [class.negative-trend]="getPriceChange(asset) < 0" (click)="openAssetDetailsDialog(asset)">
                   <div class="card-header">
@@ -270,7 +267,7 @@
                   <div class="asset-info">
                     <h3 class="asset-name">{{ asset.name }}</h3>
                     <div class="price-info">
-                      <div class="current-price">${{ getCurrentPrice(asset) | number:'1.2-2' }}</div>
+                      <div class="current-price">${{ getCurrentPrice(asset) | number:'1.2-2' }}<span class="price-unit"> / share</span></div>
                       <div class="price-change" [class.positive]="getPriceChange(asset) > 0" [class.negative]="getPriceChange(asset) < 0">
                         {{ getPriceChange(asset) > 0 ? '+' : '' }}{{ getPriceChange(asset) | number:'1.2-2' }}%
                       </div>
@@ -278,13 +275,14 @@
                   </div>
                 </div>
               </div>
+              <p class="daily-movers-disclaimer">The companies and figures here are fictitious.</p>
             </mat-card-content>
           </mat-card>
 
           <!-- Compare Investments (Chunk 5) -->
           <mat-card class="compare-card">
             <mat-card-header>
-              <h2 mat-card-title>Compare Investments</h2>
+              <h2 mat-card-title>Performance</h2>
             </mat-card-header>
             <mat-card-content>
               <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>

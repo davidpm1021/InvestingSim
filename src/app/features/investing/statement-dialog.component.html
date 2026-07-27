@@ -25,9 +25,9 @@
     </button>
     <p *ngIf="showHowToRead" class="how-to-read-body">
       <strong>Change in Account Value</strong> shows how your total account moved this quarter and year-to-date.
-      <strong>Cash Available</strong> is your settlement cash; <strong>Investments</strong> is the value of what you own.
-      <strong>Cash Activity</strong> reconciles every dollar in and out of your settlement cash. Your gains aren't real
-      until you sell — see <strong>Your Investments</strong> for what you paid versus what each holding is worth now.
+      <strong>Cash Available</strong> is the cash in your cash settlement account; <strong>Investments</strong> is the value of what you own.
+      <strong>Cash Activity</strong> reconciles every dollar in and out of your cash settlement account. Your gains aren't real
+      until you sell. See <strong>Your Investments</strong> for what you paid versus what each holding is worth now.
     </p>
   </div>
 
@@ -166,7 +166,7 @@
       <thead>
         <tr>
           <th>Investment</th><th>Type</th><th class="num">Shares</th><th class="num">Price</th>
-          <th class="num">Current Value</th><th class="num"><app-define term="Cost basis" label="What You Paid"></app-define></th><th class="num"><app-define term="Gain/Loss"></app-define></th><th class="num">% of Portfolio</th>
+          <th class="num">Current Value</th><th class="num">% of Portfolio</th><th class="num"><app-define term="Cost basis" label="What You Paid"></app-define></th><th class="num"><app-define term="Gain/Loss"></app-define></th>
         </tr>
       </thead>
       <tbody>
@@ -176,9 +176,9 @@
           <td class="num">{{ h.shares | number:'1.2-4' }}</td>
           <td class="num">{{ h.price | currency:'USD':'symbol':'1.2-2' }}</td>
           <td class="num">{{ h.value | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="num">{{ h.pctOfPortfolio | number:'1.2-2' }}%</td>
           <td class="num">{{ h.costBasis | currency:'USD':'symbol':'1.2-2' }}</td>
           <td class="num" [class.pos]="h.gainLoss >= 0" [class.neg]="h.gainLoss < 0">{{ h.gainLoss | currency:'USD':'symbol':'1.2-2' }}</td>
-          <td class="num">{{ h.pctOfPortfolio | number:'1.2-2' }}%</td>
         </tr>
       </tbody>
     </table>

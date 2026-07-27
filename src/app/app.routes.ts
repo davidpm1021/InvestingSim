@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { SplashComponent } from './pages/splash/splash.component';
 import { DesktopComponent } from './pages/desktop/desktop.component';
 import { MainLayoutComponent } from './shared/layout/main-layout/main-layout.component';
 import { BankingComponent } from './features/banking/banking.component';
@@ -9,6 +10,11 @@ import { BankSimComponent } from './features/bank-sim/bank-sim.component';
 export const routes: Routes = [
   {
     path: '',
+    component: SplashComponent,
+    title: 'Investing Sim'
+  },
+  {
+    path: 'desktop',
     component: DesktopComponent,
     title: 'Investing Sim'
   },

@@ -18,7 +18,7 @@
             <mat-button-toggle *ngFor="let r of ranges" [value]="r.key">{{ r.label }}</mat-button-toggle>
           </mat-button-toggle-group>
         </div>
-        <h4 class="performance-heading">Performance — {{ rangeLabel() }}</h4>
+        <h4 class="performance-heading">Performance: {{ rangeLabel() }}</h4>
         <div class="performance-cards">
           <div class="performance-card amount-card"
                [class.positive]="performance.amount > 0"

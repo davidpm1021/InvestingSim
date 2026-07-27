@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ChecklistService, MILESTONES, MilestoneKey } from '../../services/checklist.service';
 import { DataService } from '../../services/data.service';
+import { WalkthroughService } from '../../services/walkthrough.service';
 
 /**
  * A persistent "notebook" checklist docked to the left gutter that crosses off
@@ -157,6 +158,7 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
     public svc: ChecklistService,
     private router: Router,
     private dataService: DataService,
+    private walkthrough: WalkthroughService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -171,6 +173,10 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
         })
     );
     this.sub.add(this.svc.completed$.subscribe(set => { this.completed = set; this.cdr.detectChanges(); }));
+    // Re-render when the walkthrough opens/closes a pop-up so we can step aside
+    // (its spotlight callout can otherwise overlap the notebook on the left).
+    this.sub.add(this.walkthrough.active$.subscribe(() => { this.syncBody(); this.cdr.detectChanges(); }));
+    this.sub.add(this.walkthrough.expanded$.subscribe(() => { this.syncBody(); this.cdr.detectChanges(); }));
 
     window.addEventListener('resize', this.onResize);
     this.updateRoom();
@@ -186,12 +192,16 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
     window.removeEventListener('resize', this.onResize);
     this.mo?.disconnect();
     this.sub.unsubscribe();
+    document.body.classList.remove('nb-panel-open');
   }
 
   get visible(): boolean {
     const onSim = this.currentUrl.startsWith('/investing') || this.currentUrl.startsWith('/banking');
     const browserLayout = this.dataService.getOptions().layout === 'web_browser';
-    return onSim && browserLayout;
+    // Step aside while the walkthrough is showing a pop-up or spotlight callout;
+    // it reappears once the guide is minimized to the coach bar or finished.
+    const guideOpen = this.walkthrough.active && this.walkthrough.expanded;
+    return onSim && browserLayout && !guideOpen;
   }
 
   /** Panel shows only when the student wants it AND there is room for it. */
@@ -206,11 +216,25 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
   toggle(): void {
     this.userExpanded = !this.userExpanded;
     this.saveExpanded(this.userExpanded);
+    this.syncBody();
   }
 
   private updateRoom(): void {
     this.isBrowserMaximized = !!document.querySelector('.browser-window.maximized');
-    this.hasRoom = !this.isBrowserMaximized && window.innerWidth >= 900;
+    // Need enough width that shifting the browser window clear of the open panel
+    // (see body.nb-panel-open in styles.scss) still leaves a usable window; below
+    // this the panel collapses to the thin tab instead.
+    this.hasRoom = !this.isBrowserMaximized && window.innerWidth >= 1100;
+    this.syncBody();
+  }
+
+  /**
+   * Mirror "the panel is actually on screen" onto a body class so the layout can
+   * shift the browser window to the right of it, keeping page content from
+   * scrolling underneath the fixed notebook.
+   */
+  private syncBody(): void {
+    document.body.classList.toggle('nb-panel-open', this.visible && this.showPanel);
   }
 
   private loadExpanded(): boolean {

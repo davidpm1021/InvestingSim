@@ -44,15 +44,15 @@
             },
             {
                 "date": "2024-10-01",
-                "value": 69.68
+                "value": 68.60
             },
             {
                 "date": "2024-11-01",
-                "value": 70.84
+                "value": 68.95
             },
             {
                 "date": "2024-12-01",
-                "value": 70.95
+                "value": 69.30
             },
             {
                 "date": "2025-01-01",
@@ -164,15 +164,15 @@
             },
             {
                 "date": "2024-10-01",
-                "value": 86.28
+                "value": 83.40
             },
             {
                 "date": "2024-11-01",
-                "value": 86.81
+                "value": 84.05
             },
             {
                 "date": "2024-12-01",
-                "value": 87.42
+                "value": 84.70
             },
             {
                 "date": "2025-01-01",
@@ -364,7 +364,7 @@
         "name": "Total Stock Market Index Fund",
         "type": "mutual_fund",
         "sector": "Diversified",
-        "description": "A mutual fund tracking the total U.S. stock market. Mutual funds trade once per day at the closing price.",
+        "description": "A mutual fund tracking the total U.S. stock market.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
@@ -485,7 +485,7 @@
         "name": "Total Stock Market ETF",
         "type": "etf",
         "sector": "Diversified",
-        "description": "An ETF tracking the total U.S. stock market. ETFs trade throughout the day at the market price.",
+        "description": "An ETF tracking the total U.S. stock market.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",
@@ -606,7 +606,7 @@
         "name": "Target Date 2070 Fund",
         "type": "target_date_fund",
         "sector": "Diversified",
-        "description": "A one-fund, diversified portfolio for an investor retiring around 2070, roughly 90% stocks and 10% bonds.",
+        "description": "A one-fund, diversified portfolio for an investor retiring around 2070. It holds roughly 90% stocks and 10% bonds now, and gradually shifts toward more bonds as its target year approaches.",
         "historicalPerformance": [
             {
                 "date": "2024-01-01",

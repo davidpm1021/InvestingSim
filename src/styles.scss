@@ -110,6 +110,28 @@ h4, h5, h6 {
   border: 0;
 }
 
+// While the walkthrough coach bar is docked at the bottom (a fixed overlay),
+// reserve space at the bottom of the scroll area so page content (e.g. the
+// statement cards) can scroll clear of the bar instead of hiding behind it.
+body.wt-coach-open .browser-content,
+body.wt-coach-open .main-content {
+  padding-bottom: 110px;
+}
+
+// The notebook checklist is a fixed overlay in the left gutter. When its panel is
+// open, shift the browser window to the right of it so page content never scrolls
+// underneath the notebook (the panel spans left:14px + 236px wide). The window must
+// also SHRINK by the same amount, not just shift: it lives in a column flex, so its
+// width is set by width/max-width (not flex-grow), and a bare margin-left would push
+// the 1200px-max window past the right edge. width = 100% - both margins keeps it
+// exactly within the viewport at every width.
+body.nb-panel-open .browser-window:not(.maximized):not(.minimized) {
+  margin-left: 268px;
+  margin-right: 8px;
+  width: calc(100% - 276px);
+  max-width: 1200px;
+}
+
 // Router link active styles
 .router-link-active {
   background-color: #e8e8e8 !important;

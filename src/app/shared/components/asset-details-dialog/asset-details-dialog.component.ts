@@ -8,7 +8,9 @@ import { Chart, registerables } from 'chart.js';
 import { MONTHS_SHORT } from '../../pipes/evergreen-date.pipe';
 import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
+import { getQuarterForDate, getPreviousQuarter } from '../../data/quarters.data';
 import { AssetTypePipe } from '../../pipes/asset-type.pipe';
+import { DefineComponent } from '../define/define.component';
 
 export interface AssetDetailsDialogData {
   asset: any;
@@ -18,7 +20,7 @@ export interface AssetDetailsDialogData {
 @Component({
   selector: 'app-asset-details-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatCardModule, MatIconModule, AssetTypePipe],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatCardModule, MatIconModule, AssetTypePipe, DefineComponent],
   templateUrl: './asset-details-dialog.component.html',
   styleUrl: './asset-details-dialog.component.scss'
 })
@@ -45,6 +47,18 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
     this.currentPrice = this.getCurrentPrice();
   }
 
+  /** Glossary key for the asset's type, so the Type value can show a hover definition. */
+  typeTermKey(): string {
+    const map: { [k: string]: string } = {
+      stock: 'Stock',
+      etf: 'ETF',
+      mutual_fund: 'Mutual fund',
+      target_date_fund: 'Target-date fund',
+      bond_fund: 'Bond fund',
+    };
+    return map[this.asset?.type] || '';
+  }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.initializePriceChart();
@@ -56,6 +70,11 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
       this.priceChart.destroy();
       this.priceChart = null;
     }
+  }
+
+  /** Close and signal the caller to open the trade dialog preset to this asset. */
+  buy(): void {
+    this.dialogRef.close({ buy: true, assetId: this.asset?.id });
   }
 
   close(): void {
@@ -72,27 +91,25 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
     return currentPerformancePoint ? currentPerformancePoint.value : 0;
   }
 
+  /**
+   * Percent change over the previous quarter, matching the Daily Movers card on
+   * the Overview (quarter start vs. previous quarter start), so the two views
+   * always show the same number for the same asset.
+   */
   getPriceChange(): number {
-    const currentPrice = this.getCurrentPrice();
-    
-    const currentPerformancePoint = this.asset.historicalPerformance
-      .filter((point: any) => point.date <= this.currentDate)
-      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
-    
-    if (!currentPerformancePoint) {
-      return 0;
-    }
-    
-    const previousPerformancePoint = this.asset.historicalPerformance
-      .filter((point: any) => point.date < currentPerformancePoint.date)
-      .sort((a: any, b: any) => b.date.localeCompare(a.date))[0];
-    
-    if (!previousPerformancePoint) {
-      return 0;
-    }
-    
-    const changePercent = ((currentPerformancePoint.value - previousPerformancePoint.value) / previousPerformancePoint.value) * 100;
-    return changePercent;
+    if (!this.asset?.historicalPerformance) { return 0; }
+    const currentQuarter = getQuarterForDate(this.currentDate);
+    if (!currentQuarter) { return 0; }
+    const previousQuarter = getPreviousQuarter(currentQuarter.value);
+    if (!previousQuarter) { return 0; }
+
+    const priceOn = (date: string) =>
+      this.asset.historicalPerformance.find((p: any) => p.date === date);
+    const cur = priceOn(currentQuarter.value);
+    const prev = priceOn(previousQuarter.value);
+    if (!cur || !prev) { return 0; }
+
+    return ((cur.value - prev.value) / prev.value) * 100;
   }
 
   private initializePriceChart(): void {

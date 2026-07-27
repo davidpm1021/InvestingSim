@@ -28,6 +28,8 @@ export interface TradeDialogData {
   brokerageBalance: number;
   currentDate: string;
   holdings: any[];
+  /** When set (e.g. opened from an investment's details), preselect this asset. */
+  presetAssetId?: string;
 }
 
 /**
@@ -75,6 +77,11 @@ export class TradeDialogComponent {
     this.stocks = assets.filter(a => a.type === 'stock');
     this.funds = assets.filter(a => a.type === 'mutual_fund' || a.type === 'etf' || a.type === 'target_date_fund');
     this.bonds = assets.filter(a => a.type === 'bond_fund');
+    // Preselect the asset when opened from its details view.
+    if (data.presetAssetId) {
+      this.selectedAssetId = data.presetAssetId;
+      this.onAssetSelect();
+    }
   }
 
   onActionChange(action: 'buy' | 'sell'): void {

@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { A11yModule } from '@angular/cdk/a11y';
+import { Router } from '@angular/router';
 import { DefineComponent } from '../define/define.component';
 import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
 import { ResponsesService } from '../../services/responses.service';
+import { ChecklistService, MILESTONES } from '../../services/checklist.service';
 import { CfuQuestion } from '../../data/walkthrough-steps';
 import { GLOSSARY } from '../../data/glossary';
 
@@ -26,7 +28,7 @@ interface Segment { t: string; def: string | null; }
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule, A11yModule, DefineComponent],
   template: `
-    <ng-container *ngIf="svc.active$ | async">
+    <ng-container *ngIf="(svc.active$ | async) && !onSplash">
 
       <!-- ===== TOUR: spotlight + anchored callout ===== -->
       <ng-container *ngIf="(svc.expanded$ | async) && svc.current.target">
@@ -37,16 +39,19 @@ interface Segment { t: string; def: string | null; }
         <div class="wt-callout" [ngStyle]="calloutStyle" role="dialog" aria-modal="true"
              cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="svc.minimize()"
              [attr.aria-label]="svc.current.title">
+          <button class="wt-close" type="button" (click)="svc.minimize()"
+                  aria-label="Minimize so you can look around">
+            <mat-icon fontIcon="fa-minus"></mat-icon>
+          </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
-            <span class="wt-step">{{ svc.index + 1 }} / {{ svc.total }}</span>
           </div>
           <h3 class="wt-ct-title">{{ svc.current.title }}</h3>
-          <p class="wt-ct-body" *ngFor="let p of svc.current.body">{{ p }}</p>
+          <p class="wt-ct-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
           <div class="wt-actions">
             <button mat-button type="button" class="wt-skip" (click)="svc.skipTour()">Skip tour</button>
             <span class="wt-spacer"></span>
-            <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
+            <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev()">Back</button>
             <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="svc.next()">Next</button>
           </div>
         </div>
@@ -64,7 +69,6 @@ interface Segment { t: string; def: string | null; }
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
-            <span class="wt-step">Step {{ svc.index + 1 }} of {{ svc.total }}</span>
           </div>
           <!-- ===== QUESTION screen: its own step, notebook / paper look ===== -->
           <ng-container *ngIf="svc.current.kind === 'question'; else instruction">
@@ -73,18 +77,18 @@ interface Segment { t: string; def: string | null; }
               <span>Check yourself</span>
             </div>
             <div class="wt-cfu" *ngFor="let q of svc.current.questions">
-              <fieldset class="wt-cfu-mc" *ngIf="q.kind === 'mc'">
+              <fieldset class="wt-cfu-mc" *ngIf="q.kind === 'mc'" [disabled]="isChecked(q)">
                 <legend class="wt-cfu-q">{{ q.prompt }}</legend>
                 <label class="wt-choice" *ngFor="let opt of shuffledChoices(q)"
                        [class.selected]="isSelected(q, opt.i)"
-                       [class.correct]="isAnswered(q) && opt.c.correct"
-                       [class.wrong]="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct">
+                       [class.correct]="isChecked(q) && opt.c.correct"
+                       [class.wrong]="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct">
                   <input type="radio" [name]="q.id" [checked]="isSelected(q, opt.i)" (change)="selectChoice(q, opt.i)">
                   <span class="wt-choice-text">{{ opt.c.text }}</span>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && opt.c.correct" fontIcon="fa-check"></mat-icon>
-                  <mat-icon class="wt-choice-mark" *ngIf="isAnswered(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="fa-xmark"></mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && opt.c.correct" fontIcon="fa-check"></mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="fa-xmark"></mat-icon>
                 </label>
-                <p class="wt-cfu-exp" *ngIf="isAnswered(q)" [class.right]="isSelectedCorrect(q)">
+                <p class="wt-cfu-exp" *ngIf="isChecked(q)" [class.right]="isSelectedCorrect(q)">
                   <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
                 </p>
               </fieldset>
@@ -94,11 +98,21 @@ interface Segment { t: string; def: string | null; }
                           (input)="saveText(q, $event)" placeholder="Type your answer..."></textarea>
               </div>
             </div>
-            <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
+            <div class="wt-progress-wrap"
+                 [attr.aria-label]="milestonesDone + ' of ' + milestonesTotal + ' notebook steps done'">
+              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="fa-book-open"></mat-icon>
+              <div class="wt-progress"><span class="wt-bar" [style.width.%]="milestonePct"></span></div>
+              <span class="wt-progress-label">{{ milestonesDone }} / {{ milestonesTotal }}</span>
+            </div>
             <div class="wt-actions">
-              <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
+              <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev()">Back</button>
               <span class="wt-spacer"></span>
-              <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="svc.next()">
+              <button *ngIf="needsCheck()" mat-raised-button color="primary" type="button"
+                      cdkFocusInitial [disabled]="!canCheck()"
+                      [attr.title]="!canCheck() ? 'Pick an answer first' : null"
+                      (click)="checkAnswers()">{{ checkLabel }}</button>
+              <button *ngIf="!needsCheck()" mat-raised-button color="primary" type="button"
+                      cdkFocusInitial (click)="svc.next()">
                 {{ svc.isLast ? 'Finish' : 'Continue' }}
               </button>
             </div>
@@ -112,9 +126,14 @@ interface Segment { t: string; def: string | null; }
               <mat-icon fontIcon="fa-hand-pointer"></mat-icon>
               <span>{{ svc.current.action }}</span>
             </div>
-            <div class="wt-progress"><span class="wt-bar" [style.width.%]="pct"></span></div>
+            <div class="wt-progress-wrap"
+                 [attr.aria-label]="milestonesDone + ' of ' + milestonesTotal + ' notebook steps done'">
+              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="fa-book-open"></mat-icon>
+              <div class="wt-progress"><span class="wt-bar" [style.width.%]="milestonePct"></span></div>
+              <span class="wt-progress-label">{{ milestonesDone }} / {{ milestonesTotal }}</span>
+            </div>
             <div class="wt-actions">
-              <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev()">Back</button>
+              <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev()">Back</button>
               <span class="wt-spacer"></span>
               <button mat-raised-button color="primary" type="button" cdkFocusInitial (click)="primary()">{{ primaryLabel }}</button>
             </div>
@@ -130,8 +149,11 @@ interface Segment { t: string; def: string | null; }
           <span class="wt-coach-action">{{ svc.current.action || svc.current.title }}</span>
         </button>
         <div class="wt-coach-actions">
-          <button mat-button type="button" *ngIf="!svc.isFirst" (click)="svc.prev(); $event.stopPropagation()">Back</button>
-          <button mat-raised-button color="primary" type="button" (click)="svc.next(); $event.stopPropagation()">
+          <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev(); $event.stopPropagation()">Back</button>
+          <button mat-raised-button color="primary" type="button"
+                  [disabled]="!svc.canProceed()"
+                  [attr.title]="!svc.canProceed() ? 'Do the step to continue' : null"
+                  (click)="svc.next(); $event.stopPropagation()">
             {{ svc.isLast ? 'Finish' : 'Next step' }}
           </button>
         </div>
@@ -167,7 +189,6 @@ interface Segment { t: string; def: string | null; }
       letter-spacing: 0.3px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;
     }
     .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; }
-    .wt-step { font-size: 0.78rem; color: #666; font-weight: 500; }
 
     .wt-title { margin: 0 0 12px; font-size: 1.5rem; font-weight: 700; color: #1d2733; }
     .wt-body { margin: 0 0 12px; font-size: 0.98rem; line-height: 1.55; color: #41494f; }
@@ -179,6 +200,10 @@ interface Segment { t: string; def: string | null; }
     }
     .wt-action mat-icon { color: #2e7d32; flex-shrink: 0; }
 
+    .wt-progress-wrap { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px; }
+    .wt-progress-wrap .wt-progress { flex: 1; margin: 0; }
+    .wt-progress-icon { color: #7a6a3a; font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+    .wt-progress-label { font-size: 0.78rem; font-weight: 600; color: #5c636a; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .wt-progress { height: 4px; background: #eceff3; border-radius: 999px; margin: 18px 0 14px; overflow: hidden; }
     .wt-bar { display: block; height: 100%; background: #1f3b9b; border-radius: 999px; transition: width 0.3s ease; }
 
@@ -286,13 +311,21 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
 
   // Terms to auto-define in the copy, most specific first (so "bond fund" wins over the
   // bare "fund", and the verb in "Add Funds" is skipped via the lookbehind).
-  private readonly termRe = /(target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
+  private readonly termRe = /(cash settlement accounts?|quarterly statements?|target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\binterest\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
 
   constructor(
     public svc: WalkthroughService,
     private responses: ResponsesService,
+    private checklist: ChecklistService,
+    private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  /** The welcome splash ('/') is a pre-sim landing; the guide only appears once
+   *  the student enters the sim, so the overlay is hidden there even while active. */
+  get onSplash(): boolean {
+    return this.router.url.split('?')[0] === '/';
+  }
 
   // Stable shuffled display order per question, so the correct answer is not
   // always the first choice. Keyed by question id; `i` is the ORIGINAL index
@@ -312,6 +345,12 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   }
 
   // ----- Check-for-understanding question state (persisted via ResponsesService) -----
+  // Questions the student has SUBMITTED for checking this session. Selecting a choice
+  // no longer reveals the answer; feedback waits until they press "Check answer". The
+  // set is guarded by isAnswered() in isChecked(), so a guide replay (which clears the
+  // saved responses) also clears the revealed state without extra bookkeeping.
+  private checked = new Set<string>();
+
   isSelected(q: CfuQuestion, i: number): boolean {
     return this.responses.get(q.id)?.choiceIndex === i;
   }
@@ -325,6 +364,31 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   selectChoice(q: CfuQuestion, i: number): void {
     this.responses.setChoice(q.id, i);
   }
+
+  /** The multiple-choice questions on the current screen (free-text ones never gate). */
+  private mcQuestions(): CfuQuestion[] {
+    return (this.svc.current?.questions || []).filter(q => q.kind === 'mc');
+  }
+  /** True once the student has submitted this question and its feedback is revealed. */
+  isChecked(q: CfuQuestion): boolean {
+    return this.checked.has(q.id) && this.isAnswered(q);
+  }
+  /** Show the "Check answer" button while any MC question is still unrevealed. */
+  needsCheck(): boolean {
+    return this.mcQuestions().some(q => !this.isChecked(q));
+  }
+  /** Enable "Check answer" only once every MC question has a selection. */
+  canCheck(): boolean {
+    const mc = this.mcQuestions();
+    return mc.length > 0 && mc.every(q => this.isAnswered(q));
+  }
+  checkAnswers(): void {
+    this.mcQuestions().forEach(q => this.checked.add(q.id));
+    this.cdr.detectChanges();
+  }
+  get checkLabel(): string {
+    return this.mcQuestions().length > 1 ? 'Check answers' : 'Check answer';
+  }
   textFor(q: CfuQuestion): string {
     return this.responses.get(q.id)?.text ?? '';
   }
@@ -335,10 +399,19 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     window.addEventListener('scroll', this.onScroll, true); // capture: catch inner scroll
     window.addEventListener('resize', this.onResize);
+    this.sub.add(this.checklist.completed$.subscribe(set => {
+      this.milestonesDone = set.size;
+      this.cdr.detectChanges();
+    }));
     this.sub.add(
       combineLatest([this.svc.active$, this.svc.index$, this.svc.expanded$])
         .subscribe(() => {
-          this.bodySegments = (this.svc.current?.body || []).map(p => this.defineSegments(p));
+          this.bodySegments = (this.svc.current?.body || []).map(
+            p => this.svc.current?.noGlossary ? [{ t: p, def: null }] : this.defineSegments(p)
+          );
+          // The coach bar is a fixed bottom overlay; flag it so the page can pad
+          // its scroll area and content never hides behind the bar.
+          document.body.classList.toggle('wt-coach-open', this.svc.active && !this.svc.expanded);
           this.refreshTarget();
         })
     );
@@ -363,6 +436,7 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   private defFor(matched: string): string | null {
     const m = matched.toLowerCase();
     const key =
+      m.includes('quarterly statement') ? 'Quarterly statement' :
       m.includes('target-date fund') ? 'Target-date fund' :
       m.includes('bond fund') ? 'Bond fund' :
       m.includes('mutual fund') ? 'Mutual fund' :
@@ -371,9 +445,10 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
       m.startsWith('stock') ? 'Stock' :
       m.startsWith('fund') ? 'Fund' :
       m.startsWith('dividend') ? 'Dividend' :
+      m.startsWith('interest') ? 'Interest' :
       m.startsWith('diversification') ? 'Diversification' :
       m.startsWith('brokerage') ? 'Brokerage account' :
-      m.startsWith('settlement') ? 'Cash Settlement Account' :
+      m.includes('settlement') ? 'Cash Settlement Account' :
       m.startsWith('compounding') ? 'Compounding' :
       m.startsWith('volatility') ? 'Volatility' : '';
     return key ? (GLOSSARY[key] || null) : null;
@@ -382,21 +457,42 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener('scroll', this.onScroll, true);
     window.removeEventListener('resize', this.onResize);
+    document.body.classList.remove('wt-coach-open');
     this.sub.unsubscribe();
   }
 
-  get pct(): number { return ((this.svc.index + 1) / this.svc.total) * 100; }
+  // The tutorial-box progress tracks the seven notebook milestones (the real
+  // actions the student completes), not the raw step index, so "progress" means
+  // tasks actually done and it stays in step with the notebook checklist.
+  readonly milestonesTotal = MILESTONES.length;
+  milestonesDone = 0;
+  get milestonePct(): number {
+    return this.milestonesTotal ? (this.milestonesDone / this.milestonesTotal) * 100 : 0;
+  }
+
+  /**
+   * A step that asks the student to DO something (it carries an `action`) has to
+   * step aside so the page is reachable, so its primary button minimizes to the
+   * coach bar ("Got it, let me try"). Steps with nothing to do skip straight to
+   * the question with "Next". Keying on the action rather than on gating means
+   * even an optional look-around step like "Two accounts, two jobs" still
+   * minimizes, so the student can actually switch tabs as instructed.
+   */
+  get hasAction(): boolean {
+    return !!this.svc.current.action;
+  }
 
   get primaryLabel(): string {
     if (this.svc.isFirst) return this.svc.current.cta || "Let's go";
     if (this.svc.isLast) return this.svc.current.cta || 'Finish';
-    return 'Got it, let me try';
+    return this.hasAction ? 'Got it, let me try' : 'Next';
   }
 
   primary(): void {
     if (this.svc.isFirst) { this.svc.next(); return; }
     if (this.svc.isLast) { this.svc.finish(); return; }
-    this.svc.minimize();
+    if (this.hasAction) { this.svc.minimize(); return; }
+    this.svc.next();
   }
 
   /** Callout position relative to the spotlight (below if there is room, else above). */

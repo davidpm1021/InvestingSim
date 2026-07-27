@@ -1,0 +1,145 @@
+// Full-bleed NGPF-style landing. The InvestingPage pattern (bright-blue finance
+// icons) is the background; a navy gradient darkens the left so the white card and
+// white logo read clearly on top.
+.splash {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(24px, 6vw, 96px);
+  overflow: hidden;
+  background: #275ce4 url('/images/InvestingPage_background.png') center / cover no-repeat;
+}
+
+.splash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(11, 21, 65, 0.6) 0%,
+    rgba(11, 21, 65, 0.3) 55%,
+    rgba(11, 21, 65, 0.12) 100%);
+}
+
+// The logo is a navy + orange wordmark; invert it to solid white for the dark
+// background, matching NGPF's white landing logo.
+.splash-logo {
+  position: absolute;
+  top: 28px;
+  left: clamp(24px, 6vw, 96px);
+  height: 44px;
+  width: auto;
+  z-index: 2;
+  filter: brightness(0) invert(1);
+}
+
+.splash-card {
+  position: relative;
+  z-index: 2;
+  width: min(560px, 100%);
+  background: #fff;
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: 0 20px 60px rgba(11, 21, 65, 0.35);
+  padding: 40px 44px;
+}
+
+.splash-eyebrow {
+  margin: 0 0 4px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  color: var(--ngpf-primary-blue, #1f3b9b);
+}
+
+.splash-title {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.05;
+  color: var(--ngpf-dark-blue, #0b1541);
+}
+
+.splash-intro {
+  margin: 0 0 18px;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--ngpf-gray-900, #424242);
+}
+
+.splash-list {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.splash-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ngpf-ink, #231f20);
+}
+
+.splash-list mat-icon {
+  flex-shrink: 0;
+  color: var(--ngpf-orange, #f78219);
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.splash-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+// NGPF flat buttons. Text colors chosen for AA contrast on each fill:
+//   navy #0b1541 on orange #f78219  = 5.7:1  (white on this orange fails AA)
+//   white on bright blue #275ce4    = 5.6:1
+.splash-btn {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 13px 22px;
+  border-radius: var(--radius-lg, 10px);
+  transition: background-color 0.15s ease;
+}
+
+.splash-btn.primary {
+  background: var(--ngpf-orange, #f78219);
+  color: var(--ngpf-dark-blue, #0b1541);
+}
+.splash-btn.primary:hover { background: #e0740f; }
+
+.splash-btn.secondary {
+  background: var(--ngpf-bright-blue, #275ce4);
+  color: #fff;
+}
+.splash-btn.secondary:hover { background: #1f4ec4; }
+
+.splash-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .splash {
+    align-items: flex-start;
+    padding: 88px 16px 24px;
+  }
+  .splash-card { padding: 28px 22px; }
+}

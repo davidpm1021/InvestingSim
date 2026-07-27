@@ -43,10 +43,9 @@
                           <div class="transaction-description" role="cell">{{ transaction.displayDescription }}</div>
                           <div class="transaction-date" role="cell">{{ transaction.date | evergreenDate:'short' }}</div>
                           <div class="transaction-amount" role="cell"
-                               [class.positive]="!isStartingBalance(transaction) && getTransactionAmount(transaction) > 0"
-                               [class.negative]="getTransactionAmount(transaction) < 0"
-                               [class.neutral]="isStartingBalance(transaction)">
-                            {{ !isStartingBalance(transaction) && getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
+                               [class.positive]="getTransactionAmount(transaction) > 0"
+                               [class.negative]="getTransactionAmount(transaction) < 0">
+                            {{ getTransactionAmount(transaction) > 0 ? '+' : '' }}{{ getTransactionAmount(transaction) | currency:'USD':'symbol':'1.2-2' }}
                           </div>
                           <div class="transaction-balance" role="cell">
                             {{ transaction.runningBalance | currency:'USD':'symbol':'1.2-2' }}

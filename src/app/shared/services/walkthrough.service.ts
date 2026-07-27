@@ -5,6 +5,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { WALKTHROUGH_STEPS, WalkthroughStep } from '../data/walkthrough-steps';
 import { OnboardingService } from './onboarding.service';
 import { CurrentDateService } from './current-date.service';
+import { ChecklistService } from './checklist.service';
+import { SIM_YEAR_START } from '../data/quarters.data';
 
 /**
  * Split any step that carries questions into two runtime steps: the instruction
@@ -19,9 +21,12 @@ function expandSteps(source: WalkthroughStep[]): WalkthroughStep[] {
       const instruction: WalkthroughStep = { ...step };
       delete instruction.questions;
       out.push(instruction);
-      out.push({ part: step.part, title: 'Check yourself', body: [], kind: 'question', questions: step.questions });
+      out.push({
+        part: step.part, title: 'Check yourself', body: [], kind: 'question',
+        questions: step.questions,
+      });
     } else {
-      out.push(step);
+      out.push({ ...step });
     }
   }
   return out;
@@ -56,6 +61,7 @@ export class WalkthroughService {
     private router: Router,
     private onboarding: OnboardingService,
     private currentDate: CurrentDateService,
+    private checklist: ChecklistService,
   ) {
     // Auto-advance, but ONLY for steps with one obvious completion event, and
     // only while the student is minimized on that step (actively doing it).
@@ -71,6 +77,9 @@ export class WalkthroughService {
       .subscribe(() => this.autoAdvance('funded'));
     this.currentDate.currentDate$.pipe(skip(1), distinctUntilChanged())
       .subscribe(() => this.autoAdvance('quarter-advanced'));
+    // Gate steps advance when their checklist milestone (buy/sell/statement/
+    // withdraw) is reached while the student is minimized on that step.
+    this.checklist.completed$.subscribe(() => this.autoAdvanceGate());
   }
 
   get index(): number { return this.indexSubject.value; }
@@ -146,6 +155,36 @@ export class WalkthroughService {
   private autoAdvance(trigger: string): void {
     if (this.activeSubject.value && !this.expandedSubject.value && this.current.trigger === trigger) {
       this.next();
+    }
+  }
+
+  /** Advance when the current gate step's milestone is done (and we're minimized). */
+  private autoAdvanceGate(): void {
+    const g = this.current.gate;
+    if (g && this.activeSubject.value && !this.expandedSubject.value && this.checklist.isDone(g)) {
+      this.next();
+    }
+  }
+
+  /**
+   * Whether the student may advance from the current step. Gated steps
+   * (requireAction or gate) return false until their condition is met — but
+   * true if it was already satisfied before the student arrived, so an early
+   * action never leaves them stuck on a disabled button.
+   */
+  canProceed(): boolean {
+    const s = this.current;
+    if (s.gate) { return this.checklist.isDone(s.gate); }
+    if (!s.requireAction) { return true; }
+    switch (s.trigger) {
+      case 'browser-open': {
+        const u = this.router.url;
+        return u.startsWith('/investing') || u.startsWith('/banking');
+      }
+      case 'bank-linked': return this.onboarding.bankLinked;
+      case 'funded': return this.onboarding.hasFunded;
+      case 'quarter-advanced': return this.currentDate.getCurrentDate() !== SIM_YEAR_START;
+      default: return true;
     }
   }
 

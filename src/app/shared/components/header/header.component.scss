@@ -88,10 +88,12 @@
 }
 
 // Small screens: the header is a non-wrapping flex row whose intrinsic width
-// (logo + quarter label + Jump/Reset/Account buttons) exceeds a phone viewport
-// and would force the whole document wider than the screen (horizontal scroll +
-// empty gutter). Let it reflow instead. Desktop layout is untouched.
-@media (max-width: 700px) {
+// (logo + quarter label + Jump/Reset/Account buttons, ~860px) exceeds a tablet
+// or phone viewport and would force the whole document wider than the screen
+// (horizontal scroll + empty gutter). Let it reflow instead. The breakpoint sits
+// above that intrinsic width so wrapping kicks in before overflow (e.g. iPad
+// portrait at 768px). Desktop layout is untouched.
+@media (max-width: 900px) {
   .header {
     padding: 0 12px;
   }

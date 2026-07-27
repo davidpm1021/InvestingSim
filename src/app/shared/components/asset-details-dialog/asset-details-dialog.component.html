@@ -15,20 +15,22 @@
         </div>
         <div class="asset-info-row-compact">
           <div class="asset-details-inline">
-            <span class="detail-inline"><strong>Type:</strong> {{ asset.type | assetType }}</span>
+            <span class="detail-inline"><strong>Type:</strong> <app-define [term]="typeTermKey()" [label]="asset.type | assetType"></app-define></span>
             <span class="detail-inline"><strong>Sector:</strong> {{ asset.sector }}</span>
             <div class="detail-block-line" *ngIf="asset.dividendYield || asset.interestRate || asset.expenseRatio">
-              <span class="detail-inline" *ngIf="asset.dividendYield"><strong>Dividend:</strong> {{ (asset.dividendYield * 100) | number:'1.2-2' }}%</span>
-              <span class="detail-inline" *ngIf="asset.interestRate"><strong>Interest:</strong> {{ (asset.interestRate * 100) | number:'1.2-2' }}%</span>
-              <span class="detail-inline" *ngIf="asset.expenseRatio"><strong>Expense Ratio:</strong> {{ (asset.expenseRatio * 100) | number:'1.3-3' }}%</span>
+              <span class="detail-inline" *ngIf="asset.dividendYield"><strong><app-define term="Dividend" label="Dividend"></app-define>:</strong> {{ (asset.dividendYield * 100) | number:'1.2-2' }}%</span>
+              <span class="detail-inline" *ngIf="asset.interestRate"><strong><app-define term="Interest" label="Interest"></app-define>:</strong> {{ (asset.interestRate * 100) | number:'1.2-2' }}%</span>
+              <span class="detail-inline" *ngIf="asset.expenseRatio"><strong><app-define term="Expense ratio" label="Expense Ratio"></app-define>:</strong> {{ (asset.expenseRatio * 100) | number:'1.3-3' }}%</span>
             </div>
           </div>
           <div class="price-row-compact">
+            <div class="price-label">Current price</div>
             <div class="current-price">${{ currentPrice | number:'1.2-2' }}</div>
             <div class="price-change" [class.positive]="getPriceChange() > 0" [class.negative]="getPriceChange() < 0">
               <mat-icon [fontIcon]="getPriceChange() > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></mat-icon>
               {{ getPriceChange() > 0 ? '+' : '' }}{{ getPriceChange() | number:'1.2-2' }}%
             </div>
+            <div class="price-change-period">vs. last quarter</div>
           </div>
         </div>
       </div>
@@ -45,6 +47,7 @@
 
   <mat-dialog-actions align="end">
     <button mat-button (click)="close()">Close</button>
+    <button mat-raised-button color="primary" (click)="buy()">Buy this</button>
   </mat-dialog-actions>
 </div>
 

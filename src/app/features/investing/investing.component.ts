@@ -79,6 +79,19 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   
   // Asset type allocation percentages
   assetTypeAllocation: Array<{type: string, percentage: number, value: number}> = [];
+  // Allocation slice colors for the fixed Stocks / Bonds / Cash categories. Chosen
+  // for readability: distinct hues (blue / amber / slate, a colorblind-safe set),
+  // each with >=3:1 contrast against the white card (WCAG 1.4.11 non-text contrast)
+  // so no slice fades into the background. The two near-identical blues used before
+  // were hard to tell apart. Extras follow in case the categories ever grow.
+  private readonly allocationColors = [
+    '#275ce4', // Stocks - Bright Blue (5.6:1 on white)
+    '#c25e00', // Bonds  - Dark Amber  (4.3:1 on white)
+    '#5b6470', // Cash   - Slate Grey  (6.0:1 on white)
+    '#1db8e8', // Sky
+    '#7a3ea1', // Purple
+    '#0b1541', // Midnight
+  ];
   // Allocation card: show the data table instead of the pie chart (WCAG 1.1.1 toggle).
   showAllocationTable = false;
   
@@ -325,16 +338,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       `${this.formatAssetType(item.type)} (${item.percentage.toFixed(1)}%)`
     );
     const data = this.assetTypeAllocation.map(item => item.percentage);
-    const backgroundColors = [
-      '#275ce4', // Bright Blue
-      '#1f3b9b', // True Blue
-      '#1db8e8', // Sky
-      '#f4ad00', // Gold
-      '#f78219', // Orange
-      '#0b1541', // Midnight
-      '#6b7bc4', // Muted blue
-      '#c3c3c3'  // Gray
-    ];
+    const backgroundColors = this.allocationColors;
 
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'pie',
@@ -387,16 +391,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       `${this.formatAssetType(item.type)} (${item.percentage.toFixed(1)}%)`
     );
     const data = this.assetTypeAllocation.map(item => item.percentage);
-    const backgroundColors = [
-      '#275ce4', // Bright Blue
-      '#1f3b9b', // True Blue
-      '#1db8e8', // Sky
-      '#f4ad00', // Gold
-      '#f78219', // Orange
-      '#0b1541', // Midnight
-      '#6b7bc4', // Muted blue
-      '#c3c3c3'  // Gray
-    ];
+    const backgroundColors = this.allocationColors;
 
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = data;
@@ -639,7 +634,7 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openTradeDialog(action: 'buy' | 'sell'): void {
+  openTradeDialog(action: 'buy' | 'sell', presetAssetId?: string): void {
     const dialogRef = this.dialog.open(TradeDialogComponent, {
       width: '480px',
       maxHeight: '90vh',
@@ -647,7 +642,8 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
         action,
         brokerageBalance: this.brokerageBalance,
         currentDate: this.currentDate,
-        holdings: this.holdings
+        holdings: this.holdings,
+        presetAssetId
       }
     });
 
@@ -1021,10 +1017,17 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       currentDate: this.currentDate
     };
 
-    this.dialog.open(AssetDetailsDialogComponent, {
+    const ref = this.dialog.open(AssetDetailsDialogComponent, {
       width: '700px',
       maxWidth: '90vw',
       data: dialogData
+    });
+
+    // "Buy this" in the details dialog opens the trade dialog preset to this asset.
+    ref.afterClosed().subscribe((result: any) => {
+      if (result?.buy && result.assetId) {
+        this.openTradeDialog('buy', result.assetId);
+      }
     });
   }
 

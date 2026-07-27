@@ -4,25 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-InvestingSim is an Angular 19 client-side educational app that simulates investing and banking. Users advance through quarters (Q4 2024 to Q4 2025), buy/sell assets, transfer funds between accounts, and track portfolio performance. All data is static (no backend) and state persists in localStorage.
-
-## Development Commands
-
-```bash
-ng serve          # Dev server at http://localhost:4200
-ng build          # Production build to dist/investing-sim
-ng test           # Unit tests (Karma + Jasmine, Chrome)
-ng build --watch --configuration development  # Watch mode
-```
-
-## Tech Stack
-
-- Angular 19.2 with standalone components (no NgModules)
-- TypeScript 5.7, SCSS
-- Angular Material 19.2 (Azure Blue prebuilt theme), Bootstrap 5.3
-- Chart.js 4.5 for visualizations
-- RxJS BehaviorSubjects for state management
-- localStorage for persistence (all keys prefixed `investing_sim__`)
+InvestingSim is an Angular 19 client-side educational app that simulates investing and banking. Users advance through quarters (Q4 2024 to Q4 2025), buy/sell assets, transfer funds between accounts, and track portfolio performance. All data is static (no backend) and state persists in localStorage (all keys prefixed `investing_sim__`).
 
 ## Architecture
 

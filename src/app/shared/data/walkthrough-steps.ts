@@ -37,6 +37,21 @@ export interface WalkthroughStep {
   /** Scroll the page back to the top when this step opens (the tour leaves the
    *  page scrolled down at the lower cards). */
   scrollTop?: boolean;
+  /** Suppress the automatic glossary hover-definitions in this step's body. */
+  noGlossary?: boolean;
+  /** Lock forward progress until the step's action is done: the manual
+   *  "Next step" control is disabled, so only the auto-advance trigger can
+   *  move past it (e.g. you must actually open the browser). */
+  requireAction?: boolean;
+  /** Lock forward progress until this checklist milestone is complete. Like
+   *  requireAction, but gated on a real portfolio action (buy/sell/etc.) rather
+   *  than a one-shot event. Auto-advances when the milestone is reached, and
+   *  unlocks immediately if the student already did it before arriving here. */
+  gate?: 'buy' | 'sell' | 'statement' | 'withdraw';
+  /** Seal off Back at this step: earlier steps referenced a screen that is no
+   *  longer visible (the desktop), so hide Back so the student can't rewind
+   *  into stale, out-of-context instructions. */
+  sealBack?: boolean;
   /** Check-for-understanding questions for this instruction. The service splits
    *  these onto their own follow-up step, shown after the student clicks Next. */
   questions?: CfuQuestion[];
@@ -50,17 +65,18 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Welcome',
     title: 'So you want to invest',
     body: [
-      "You have $5,000 in savings and some curiosity. Let's open a brokerage account, safely in a simulation, and put a little of it to work.",
+      "You have $5,000 in savings. Let's open a brokerage account and put a little of it to work.",
     ],
-    action: 'Ready? Let us begin.',
     cta: "Let's go",
   },
   {
     part: 'Part I · Set up',
-    title: 'Open your brokerage',
+    title: 'Open your brokerage account',
     trigger: 'browser-open',
+    noGlossary: true,
+    requireAction: true,
     body: [
-      'A brokerage is where you buy and hold investments. Open the browser to reach yours, Summit Invest.',
+      'A brokerage account is where you buy and hold investments. Open the browser to reach yours, Summit Invest.',
     ],
     action: 'Open the Web Browser on the desktop.',
   },
@@ -68,20 +84,45 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Tour',
     title: 'A quick look around',
+    sealBack: true,
     target: '.browser-tabs',
-    body: ['These two tabs switch between Evergreen Bank (your cash) and Summit Invest (your investments).'],
+    body: ['These two tabs switch between Evergreen Bank, where your cash is held, and Summit Invest, where your investments are held.'],
+  },
+  {
+    part: 'Part I · Connect',
+    title: 'Connect your bank',
+    trigger: 'bank-linked',
+    requireAction: true,
+    scrollTop: true,
+    body: [
+      'A brokerage account holds investments, but the cash to buy them comes from your bank. Connecting it lets you move money in and out.',
+    ],
+    action: 'On the Overview tab, click "Connect Your Bank", then "Connect to your Bank".',
+    questions: [
+      {
+        id: 'cfu-connect-why',
+        kind: 'mc',
+        prompt: 'Why does a brokerage account make you connect a bank account before you can do anything?',
+        choices: [
+          { text: 'A brokerage account holds investments, but the cash to buy them has to come from your bank account.', correct: true },
+          { text: 'Banks require it by law before you can see any prices.' },
+          { text: 'It is how the brokerage account pays you interest on your savings.' },
+        ],
+        explanation: 'The brokerage account is where investments live; your bank account is where the cash starts. Connecting them lets you move money in to invest, and back out when you want it.',
+      },
+    ],
   },
   {
     part: 'Tour',
     title: 'Overview tab',
     target: '.tour-tab-overview',
-    body: ['Your home base: balances, the Daily Movers, and where you Buy and Sell.'],
+    body: ['Your home base: balances, the investments you can buy, and where you Buy and Sell.'],
   },
   {
     part: 'Tour',
     title: 'Holdings tab',
     target: '.tour-tab-holdings',
-    body: ['Everything you own, plus your portfolio value over time.'],
+    body: ['The investments you own, and your portfolio value over time.'],
   },
   {
     part: 'Tour',
@@ -96,58 +137,23 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: ['Your quarterly statements show up here, once each quarter ends.'],
   },
   {
-    part: 'Tour',
-    title: 'Daily Movers',
-    target: '.daily-movers-card',
-    body: ['The investments you can buy, with live prices. Click any one to read about it.'],
-  },
-  {
-    part: 'Tour',
-    title: 'Compare Investments',
-    target: '.compare-card',
-    body: ['And this chart shows how every investment has moved over time.'],
-  },
-  {
-    part: 'Part I · Connect',
-    title: 'Connect your bank',
-    trigger: 'bank-linked',
-    scrollTop: true,
-    body: [
-      'A brokerage holds investments, but the cash to buy them comes from your bank. Connecting it lets you move money in and out.',
-    ],
-    action: 'On the Overview tab, click "Connect Your Bank", then "Connect to your Bank".',
-    questions: [
-      {
-        id: 'cfu-connect-why',
-        kind: 'mc',
-        prompt: 'Why does a brokerage make you connect a bank before you can do anything?',
-        choices: [
-          { text: 'A brokerage holds investments, but the cash to buy them has to come from your bank.', correct: true },
-          { text: 'Banks require it by law before you can see any prices.' },
-          { text: 'It is how the brokerage pays you interest on your savings.' },
-        ],
-        explanation: 'The brokerage is where investments live; your bank is where the cash starts. Connecting them lets you move money in to invest, and back out when you want it.',
-      },
-    ],
-  },
-  {
     part: 'Part I · Look around',
     title: 'Two accounts, two jobs',
     body: [
-      'Savings earns 1.50%; the brokerage cash account earns just 0.25%. You move money over not for interest, but to buy investments that can grow faster.',
+      'In this simulation, your savings account and your cash settlement account pay different interest rates. But you move money over not for the interest. You move it to buy investments, which can grow faster over time (though they can also fall).',
     ],
-    action: 'Switch between the two browser tabs and compare the balances.',
+    action: 'Switch between the two tabs and see which account pays more interest.',
     questions: [
       {
         id: 'cfu-why-move-money',
         kind: 'mc',
-        prompt: 'The cash settlement account pays less interest than your savings. So why move money into the brokerage at all?',
+        prompt: 'In this simulation, the cash settlement account earns less interest than your savings. So why move money into it at all?',
         choices: [
           { text: 'To buy investments, which can grow faster than cash over time.', correct: true },
           { text: 'To earn a higher interest rate than the bank pays.' },
-          { text: 'Because money is safer in a brokerage than in a bank.' },
+          { text: 'To keep your money safer than in a bank.' },
         ],
-        explanation: 'You do not move money over for interest. You move it so you can invest; investments like stocks and funds can grow faster than cash over time, though they can also fall.',
+        explanation: 'Here, your cash settlement account earns less than savings, so moving money over is about investing, not interest. You move it to buy investments, which can grow faster than cash over time, though they can also fall.',
       },
     ],
   },
@@ -155,21 +161,22 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part I · Fund it',
     title: 'Move money in',
     trigger: 'funded',
+    requireAction: true,
     body: [
-      "You can't invest cash that is still at the bank. (Transfers are instant here, but take a few days in real life.)",
+      "You can't invest cash that is still at the bank.",
     ],
-    action: 'Click Add Funds and transfer money into your brokerage.',
+    action: 'Click Add Funds and transfer money into your brokerage account.',
     questions: [
       {
         id: 'cfu-transfer-timing',
         kind: 'mc',
-        prompt: 'The transfer is instant here but takes a few days in real life. Why is that worth knowing before you invest?',
+        prompt: 'The transfer is instant here, but in real life it can take a few days. Why is that worth knowing before you invest?',
         choices: [
-          { text: 'In real life the cash would not be ready to trade the instant you click, so you would move it in ahead of time.', correct: true },
+          { text: 'Because the cash might not be ready to trade right away, so you would move it in ahead of time.', correct: true },
           { text: 'Because real transfers charge a fee every time.' },
           { text: 'Because the price of investments changes while you wait.' },
         ],
-        explanation: 'If a real transfer takes days to clear, you cannot buy the moment you decide. Planning ahead means your cash is ready when you want to trade.',
+        explanation: 'If a real transfer takes a few days to clear, you cannot buy the moment you decide. Planning ahead means your cash is ready when you want to trade.',
       },
     ],
   },
@@ -177,40 +184,42 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part II · Explore',
     title: 'Meet your investments',
     body: [
-      'Seven choices: three stocks, two whole-market funds (a mutual fund and an ETF), a target-date fund, and a bond fund.',
-      'The mutual fund and the ETF track the same market. The fund prices once a day after close; the ETF trades live all day, like a stock.',
+      'Seven choices: three stocks, a mutual fund, an ETF, a target-date fund, and a bond fund.',
+      'The mutual fund and the ETF track the same market. The mutual fund is priced once a day, after the market closes; the ETF trades live all day, like a stock.',
     ],
-    action: 'Click a few Daily Movers to read them, then compare the mutual fund and the ETF.',
+    action: 'Click a few investments to read them, then compare the mutual fund and the ETF.',
     questions: [
       {
-        id: 'cfu-types',
+        id: 'cfu-which-etf',
         kind: 'mc',
-        prompt: 'There are seven investments to choose from. What different types are available?',
+        prompt: 'Which of these investments is an ETF?',
         choices: [
-          { text: 'Individual stocks, a mutual fund, an ETF, a target-date fund, and a bond fund.', correct: true },
-          { text: 'Only individual stocks and individual bonds.' },
-          { text: 'Savings accounts, CDs, and money-market funds.' },
+          { text: 'Total Stock Market ETF', correct: true },
+          { text: 'Total Stock Market Index Fund' },
+          { text: 'Target Date 2070 Fund' },
         ],
-        explanation: 'Three individual stocks, two whole-market funds (a mutual fund and an ETF), a target-date fund, and a bond fund: a spread of ways to invest.',
+        explanation: 'The Total Stock Market ETF is the ETF, so it trades on an exchange all day, like a stock. The index fund is a mutual fund, and the target-date fund is a blended fund of stocks and bonds.',
       },
       {
-        id: 'cfu-mf-vs-etf',
+        id: 'cfu-which-daily',
         kind: 'mc',
-        prompt: 'A mutual fund and an ETF here track the same market. How does the way they trade differ?',
+        prompt: 'Which of these is priced just once a day, after the market closes?',
         choices: [
-          { text: 'The mutual fund prices once a day after close; the ETF trades all day at a live price, like a stock.', correct: true },
-          { text: 'The ETF prices once a day; the mutual fund trades live all day.' },
-          { text: 'They trade exactly the same way; only the names differ.' },
+          { text: 'Total Stock Market Index Fund', correct: true },
+          { text: 'Total Stock Market ETF' },
+          { text: 'Sterling Health' },
         ],
-        explanation: 'Same underlying market, different wrapper. A mutual fund settles at one end-of-day price; an ETF trades live throughout the day like a stock.',
+        explanation: 'The Total Stock Market Index Fund is a mutual fund, so it is priced once a day after close. The ETF and the stock (Sterling Health) both trade live all day at the market price.',
       },
     ],
   },
   {
     part: 'Part II · Buy',
     title: 'Build your portfolio',
+    gate: 'buy',
+    noGlossary: true,
     body: [
-      'Buy at least three different types. Spreading your money around (diversification) means when one drops, another may rise. Trades are free.',
+      'Buy at least three different types. Spreading your money around (diversification) means when one drops, another may rise. Trades are free in this simulation.',
     ],
     action: 'Click Buy and purchase three different types of investment.',
     questions: [
@@ -220,7 +229,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         prompt: "Right after you buy, a holding's Gain/Loss is about $0. Why?",
         choices: [
           { text: 'You just bought at the current price, so what you paid and what it is worth still match.', correct: true },
-          { text: 'The brokerage hides your gain until the quarter ends.' },
+          { text: 'The brokerage account hides your gain until the quarter ends.' },
           { text: 'Buying always starts you at a small loss from fees.' },
         ],
         explanation: 'A gain or loss only appears once the price moves away from what you paid, which happens as time passes, not the instant you buy. (Trades here are free.)',
@@ -231,27 +240,31 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part III · Time',
     title: 'Fast-forward a quarter',
     trigger: 'quarter-advanced',
+    requireAction: true,
     body: [
       'Time moves one way, so finalize your trades first. Then jump ahead.',
     ],
-    action: 'Click Jump to Quarter 2 and confirm.',
-  },
-  {
-    part: 'Part III · Alerts',
-    title: 'What a brokerage tells you',
-    body: [
-      'A real brokerage sends only facts, like "your statement is ready", never advice. The decisions stay yours.',
-    ],
-    action: 'Open the Notifications bell.',
+    action: 'At the top of the page, click Jump to Quarter 2, then confirm.',
   },
   {
     part: 'Part III · Income',
-    title: 'Money that shows up on its own',
+    title: 'Unearned Income',
     body: [
-      'Interest posts monthly; dividends and bond income post each quarter as cash into your settlement account, not as trades. Nice, but a dividend can arrive even while a price falls.',
+      'Your savings earns interest each month. Your investments can pay dividends or bond income each quarter, added as cash to your cash settlement account, not as trades. A dividend can even arrive while a price falls.',
     ],
-    action: 'Check Recent Transactions at Evergreen Bank, then the Recent Transactions card on the Summit Invest Overview, just below Recent Trade Activity.',
+    action: 'On the Summit Invest Overview, find your dividend or bond income in Recent Transactions, just below Recent Trade Activity.',
     questions: [
+      {
+        id: 'cfu-income-lands',
+        kind: 'mc',
+        prompt: 'Your investments paid a dividend or bond income this quarter. Where did that cash go?',
+        choices: [
+          { text: 'Into your cash settlement account, as cash.', correct: true },
+          { text: 'Straight into your Evergreen Bank savings.' },
+          { text: 'It was reinvested to buy more shares automatically.' },
+        ],
+        explanation: 'Income lands as cash in your cash settlement account, ready to reinvest or move to your bank. It is not sent to your savings, and it is not reinvested for you unless you choose to buy more.',
+      },
       {
         id: 'cfu-dividend-signal',
         kind: 'mc',
@@ -268,10 +281,12 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part III · Statement',
     title: 'Read your first statement',
+    gate: 'statement',
     body: [
+      'Your brokerage account only sends facts, like the "statement is ready" alert in the Notifications bell, never advice. The decisions stay yours.',
       "A holding's gain is not real money until you sell it (it is unrealized). That is why the statement splits Cash Available from Investments.",
     ],
-    action: 'Open your Quarter 1 statement.',
+    action: "Open the Statements tab, or click the \"statement is ready\" notification, then open your Quarter 1 statement.",
     questions: [
       {
         id: 'cfu-unrealized',
@@ -280,17 +295,29 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         choices: [
           { text: 'No. It is an unrealized gain that only becomes real money when you sell.', correct: true },
           { text: 'Yes. It is already sitting in your cash settlement account.' },
-          { text: 'Yes. The brokerage deposits gains into your bank each quarter.' },
+          { text: 'Yes. The brokerage account deposits gains into your bank each quarter.' },
         ],
-        explanation: 'Until you sell, the price can still rise or fall. That is why the statement separates Cash Available (real settlement cash) from Investments (the current value of what you own).',
+        explanation: 'Until you sell, the price can still rise or fall. That is why the statement separates Cash Available (the real cash in your cash settlement account) from Investments (the current value of what you own).',
+      },
+      {
+        id: 'cfu-statement-read',
+        kind: 'mc',
+        prompt: 'Your account value rose this quarter. How does the statement show how much of that was real gains, not just money you added?',
+        choices: [
+          { text: 'It lists "Money you added" separately from your investment gain/loss and income.', correct: true },
+          { text: 'It does not; the statement only shows the ending total.' },
+          { text: 'All of the increase counts as your investment gains.' },
+        ],
+        explanation: 'The statement splits the change in your account into money you added versus what your investments earned (gains plus income). That separation shows your true return.',
       },
     ],
   },
   {
     part: 'Part III · Sell',
     title: 'Selling, and the tax twist',
+    gate: 'sell',
     body: [
-      'Sales are tagged ST or LT. Almost all here are short-term (held under a year); in real life, long-term gains are usually taxed less.',
+      'Sales are tagged short-term (ST) or long-term (LT). Almost all here are short-term, held under a year; in real life, long-term gains are usually taxed less.',
     ],
     action: 'Sell part of a holding, then open the Activity tab.',
   },
@@ -298,18 +325,17 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part IV · The year',
     title: 'Play out the year',
     body: [
-      "Look at each holding's Gain/Loss and the Compare chart. Make trades as you see fit: buy a dip, add to a winner, or trim a position.",
-      'Then jump a quarter, open each new statement, and review, repeating through Quarter 4. Which holdings carried you, and did the stocks swing more than the bond fund?',
+      "Now play out the rest of the year. Watch each holding's Gain/Loss and the Performance chart, and trade as you see fit: buy a dip, add to a winner, or trim a position.",
     ],
-    action: 'Trade, advance a quarter, and review, repeating through Quarter 4.',
+    action: 'Repeat through Quarter 4: trade if you want, jump a quarter, then open the new statement.',
     questions: [
       {
         id: 'cfu-allocation',
         kind: 'mc',
         prompt: 'Why does it matter how your money is split across stocks, bonds, and cash (your allocation)?',
         choices: [
-          { text: 'Different types move differently, so spreading out means one falling may be offset by another. It also sets how much your value swings.', correct: true },
-          { text: 'A brokerage charges you less when you hold more types.' },
+          { text: 'Different types move differently, so one falling may be offset by another rising.', correct: true },
+          { text: 'A brokerage account charges you less when you hold more types.' },
           { text: 'Allocation only matters for taxes, not for risk.' },
         ],
         explanation: 'Stocks tend to swing more than bonds, and cash barely moves. Your mix drives both how bumpy the ride is and how much room you have to grow. That is diversification.',
@@ -319,21 +345,22 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part IV · Cash out',
     title: 'Turning investments back into money',
+    gate: 'withdraw',
     body: [
-      'Your dividends and interest pile up as settlement cash. To bank it, sell what you want, then use Withdraw Funds.',
+      'Your dividends and interest pile up in your cash settlement account. To bank it, sell what you want, then use Withdraw Funds.',
     ],
-    action: 'Make any final trades, then advance to the Year-End Review.',
+    action: 'Use Withdraw Funds to move some cash from your cash settlement account back to your bank.',
     questions: [
       {
         id: 'cfu-cash-out',
         kind: 'mc',
-        prompt: "Your settlement cash has piled up. How do you turn that, or a holding's gain, into money in your bank?",
+        prompt: "The cash in your cash settlement account has piled up. How do you turn that, or a holding's gain, into money in your bank?",
         choices: [
-          { text: 'Sell any holdings you want to cash out, then use Withdraw Funds to move the settlement cash to your bank.', correct: true },
-          { text: 'The brokerage sends it to your bank automatically at year end.' },
-          { text: 'Gains cannot be moved to a bank; they stay in the brokerage.' },
+          { text: 'Sell any holdings you want to cash out, then use Withdraw Funds to move the cash from your cash settlement account to your bank.', correct: true },
+          { text: 'The brokerage account sends it to your bank automatically at year end.' },
+          { text: 'Gains cannot be moved to a bank; they stay in the brokerage account.' },
         ],
-        explanation: "A holding's gain is not spendable until you sell. After selling, Withdraw Funds moves your settlement cash back to Evergreen Bank.",
+        explanation: "A holding's gain is not spendable until you sell. After selling, Withdraw Funds moves the cash from your cash settlement account back to Evergreen Bank.",
       },
     ],
   },
@@ -341,7 +368,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part V · Reflect',
     title: 'Take a moment',
     body: [
-      'You funded a brokerage, invested, rode the ups and downs, and read your statements. Before you finish, take a moment to reflect.',
+      'You funded a brokerage account, invested, rode the ups and downs, and read your statements. Before you finish, take a moment to reflect.',
     ],
     action: 'Click Next to jot down a thought.',
     questions: [
@@ -356,7 +383,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'You did it',
     title: 'One year as an investor',
     body: [
-      'You funded a brokerage, invested, weathered the ups and downs, and read your statements. The real thing works just like this.',
+      'You funded a brokerage account, invested, weathered the ups and downs, and read your statements. The real thing works just like this.',
     ],
     action: 'Close the guide and keep exploring.',
     cta: 'Finish',

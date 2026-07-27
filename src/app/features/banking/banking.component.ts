@@ -66,9 +66,4 @@ export class BankingComponent implements OnInit, OnDestroy {
     return transaction.amount;
   }
 
-  isStartingBalance(transaction: Transaction & { runningBalance: number, displayDescription: string }): boolean {
-    // The seeded opening balance is carried-over money, not a deposit, so the
-    // Activity list shows it neutrally (no +/green) instead of as a credit.
-    return transaction.displayDescription === 'Starting balance';
-  }
 }

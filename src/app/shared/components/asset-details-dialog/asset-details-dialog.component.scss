@@ -107,8 +107,21 @@ mat-dialog-content {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 2px;
   flex-shrink: 0;
+
+  .price-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #858585;
+    font-weight: 700;
+  }
+
+  .price-change-period {
+    font-size: 0.72rem;
+    color: #858585;
+  }
 
   .current-price {
     font-size: 1.4rem;
