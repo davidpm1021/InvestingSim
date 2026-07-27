@@ -476,3 +476,27 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .mat-button-toggle-checked .mat-button-toggle-label-content { color: #06122a !important; }
   .mat-button-toggle-appearance-standard .mat-button-toggle-focus-overlay { background: rgba(255, 255, 255, 0.12); }
 }
+
+// ============================================================
+//  Web-designer markup 2 follow-ups
+// ============================================================
+// Card titles -> Montserrat (Material defaults mat-card-title to Roboto).
+.mat-mdc-card-title,
+.browser-content h2, .browser-content h3,
+.card h2, [mat-card-title] {
+  font-family: 'Montserrat', Helvetica, Arial, sans-serif !important;
+}
+
+// Faint captions + empty-state text on dark -> readable (designer "check text accessibility").
+.browser-content {
+  .chart-hint, .cmp-sub, .compare-card .chart-hint,
+  .no-recent-activity, .no-transactions, .no-recent-transactions,
+  .no-trade-activity, .empty-state { color: #aab4d0 !important; }
+}
+
+// Empty-state paragraphs: the broad `.tab-content p` rule sets #333, which is
+// dark-on-dark. Target the paragraphs directly.
+.browser-content {
+  .no-recent-activity p, .no-transactions p, .no-holdings-message p,
+  .no-holdings p, .no-data p, .no-selection p { color: #aab4d0 !important; }
+}

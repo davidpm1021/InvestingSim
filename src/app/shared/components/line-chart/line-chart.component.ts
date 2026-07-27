@@ -156,8 +156,10 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart: Chart | null = null;
   private viewReady = false;
-  // NGPF-family series palette (two blues + warm accents), kept distinguishable.
-  private readonly palette = ['#275ce4', '#1f3b9b', '#1db8e8', '#f4ad00', '#f78219', '#0b1541', '#6b7bc4', '#8a5a00'];
+  // Series palette tuned for the dark navy chart: every colour is light/bright and
+  // mutually distinguishable (the old palette included the navy background colour,
+  // so those lines vanished). Designer "check color accessibility".
+  private readonly palette = ['#4d8bff', '#c3cbe0', '#36ebff', '#f4ad00', '#f78219', '#b39dff', '#01e294', '#ff8087'];
 
   constructor() {
     Chart.register(...registerables);
@@ -280,10 +282,17 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
           }
         },
         scales: {
-          x: { display: true, ticks: { maxRotation: 0, autoSkip: true } },
+          // Light axis labels + subtle grid for the dark chart background.
+          x: {
+            display: true,
+            ticks: { maxRotation: 0, autoSkip: true, color: '#aab4d0' },
+            grid: { color: 'rgba(255, 255, 255, 0.09)' }
+          },
           y: {
             display: true,
-            title: { display: true, text: this.yLabel },
+            title: { display: true, text: this.yLabel, color: '#9aa6c4' },
+            ticks: { color: '#aab4d0' },
+            grid: { color: 'rgba(255, 255, 255, 0.09)' },
             beginAtZero: this.yMax != null,
             max: this.yMax
           }

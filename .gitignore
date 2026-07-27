@@ -46,3 +46,8 @@ Thumbs.db
 
 # Stray design screenshots dropped in the repo root
 [Ss]creenshot*.png
+
+# Design review drops in the repo root
+/*.jpg
+/*.jpeg
+*[Mm]arkup*
