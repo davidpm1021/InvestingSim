@@ -41,7 +41,7 @@ html, body {
   --ngpf-gray-900: #424242;
   --ngpf-gray-700: #858585;
 
-  --font-display: 'PT Sans', Helvetica, Arial, sans-serif;   /* titles only */
+  --font-display: 'Montserrat', Helvetica, Arial, sans-serif; /* Montserrat everywhere (design update) */
   --font-sans:    'Montserrat', Helvetica, Arial, sans-serif; /* everything else */
 
   --radius-md: 8px;
@@ -208,8 +208,6 @@ body.nb-panel-open .browser-window:not(.maximized):not(.minimized) {
     min-height: 0;
     padding: 0;
     border-bottom: 1px solid #f2f4f7;
-    /* NGPF notification style: a 6px brand-blue left rail on white (not a full border). */
-    border-left: 6px solid var(--ngpf-bright-blue);
 
     &:last-of-type { border-bottom: none; }
     &:hover,
@@ -440,3 +438,41 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .no-statements p { color: #cfd9e0 !important; }
 }
 .browser-content .no-statements p { color: #cfd9e0 !important; }
+
+// ============================================================
+//  Design-update follow-ups (designer feedback)
+// ============================================================
+// Montserrat on Material buttons + tab labels (they default to Roboto).
+.mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-outlined-button,
+.mat-mdc-unelevated-button, .mdc-button__label,
+.mat-mdc-tab .mdc-tab__text-label, .mat-button-toggle {
+  font-family: 'Montserrat', Helvetica, Arial, sans-serif !important;
+}
+
+// In-content primary buttons (Connect Your Bank, Add Funds, Buy) -> cyan / black
+// text, matching the design's action buttons. Nav + dialog + modal buttons stay blue.
+.browser-content .mat-mdc-raised-button.mat-primary,
+.browser-content .mat-mdc-unelevated-button.mat-primary {
+  background-color: #36ebff !important;
+  color: #000 !important;
+}
+.browser-content .mat-mdc-raised-button.mat-primary .mdc-button__label,
+.browser-content .mat-mdc-unelevated-button.mat-primary .mdc-button__label { color: #000 !important; }
+.browser-content .mat-mdc-raised-button.mat-primary:hover,
+.browser-content .mat-mdc-unelevated-button.mat-primary:hover { background-color: #22d9ee !important; }
+
+// Performance period toggle (1M / 3M / YTD / All) on dark: light unselected text,
+// cyan selected (designer accessibility flag).
+.browser-content {
+  .mat-button-toggle-group { border-color: rgba(255, 255, 255, 0.24); background: transparent; }
+  .mat-button-toggle { background: transparent; }
+  .mat-button-toggle .mat-button-toggle-label-content { color: #cfd9e0; }
+  .mat-button-toggle + .mat-button-toggle { border-left-color: rgba(255, 255, 255, 0.24); }
+  .mat-button-toggle-checked {
+    background: #36ebff !important;
+    --mat-standard-button-toggle-selected-state-background-color: #36ebff;
+    --mat-standard-button-toggle-selected-state-text-color: #06122a;
+  }
+  .mat-button-toggle-checked .mat-button-toggle-label-content { color: #06122a !important; }
+  .mat-button-toggle-appearance-standard .mat-button-toggle-focus-overlay { background: rgba(255, 255, 255, 0.12); }
+}

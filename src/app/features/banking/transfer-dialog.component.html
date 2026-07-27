@@ -6,7 +6,7 @@
       <div class="account-card source-account">
         <div class="account-header">
           <div class="account-logo">
-            <mat-icon class="account-icon" [fontIcon]="data.transferDirection === 'to-brokerage' ? 'fa-building-columns' : 'fa-arrow-trend-up'"></mat-icon>
+            <mat-icon class="account-icon" [fontIcon]="data.transferDirection === 'to-brokerage' ? 'la-university' : 'la-chart-line'"></mat-icon>
             <h3 class="account-name">{{ data.transferDirection === 'to-brokerage' ? 'Evergreen Bank' : 'Summit Invest' }}</h3>
           </div>
           <p class="account-service">{{ data.transferDirection === 'to-brokerage' ? 'Online Banking' : 'Investment Services' }}</p>
@@ -18,14 +18,14 @@
       </div>
       
       <div class="transfer-arrow">
-        <mat-icon fontIcon="fa-arrow-right"></mat-icon>
+        <mat-icon fontIcon="la-arrow-right"></mat-icon>
       </div>
       
       <!-- Destination Account (right side) -->
       <div class="account-card destination-account">
         <div class="account-header">
           <div class="account-logo">
-            <mat-icon class="account-icon" [fontIcon]="data.transferDirection === 'to-brokerage' ? 'fa-arrow-trend-up' : 'fa-building-columns'"></mat-icon>
+            <mat-icon class="account-icon" [fontIcon]="data.transferDirection === 'to-brokerage' ? 'la-chart-line' : 'la-university'"></mat-icon>
             <h3 class="account-name">{{ data.transferDirection === 'to-brokerage' ? 'Summit Invest' : 'Evergreen Bank' }}</h3>
           </div>
           <p class="account-service">{{ data.transferDirection === 'to-brokerage' ? 'Investment Services' : 'Online Banking' }}</p>
@@ -63,7 +63,7 @@
       </div>
 
       <div class="transfer-timing-note">
-        <mat-icon fontIcon="fa-clock"></mat-icon>
+        <mat-icon fontIcon="la-clock"></mat-icon>
         <span>Transfers are instant in this simulation. In real life, a bank transfer can take a few days to process.</span>
       </div>
     </div>

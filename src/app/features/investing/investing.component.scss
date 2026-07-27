@@ -1476,12 +1476,10 @@ h2 {
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-.mover-card.positive-trend {
-  border-left: 4px solid #6c757d;
-}
-
+.mover-card.positive-trend,
 .mover-card.negative-trend {
-  border-left: 4px solid #6c757d;
+  // No left accent border (design update) — the trend is shown by the badge.
+  border-left: none;
 }
 
 .card-header {
@@ -1702,3 +1700,12 @@ h2 { color: #fff !important; }
 .transaction-shares, .transaction-price, .transaction-total, .transaction-status,
 .price-history-section h4 { color: #e0e6f2 !important; }
 .price-history-section h4 { color: #fff !important; }
+
+// Designer feedback: zero-state text readable on dark; trend badge icon not clipped.
+.no-allocation,
+.no-holdings-message, .no-holdings-message p, .no-holdings-message .message-hint,
+.chart-placeholder, .chart-placeholder p { color: #cfd9e0 !important; }
+.trend-indicator mat-icon {
+  overflow: visible !important;
+  font-size: 16px; width: 16px; height: 16px;
+}

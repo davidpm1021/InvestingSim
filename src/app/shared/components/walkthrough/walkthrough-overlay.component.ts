@@ -41,7 +41,7 @@ interface Segment { t: string; def: string | null; }
              [attr.aria-label]="svc.current.title">
           <button class="wt-close" type="button" (click)="svc.minimize()"
                   aria-label="Minimize so you can look around">
-            <mat-icon fontIcon="fa-minus"></mat-icon>
+            <mat-icon fontIcon="la-minus"></mat-icon>
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
@@ -65,7 +65,7 @@ interface Segment { t: string; def: string | null; }
              (keydown.escape)="svc.minimize()">
           <button class="wt-close" type="button" (click)="svc.minimize()"
                   aria-label="Minimize so you can try it">
-            <mat-icon fontIcon="fa-minus"></mat-icon>
+            <mat-icon fontIcon="la-minus"></mat-icon>
           </button>
           <div class="wt-meta">
             <span class="wt-chip">{{ svc.current.part }}</span>
@@ -73,7 +73,7 @@ interface Segment { t: string; def: string | null; }
           <!-- ===== QUESTION screen: its own step, notebook / paper look ===== -->
           <ng-container *ngIf="svc.current.kind === 'question'; else instruction">
             <div class="wt-cfu-head">
-              <mat-icon aria-hidden="true" fontIcon="fa-pen"></mat-icon>
+              <mat-icon aria-hidden="true" fontIcon="la-pen"></mat-icon>
               <span>Check yourself</span>
             </div>
             <div class="wt-cfu" *ngFor="let q of svc.current.questions">
@@ -85,8 +85,8 @@ interface Segment { t: string; def: string | null; }
                        [class.wrong]="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct">
                   <input type="radio" [name]="q.id" [checked]="isSelected(q, opt.i)" (change)="selectChoice(q, opt.i)">
                   <span class="wt-choice-text">{{ opt.c.text }}</span>
-                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && opt.c.correct" fontIcon="fa-check"></mat-icon>
-                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="fa-xmark"></mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && opt.c.correct" fontIcon="la-check"></mat-icon>
+                  <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="la-times"></mat-icon>
                 </label>
                 <p class="wt-cfu-exp" *ngIf="isChecked(q)" [class.right]="isSelectedCorrect(q)">
                   <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
@@ -100,7 +100,7 @@ interface Segment { t: string; def: string | null; }
             </div>
             <div class="wt-progress-wrap"
                  [attr.aria-label]="milestonesDone + ' of ' + milestonesTotal + ' notebook steps done'">
-              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="fa-book-open"></mat-icon>
+              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="la-book-open"></mat-icon>
               <div class="wt-progress"><span class="wt-bar" [style.width.%]="milestonePct"></span></div>
               <span class="wt-progress-label">{{ milestonesDone }} / {{ milestonesTotal }}</span>
             </div>
@@ -123,12 +123,12 @@ interface Segment { t: string; def: string | null; }
             <h2 class="wt-title">{{ svc.current.title }}</h2>
             <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
             <div class="wt-action" *ngIf="svc.current.action">
-              <mat-icon fontIcon="fa-hand-pointer"></mat-icon>
+              <mat-icon fontIcon="la-hand-pointer"></mat-icon>
               <span>{{ svc.current.action }}</span>
             </div>
             <div class="wt-progress-wrap"
                  [attr.aria-label]="milestonesDone + ' of ' + milestonesTotal + ' notebook steps done'">
-              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="fa-book-open"></mat-icon>
+              <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="la-book-open"></mat-icon>
               <div class="wt-progress"><span class="wt-bar" [style.width.%]="milestonePct"></span></div>
               <span class="wt-progress-label">{{ milestonesDone }} / {{ milestonesTotal }}</span>
             </div>
@@ -179,8 +179,10 @@ interface Segment { t: string; def: string | null; }
 
     .wt-close {
       position: absolute; top: 12px; right: 12px; border: none; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.10); color: #cfd9e0; cursor: pointer; padding: 4px; line-height: 0;
+      background: rgba(255, 255, 255, 0.10); color: #cfd9e0; cursor: pointer;
+      width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; line-height: 1;
     }
+    .wt-close mat-icon { font-size: 20px; width: 20px; height: 20px; }
     .wt-close:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
 
     .wt-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -195,14 +197,14 @@ interface Segment { t: string; def: string | null; }
 
     .wt-action {
       display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 8px;
-      padding: 12px 14px; background: rgba(1, 226, 148, 0.15); border-left: 4px solid #01e294;
-      border-radius: 8px; font-size: 0.92rem; font-weight: 600; color: #e9fff7;
+      padding: 12px 14px; background: rgba(1, 226, 148, 0.15);
+      border-radius: 9px; font-size: 0.92rem; font-weight: 600; color: #e9fff7;
     }
     .wt-action mat-icon { color: #01e294; flex-shrink: 0; }
 
     .wt-progress-wrap { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px; }
     .wt-progress-wrap .wt-progress { flex: 1; margin: 0; }
-    .wt-progress-icon { color: #36ebff; font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+    .wt-progress-icon { color: #36ebff; font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; overflow: visible; }
     .wt-progress-label { font-size: 0.78rem; font-weight: 600; color: #cfd9e0; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .wt-progress { height: 8px; background: rgba(255, 255, 255, 0.14); border-radius: 999px; margin: 18px 0 14px; overflow: hidden; }
     .wt-bar { display: block; height: 100%; background: linear-gradient(90deg, #275ce4, #36ebff); border-radius: 999px; transition: width 0.3s ease; }
@@ -214,8 +216,8 @@ interface Segment { t: string; def: string | null; }
     }
     .wt-cfu-head {
       display: flex; align-items: center; gap: 8px; margin: 4px 0 14px;
-      font-family: 'Caveat', 'Comic Sans MS', cursive; font-weight: 700;
-      font-size: 1.9rem; line-height: 1; color: #48e9ca;
+      font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-weight: 700;
+      font-size: 1.3rem; line-height: 1; color: #48e9ca;
     }
     .wt-cfu-head mat-icon { color: #36ebff; font-size: 24px; width: 24px; height: 24px; }
     .wt-cfu + .wt-cfu { margin-top: 18px; padding-top: 16px; border-top: 1px dashed rgba(255, 255, 255, 0.18); }
@@ -238,9 +240,9 @@ interface Segment { t: string; def: string | null; }
     .wt-choice.wrong .wt-choice-mark { color: #ff8087; }
     .wt-cfu-exp {
       margin: 4px 2px 0; font-size: 0.88rem; line-height: 1.5; color: #dfe6f7;
-      background: rgba(255, 255, 255, 0.06); border-left: 4px solid #36ebff; border-radius: 8px; padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.06); border-radius: 9px; padding: 10px 12px;
     }
-    .wt-cfu-exp.right { background: rgba(1, 226, 148, 0.15); border-left-color: #01e294; }
+    .wt-cfu-exp.right { background: rgba(1, 226, 148, 0.15); }
     .wt-cfu-exp strong { color: #fff; }
     .wt-cfu-free { display: flex; flex-direction: column; gap: 8px; }
     .wt-cfu-text {

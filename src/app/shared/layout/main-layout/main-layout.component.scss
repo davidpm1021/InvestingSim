@@ -23,7 +23,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0b1541; // Dark navy page (design update)
+  background: #edf0f5; // Light gutter around the browser window (design update)
   padding: 0; // No padding at all, header should be full width
 }
 
@@ -216,18 +216,18 @@
 
   &.active {
     background: #ffffff;
-    border-color: #275ce4;
-    border-bottom: 2px solid #275ce4;
+    border-color: #dadce0;
+    border-bottom: none;
     z-index: 2;
-    box-shadow: 
+    box-shadow:
       0 -2px 8px rgba(0, 0, 0, 0.15),
       0 2px 4px rgba(0, 0, 0, 0.1);
-    
+
     .tab-text {
       color: #1f3b9b;
       font-weight: 600;
     }
-    
+
     .tab-favicon {
       filter: hue-rotate(200deg);
     }
@@ -251,7 +251,7 @@
   // Tab-specific styling to represent different institutions
   &.tab-home {
     &.active {
-      border-color: #275ce4;
+      border-color: #dadce0;
       .tab-text {
         color: #1f3b9b;
       }
@@ -260,7 +260,7 @@
 
   &.tab-banking {
     &.active {
-      border-color: #d32f2f;
+      border-color: #dadce0;
       .tab-text {
         color: #d32f2f;
       }
@@ -272,7 +272,7 @@
 
   &.tab-investing {
     &.active {
-      border-color: #2e7d32;
+      border-color: #dadce0;
       .tab-text {
         color: #2e7d32;
       }

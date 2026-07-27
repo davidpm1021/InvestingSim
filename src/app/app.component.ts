@@ -13,9 +13,9 @@ import { MatIconRegistry } from '@angular/material/icon';
 })
 export class AppComponent implements OnInit {
   constructor(private walkthrough: WalkthroughService, iconRegistry: MatIconRegistry) {
-    // NGPF uses FontAwesome 6 Solid; make every <mat-icon> render an FA glyph
-    // (icons are set via fontIcon="fa-...", so sizing/alignment stay unchanged).
-    iconRegistry.setDefaultFontSetClass('fa-solid');
+    // Line Awesome Solid (design update); every <mat-icon fontIcon="la-..."> renders
+    // a Line Awesome glyph. `las` is the solid base class.
+    iconRegistry.setDefaultFontSetClass('las');
   }
 
   ngOnInit(): void {

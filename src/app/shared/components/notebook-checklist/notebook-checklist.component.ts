@@ -27,35 +27,35 @@ import { WalkthroughService } from '../../services/walkthrough.service';
       <!-- Collapsed: a compact reopen tab on the left edge -->
       <button *ngIf="!showPanel" type="button" class="nb-reopen" (click)="toggle()"
               [attr.aria-expanded]="false" aria-label="Open your checklist">
-        <span class="nb-reopen-badge"><mat-icon fontIcon="fa-clipboard-check"></mat-icon></span>
+        <span class="nb-reopen-badge"><mat-icon fontIcon="la-clipboard-check"></mat-icon></span>
         <span class="nb-reopen-text">My Checklist</span>
       </button>
 
       <!-- Expanded: light floating checklist card -->
       <aside *ngIf="showPanel" class="nb-panel" [class.complete]="doneCount === total" aria-label="Checklist">
         <div class="nb-head">
-          <span class="nb-badge" aria-hidden="true"><mat-icon fontIcon="fa-clipboard-check"></mat-icon></span>
+          <span class="nb-badge" aria-hidden="true"><mat-icon fontIcon="la-clipboard-check"></mat-icon></span>
           <div class="nb-titles">
             <span class="nb-title" role="heading" aria-level="2">My Checklist</span>
             <span class="nb-sub">Your first {{ total }} steps</span>
           </div>
           <button type="button" class="nb-collapse" (click)="toggle()"
                   [attr.aria-expanded]="true" aria-label="Collapse the checklist">
-            <mat-icon fontIcon="fa-chevron-left"></mat-icon>
+            <mat-icon fontIcon="la-chevron-left"></mat-icon>
           </button>
         </div>
 
         <ul class="nb-list">
           <li *ngFor="let m of milestones" class="nb-item" [class.done]="isDone(m.key)">
             <span class="nb-box" aria-hidden="true">
-              <mat-icon *ngIf="isDone(m.key)" fontIcon="fa-check"></mat-icon>
+              <mat-icon *ngIf="isDone(m.key)" fontIcon="la-check"></mat-icon>
             </span>
             <span class="nb-label">{{ m.label }}</span>
             <span class="nb-sr" *ngIf="isDone(m.key)"> - done</span>
           </li>
         </ul>
 
-        <div class="nb-done"><mat-icon fontIcon="fa-trophy"></mat-icon> You're all set, nice work!</div>
+        <div class="nb-done"><mat-icon fontIcon="la-trophy"></mat-icon> You're all set, nice work!</div>
 
         <div class="nb-foot">
           <span class="nb-count">{{ doneCount }} of {{ total }}</span>

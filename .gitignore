@@ -43,3 +43,6 @@ Thumbs.db
 
 # Claude Code local files (settings, worktrees)
 .claude/
+
+# Stray design screenshots dropped in the repo root
+[Ss]creenshot*.png

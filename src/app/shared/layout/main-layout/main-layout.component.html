@@ -28,49 +28,49 @@
       <div class="tab tab-banking" appClickable
            [class.active]="currentRoute === '/banking'"
            (click)="navigateTo('/banking'); $event.stopPropagation()">
-        <mat-icon class="tab-favicon" fontIcon="fa-building-columns"></mat-icon>
+        <mat-icon class="tab-favicon" fontIcon="la-university"></mat-icon>
         <span class="tab-text">Evergreen Bank</span>
       </div>
       <div class="tab tab-investing" appClickable
            [class.active]="currentRoute === '/investing'"
            (click)="navigateTo('/investing'); $event.stopPropagation()">
-        <mat-icon class="tab-favicon" fontIcon="fa-arrow-trend-up"></mat-icon>
+        <mat-icon class="tab-favicon" fontIcon="la-chart-line"></mat-icon>
         <span class="tab-text">Summit Invest</span>
       </div>
       <div class="tab tab-admin" appClickable
            [class.active]="currentRoute === '/admin'"
            [class.hidden]="!hasAccessedAdmin"
            (click)="navigateTo('/admin'); $event.stopPropagation()">
-        <mat-icon class="tab-favicon" fontIcon="fa-gear"></mat-icon>
+        <mat-icon class="tab-favicon" fontIcon="la-cog"></mat-icon>
         <span class="tab-text">Admin Panel</span>
       </div>
       <div class="tab tab-bank-sim" appClickable
            [class.active]="currentRoute === '/bank-sim'"
            [class.hidden]="!hasAccessedBankSim"
            (click)="navigateTo('/bank-sim'); $event.stopPropagation()">
-        <mat-icon class="tab-favicon" fontIcon="fa-building-columns"></mat-icon>
+        <mat-icon class="tab-favicon" fontIcon="la-university"></mat-icon>
         <span class="tab-text">Bank Sim</span>
       </div>
       
       <!-- Browser Window Controls -->
       <div class="browser-controls">
         <button class="control-btn minimize-btn" (click)="minimizeWindow(); $event.stopPropagation()" title="Minimize">
-          <mat-icon fontIcon="fa-minus"></mat-icon>
+          <mat-icon fontIcon="la-minus"></mat-icon>
         </button>
         <button class="control-btn restore-btn" 
                 *ngIf="isMaximized" 
                 (click)="restoreWindow(); $event.stopPropagation()" 
                 title="Restore">
-          <mat-icon fontIcon="fa-compress"></mat-icon>
+          <mat-icon fontIcon="la-compress"></mat-icon>
         </button>
         <button class="control-btn maximize-btn" 
                 *ngIf="!isMaximized" 
                 (click)="maximizeWindow(); $event.stopPropagation()" 
                 title="Maximize">
-          <mat-icon fontIcon="fa-expand"></mat-icon>
+          <mat-icon fontIcon="la-expand"></mat-icon>
         </button>
         <button class="control-btn close-btn" (click)="closeWindow(); $event.stopPropagation()" title="Close">
-          <mat-icon fontIcon="fa-xmark"></mat-icon>
+          <mat-icon fontIcon="la-times"></mat-icon>
         </button>
       </div>
     </div>
@@ -79,23 +79,23 @@
     <div class="browser-nav">
       <div class="nav-buttons">
         <button class="nav-btn" (click)="goBack()" title="Back">
-          <mat-icon fontIcon="fa-arrow-left"></mat-icon>
+          <mat-icon fontIcon="la-arrow-left"></mat-icon>
         </button>
         <button class="nav-btn" (click)="goForward()" title="Forward">
-          <mat-icon fontIcon="fa-arrow-right"></mat-icon>
+          <mat-icon fontIcon="la-arrow-right"></mat-icon>
         </button>
         <button class="nav-btn" (click)="refresh()" title="Refresh">
-          <mat-icon fontIcon="fa-arrows-rotate"></mat-icon>
+          <mat-icon fontIcon="la-sync"></mat-icon>
         </button>
         <button class="nav-btn" (click)="goHome()" title="Home">
-          <mat-icon fontIcon="fa-house"></mat-icon>
+          <mat-icon fontIcon="la-home"></mat-icon>
         </button>
       </div>
       
       <div class="address-bar">
-        <mat-icon class="security-icon" *ngIf="isSecureUrl()" aria-hidden="true" fontIcon="fa-lock"></mat-icon>
+        <mat-icon class="security-icon" *ngIf="isSecureUrl()" aria-hidden="true" fontIcon="la-lock"></mat-icon>
         <span class="address-text">{{ getCurrentUrl() }}</span>
-        <mat-icon class="loading-indicator" *ngIf="isLoading" aria-hidden="true" fontIcon="fa-arrows-rotate"></mat-icon>
+        <mat-icon class="loading-indicator" *ngIf="isLoading" aria-hidden="true" fontIcon="la-sync"></mat-icon>
       </div>
     </div>
 

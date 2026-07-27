@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="logo-container">
       <div class="account-logo">
-        <mat-icon class="account-icon" fontIcon="fa-arrow-trend-up"></mat-icon>
+        <mat-icon class="account-icon" fontIcon="la-chart-line"></mat-icon>
         <h1 class="account-name">Summit Invest</h1>
       </div>
       <p class="account-service">Investment Services</p>
@@ -67,7 +67,7 @@
               </div>
               <ng-container *ngIf="bankLinked">
                 <div class="bank-linked-indicator">
-                  <mat-icon class="linked-check" fontIcon="fa-circle-check"></mat-icon>
+                  <mat-icon class="linked-check" fontIcon="la-check-circle"></mat-icon>
                   <span>Bank linked: Evergreen Bank •••• 1234</span>
                 </div>
                 <div class="button-group">
@@ -261,7 +261,7 @@
                   <div class="card-header">
                     <div class="asset-symbol-badge">{{ asset.id }}</div>
                     <div class="trend-indicator" [class.up]="getPriceChange(asset) > 0" [class.down]="getPriceChange(asset) < 0">
-                      <mat-icon [fontIcon]="getPriceChange(asset) > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></mat-icon>
+                      <mat-icon [fontIcon]="getPriceChange(asset) > 0 ? 'la-chart-line' : 'la-chart-line'"></mat-icon>
                     </div>
                   </div>
                   <div class="asset-info">
@@ -473,7 +473,7 @@
                         <span class="amount">${{ (statement.endingCashBalance || 0) + (statement.endingHoldingsValue || 0) | number:'1.2-2' }}</span>
                       </div>
                     </div>
-                    <mat-icon class="open-icon" fontIcon="fa-up-right-from-square"></mat-icon>
+                    <mat-icon class="open-icon" fontIcon="la-external-link-alt"></mat-icon>
                   </div>
                 </mat-card-content>
               </mat-card>

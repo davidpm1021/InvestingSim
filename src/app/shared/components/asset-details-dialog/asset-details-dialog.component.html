@@ -2,7 +2,7 @@
   <div class="dialog-header">
     <h2 mat-dialog-title>Asset Details</h2>
     <button mat-icon-button (click)="close()" class="close-button" aria-label="Close">
-      <mat-icon fontIcon="fa-xmark"></mat-icon>
+      <mat-icon fontIcon="la-times"></mat-icon>
     </button>
   </div>
 
@@ -27,7 +27,7 @@
             <div class="price-label">Current price</div>
             <div class="current-price">${{ currentPrice | number:'1.2-2' }}</div>
             <div class="price-change" [class.positive]="getPriceChange() > 0" [class.negative]="getPriceChange() < 0">
-              <mat-icon [fontIcon]="getPriceChange() > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></mat-icon>
+              <mat-icon [fontIcon]="getPriceChange() > 0 ? 'la-chart-line' : 'la-chart-line'"></mat-icon>
               {{ getPriceChange() > 0 ? '+' : '' }}{{ getPriceChange() | number:'1.2-2' }}%
             </div>
             <div class="price-change-period">vs. last quarter</div>

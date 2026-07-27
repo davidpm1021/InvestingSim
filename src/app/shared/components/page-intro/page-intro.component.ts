@@ -15,15 +15,15 @@ import { FirstVisitService } from '../../services/first-visit.service';
   imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
   template: `
     <div class="page-intro" *ngIf="show">
-      <mat-icon class="intro-icon" fontIcon="fa-lightbulb"></mat-icon>
+      <mat-icon class="intro-icon" fontIcon="la-lightbulb"></mat-icon>
       <span class="intro-text">{{ text }}</span>
       <button mat-icon-button class="intro-close" (click)="dismiss()" aria-label="Dismiss">
-        <mat-icon fontIcon="fa-xmark"></mat-icon>
+        <mat-icon fontIcon="la-times"></mat-icon>
       </button>
     </div>
     <button *ngIf="!show" mat-icon-button class="intro-help" (click)="reopen()"
             matTooltip="Show tips for this page" aria-label="Show tips">
-      <mat-icon fontIcon="fa-circle-question"></mat-icon>
+      <mat-icon fontIcon="la-question-circle"></mat-icon>
     </button>
   `,
   styles: [`

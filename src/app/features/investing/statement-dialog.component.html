@@ -6,7 +6,7 @@
       <p class="statement-period">{{ model.periodStart | evergreenDate }} – {{ model.periodEnd | evergreenDate }}</p>
     </div>
     <button mat-icon-button class="close-button" (click)="close()" aria-label="Close statement">
-      <mat-icon fontIcon="fa-xmark"></mat-icon>
+      <mat-icon fontIcon="la-times"></mat-icon>
     </button>
   </div>
 
@@ -20,7 +20,7 @@
   <!-- How to read this statement -->
   <div class="how-to-read">
     <button mat-button color="primary" (click)="showHowToRead = !showHowToRead">
-      <mat-icon [fontIcon]="showHowToRead ? 'fa-chevron-up' : 'fa-circle-question'"></mat-icon>
+      <mat-icon [fontIcon]="showHowToRead ? 'la-chevron-up' : 'la-question-circle'"></mat-icon>
       How to read this statement
     </button>
     <p *ngIf="showHowToRead" class="how-to-read-body">
