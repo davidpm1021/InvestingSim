@@ -255,7 +255,10 @@ interface Segment { t: string; def: string | null; }
 
     .wt-actions { display: flex; align-items: center; gap: 8px; }
     .wt-spacer { flex: 1; }
-    .wt-skip { color: #cfd9e0 !important; }
+    /* Text buttons (Back) -> cyan on the dark modal; Material's default is bright blue. */
+    .wt-actions .mat-mdc-button:not(.wt-skip),
+    .wt-actions .mat-mdc-button:not(.wt-skip) .mdc-button__label { color: #36ebff !important; }
+    .wt-skip, .wt-skip .mdc-button__label { color: #cfd9e0 !important; }
 
     /* ---------- tour spotlight ---------- */
     .wt-block { position: fixed; inset: 0; z-index: 3000; background: transparent; }
