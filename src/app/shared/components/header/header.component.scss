@@ -1,16 +1,19 @@
+// Dark NGPF top nav (design update, Figma node 11409-16385): a navy band with the
+// NGPF logo and the quarter / Reset / notifications / Account controls.
 .header {
   width: 100%;
-  background-color: #edfaff;
-  border-bottom: 1px solid #ddd;
-  padding: 0 20px;
+  background-color: #0d1157;
+  padding: 15px 32px;
 }
 
 .header-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 60px;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 64px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .logo {
@@ -20,94 +23,93 @@
 }
 
 .logo-image {
-  height: 40px;
+  height: 56px;
   width: auto;
 }
 
-.logo .app-title {
-  margin: 0;
-  color: #333;
-  font-weight: 500;
-  font-size: 1.5rem;
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-wrap: wrap;
 }
 
-        .header-controls {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
+// Quarter chip: a soft translucent pill on the navy band.
+.quarter-info {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #eaf0ff;
+}
+.current-quarter-label { white-space: nowrap; }
 
-        .quarter-info {
-          display: flex;
-          align-items: center;
-          padding: 8px 12px;
-          background-color: #e3f2fd;
-          border-radius: 4px;
-          font-size: 14px;
-          font-weight: 500;
-          color: #1f3b9b;
-        }
+// Nav buttons re-themed for the dark band. Bright blue for primary actions
+// (Jump / Account), a translucent ghost for Reset.
+.jump-quarter-button.mat-mdc-raised-button,
+.account-button.mat-mdc-raised-button {
+  background: #275ce4 !important;
+  color: #fff !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+  &:hover { filter: brightness(1.08); }
+}
 
-        .current-quarter-label {
-          white-space: nowrap;
-        }
+.reset-button.mat-mdc-raised-button {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+  &:hover { background: rgba(255, 255, 255, 0.22) !important; }
+}
 
-        .jump-quarter-button {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+.jump-quarter-button,
+.reset-button,
+.account-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
 
-        .reset-button {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+// Notification bell: white icon on the band, cyan unread badge.
+.notif-button.mat-mdc-icon-button {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+.notif-button.mat-mdc-icon-button:hover { background: rgba(255, 255, 255, 0.22); }
 
 .quarter-selector {
   min-width: 150px;
   height: 40px;
   padding: 8px 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 14px;
-  background-color: white;
+  background-color: #fff;
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
     border-color: #275ce4;
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+    box-shadow: 0 0 0 2px rgba(39, 92, 228, 0.3);
   }
 }
 
-.account-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-// Small screens: the header is a non-wrapping flex row whose intrinsic width
-// (logo + quarter label + Jump/Reset/Account buttons, ~860px) exceeds a tablet
-// or phone viewport and would force the whole document wider than the screen
-// (horizontal scroll + empty gutter). Let it reflow instead. The breakpoint sits
-// above that intrinsic width so wrapping kicks in before overflow (e.g. iPad
-// portrait at 768px). Desktop layout is untouched.
+// Small screens: let the non-wrapping row reflow before it overflows.
 @media (max-width: 900px) {
   .header {
-    padding: 0 12px;
+    padding: 12px;
   }
-
   .header-content {
-    flex-wrap: wrap;
-    height: auto;
-    min-height: 60px;
-    padding: 8px 0;
     row-gap: 8px;
+    padding: 8px 0;
   }
-
   .header-controls {
-    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 8px;
   }

@@ -23,7 +23,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #edfaff; // Light blue background
+  background: #0b1541; // Dark navy page (design update)
   padding: 0; // No padding at all, header should be full width
 }
 
@@ -424,7 +424,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden; // Prevent horizontal scrolling
-  background-color: #fff;
+  background-color: #0b1541; // Dark navy sim body (design update)
   padding: 12px; // Reduced padding to better match content width
   position: relative;
   

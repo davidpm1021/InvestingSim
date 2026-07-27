@@ -238,3 +238,46 @@ h2 {
     text-align: center;
   }
 }
+
+// ============================================================
+//  DARK THEME overrides (design update). Appended to win by source order.
+// ============================================================
+.page-header {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 14px;
+}
+.logo-container {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  min-width: 0;
+}
+.account-icon { color: #36ebff; }
+.account-name { color: #fff; }
+.account-service { color: #cfd9e0; }
+.page-description p { color: #cfd9e0; }
+h1 { color: #fff; }
+h2 { color: #fff; }
+
+// Sections -> dark cards; inner account cards -> subtle translucent panels.
+.account-summary,
+.recent-transactions {
+  background: #1b3167;
+  border: none;
+}
+.account-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.account-card h3 { color: #fff; }
+.balance { color: #01e294; }
+
+// Any remaining dark-on-dark text.
+.transaction-list,
+.transaction-item,
+.transaction-date,
+.transaction-description,
+.no-transactions { color: #e0e6f2; }

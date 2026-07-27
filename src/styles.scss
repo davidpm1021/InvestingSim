@@ -126,9 +126,9 @@ body.wt-coach-open .main-content {
 // the 1200px-max window past the right edge. width = 100% - both margins keeps it
 // exactly within the viewport at every width.
 body.nb-panel-open .browser-window:not(.maximized):not(.minimized) {
-  margin-left: 268px;
+  margin-left: 332px;
   margin-right: 8px;
-  width: calc(100% - 276px);
+  width: calc(100% - 340px);
   max-width: 1200px;
 }
 
@@ -248,3 +248,116 @@ body.nb-panel-open .browser-window:not(.maximized):not(.minimized) {
   }
 }
 
+
+// ============================================================
+//  DARK THEME — sim body (design update, Figma node 11409-16385)
+//  Scoped to .browser-content so the faux-browser chrome and CDK
+//  overlays (dialogs) are unaffected here and themed separately.
+// ============================================================
+$dk-navy: #0b1541;
+$dk-card: #1b3167;
+$dk-card-2: #233563;
+$dk-cyan: #36ebff;
+$dk-teal: #48e9ca;
+$dk-green: #01e294;
+$dk-divider: rgba(255, 255, 255, 0.5);
+
+.browser-content {
+  color: #fff;
+
+  // Cards become dark navy panels.
+  .mat-mdc-card {
+    background: $dk-card;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    box-shadow: none;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .mat-mdc-card-title,
+  [mat-card-title] {
+    color: #fff;
+  }
+
+  // Tabs: white labels, teal active + underline.
+  .mat-mdc-tab .mdc-tab__text-label { color: #fff; font-weight: 700; letter-spacing: 0.02em; }
+  .mat-mdc-tab:hover .mdc-tab__text-label { color: $dk-teal; }
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
+  .mat-mdc-tab-link.mdc-tab--active .mdc-tab__text-label { color: $dk-teal; }
+  .mdc-tab-indicator__content--underline { border-color: $dk-teal !important; }
+  .mat-mdc-tab-header,
+  .mat-mdc-tab-group .mat-mdc-tab-header { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  .mat-mdc-tab-header-pagination-chevron { border-color: #fff; }
+
+  // Tables (holdings, statement, chart data tables) on dark.
+  table th { color: #aab4d0; border-color: $dk-divider; }
+  table td { color: #fff; border-color: $dk-divider; }
+  .mat-mdc-table, .mat-mdc-header-row, .mat-mdc-row { background: transparent; }
+
+  // Generic text/links inside the sim.
+  a { color: $dk-cyan; }
+  p, span, li, label, div { border-color: $dk-divider; }
+}
+
+// ============================================================
+//  DARK THEME — dialogs & overlays (design update)
+//  Dialogs live in the CDK overlay, outside .browser-content, so
+//  they are themed here to match the dark sim.
+// ============================================================
+.mat-mdc-dialog-container {
+  color: #fff;
+
+  .mat-mdc-dialog-surface,
+  .mdc-dialog__surface { background: #1b3167; color: #fff; }
+
+  h1, h2, h3, h4, h5, h6,
+  .mat-mdc-dialog-title,
+  [mat-dialog-title] { color: #fff !important; }
+
+  .mat-mdc-dialog-content { color: #e0e6f2; }
+  // Component stylesheets scope their own dark text on labels/values; force the
+  // common ones light so nothing stays dark-on-dark.
+  .mat-mdc-dialog-content,
+  .mat-mdc-dialog-content span,
+  .mat-mdc-dialog-content label,
+  .mat-mdc-dialog-content li,
+  .mat-mdc-dialog-content strong { color: #e0e6f2; }
+  .mat-mdc-dialog-content a { color: #36ebff; }
+  p, span, label, li, small, strong, div { border-color: rgba(255, 255, 255, 0.5); }
+  a { color: #36ebff; }
+
+  // Tables (statement dialog) on dark.
+  table th, th { color: #aab4d0; border-color: rgba(255, 255, 255, 0.4); }
+  table td, td { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+  .pos { color: #01e294; }
+  .neg { color: #ff8087; }
+
+  // Inner "boxes" / sections that were pale.
+  .summary-box, .how-to-read-body, .statement-meta,
+  .account-value-summary, .meta-value, .meta-label { background: transparent; }
+
+  // Form fields -> dark inputs.
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) { background: rgba(255, 255, 255, 0.06); }
+  .mdc-text-field--outlined .mdc-notched-outline > * { border-color: rgba(255, 255, 255, 0.3); }
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element,
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-value { color: #fff !important; }
+  .mat-mdc-input-element::placeholder { color: #9aa6c4; }
+  .mdc-floating-label,
+  .mat-mdc-form-field-label,
+  mat-label,
+  .mat-mdc-form-field-hint { color: #cfd9e0 !important; }
+  .mat-mdc-select-arrow { color: #cfd9e0; }
+  .mdc-line-ripple::before { border-bottom-color: rgba(255, 255, 255, 0.3); }
+}
+
+// Select dropdown panels + menus on dark.
+.mat-mdc-select-panel,
+.mat-mdc-menu-panel:not(.notif-menu) {
+  background: #233563 !important;
+  .mat-mdc-option, .mat-mdc-menu-item { color: #fff; }
+  .mat-mdc-option .mdc-list-item__primary-text { color: #fff; }
+  .mat-mdc-option:hover, .mat-mdc-menu-item:hover { background: rgba(255, 255, 255, 0.08); }
+}

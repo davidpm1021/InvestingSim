@@ -1,145 +1,144 @@
-// Full-bleed NGPF-style landing. The InvestingPage pattern (bright-blue finance
-// icons) is the background; a navy gradient darkens the left so the white card and
-// white logo read clearly on top.
+// Dark splash, ported from the design update (Figma node 11398-15946): a full-bleed
+// LED stock-ticker photo with a blue multiply tint, and a solid navy panel inset
+// from the left carrying the welcome content.
+:host {
+  --navy: #0b1541;
+  --panel: #0d1157;
+  --bright: #275ce4;
+  --font: 'Montserrat', Helvetica, Arial, sans-serif;
+}
+
 .splash {
   position: relative;
   min-height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 clamp(24px, 6vw, 96px);
   overflow: hidden;
-  background: #275ce4 url('../../../assets/images/InvestingPage_background.png') center / cover no-repeat;
+  font-family: var(--font);
+  background: var(--navy) url('../../../assets/images/splash-bg.jpg') no-repeat;
+  background-size: cover;
+  background-position: 66% 42%;
 }
 
-.splash::before {
-  content: '';
+// Blue multiply wash over the photo (the solid navy panel covers it on the left).
+.splash-tint {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
-    rgba(11, 21, 65, 0.6) 0%,
-    rgba(11, 21, 65, 0.3) 55%,
-    rgba(11, 21, 65, 0.12) 100%);
+  background: rgba(4, 39, 165, 0.52);
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
-// The logo is a navy + orange wordmark; invert it to solid white for the dark
-// background, matching NGPF's white landing logo.
-.splash-logo {
+.panel {
   position: absolute;
-  top: 28px;
-  left: clamp(24px, 6vw, 96px);
-  height: 44px;
-  width: auto;
-  z-index: 2;
-  filter: brightness(0) invert(1);
-}
-
-.splash-card {
-  position: relative;
-  z-index: 2;
-  width: min(560px, 100%);
-  background: #fff;
-  border-radius: var(--radius-xl, 16px);
-  box-shadow: 0 20px 60px rgba(11, 21, 65, 0.35);
-  padding: 40px 44px;
-}
-
-.splash-eyebrow {
-  margin: 0 0 4px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.85rem;
-  color: var(--ngpf-primary-blue, #1f3b9b);
-}
-
-.splash-title {
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  line-height: 1.05;
-  color: var(--ngpf-dark-blue, #0b1541);
-}
-
-.splash-intro {
-  margin: 0 0 18px;
-  font-size: 1rem;
-  line-height: 1.5;
-  font-weight: 600;
-  color: var(--ngpf-gray-900, #424242);
-}
-
-.splash-list {
-  list-style: none;
-  margin: 0 0 28px;
-  padding: 0;
+  top: 0;
+  bottom: 0;
+  left: 8.6%;
+  width: 42%;
+  min-width: 420px;
+  background: var(--panel);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  justify-content: center;
+  padding: 56px;
+  z-index: 2;
 }
 
-.splash-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--ngpf-ink, #231f20);
+.panel-inner { max-width: 540px; }
+
+.splash-logo {
+  width: 300px;
+  max-width: 80%;
+  display: block;
+  margin-bottom: 40px;
 }
 
-.splash-list mat-icon {
-  flex-shrink: 0;
-  color: var(--ngpf-orange, #f78219);
-  font-size: 22px;
-  width: 22px;
-  height: 22px;
+.splash h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.27;
+  color: #fff;
+  max-width: 535px;
+  margin-bottom: 22px;
 }
 
-.splash-actions {
+.intro {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 511px;
+  margin-bottom: 20px;
+}
+
+.bullets {
+  list-style: none;
+  margin: 0 0 34px;
+  padding: 0;
+  max-width: 490px;
+}
+.bullets li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 14px;
+}
+.bullets li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #36ebff;
+}
+.bullets li:last-child { margin-bottom: 0; }
+
+.btn-row {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
 }
-
-// NGPF flat buttons. Text colors chosen for AA contrast on each fill:
-//   navy #0b1541 on orange #f78219  = 5.7:1  (white on this orange fails AA)
-//   white on bright blue #275ce4    = 5.6:1
-.splash-btn {
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  cursor: pointer;
-  font-family: var(--font-sans);
+  border-radius: 10px;
+  padding: 16px 24px;
+  font-family: var(--font);
+  font-size: 18px;
   font-weight: 700;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 13px 22px;
-  border-radius: var(--radius-lg, 10px);
-  transition: background-color 0.15s ease;
+  cursor: pointer;
+  transition: filter 0.12s ease;
 }
-
-.splash-btn.primary {
-  background: var(--ngpf-orange, #f78219);
-  color: var(--ngpf-dark-blue, #0b1541);
-}
-.splash-btn.primary:hover { background: #e0740f; }
-
-.splash-btn.secondary {
-  background: var(--ngpf-bright-blue, #275ce4);
+.btn-primary {
+  background: var(--bright);
   color: #fff;
 }
-.splash-btn.secondary:hover { background: #1f4ec4; }
-
-.splash-btn:focus-visible {
-  outline: 3px solid #fff;
+.btn-primary:hover { filter: brightness(1.08); }
+.btn:focus-visible {
+  outline: 3px solid #36ebff;
   outline-offset: 2px;
 }
 
-@media (max-width: 600px) {
-  .splash {
-    align-items: flex-start;
-    padding: 88px 16px 24px;
+@media (max-width: 1040px) {
+  .panel {
+    left: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 640px;
+    background: rgba(13, 17, 87, 0.92);
+    padding: 56px 40px;
   }
-  .splash-card { padding: 28px 22px; }
+  .splash { background-position: center; }
+}
+@media (max-width: 560px) {
+  .panel { padding: 44px 24px; }
+  .splash h1 { font-size: 34px; }
+  .intro,
+  .bullets li { font-size: 17px; }
+  .btn { flex: 1; }
 }

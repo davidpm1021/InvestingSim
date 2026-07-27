@@ -24,112 +24,114 @@ import { WalkthroughService } from '../../services/walkthrough.service';
   imports: [CommonModule, MatIconModule],
   template: `
     <div class="nb-root" *ngIf="visible">
-      <!-- Collapsed: a small tab on the left edge -->
-      <button *ngIf="!showPanel" type="button" class="nb-tab" (click)="toggle()"
-              [attr.aria-expanded]="false" aria-label="Open your notebook checklist">
-        <mat-icon class="nb-tab-icon" fontIcon="fa-book-open"></mat-icon>
-        <span class="nb-tab-text">Notebook</span>
-        <span class="nb-tab-count">{{ doneCount }}/{{ total }}</span>
+      <!-- Collapsed: a compact reopen tab on the left edge -->
+      <button *ngIf="!showPanel" type="button" class="nb-reopen" (click)="toggle()"
+              [attr.aria-expanded]="false" aria-label="Open your checklist">
+        <span class="nb-reopen-badge"><mat-icon fontIcon="fa-clipboard-check"></mat-icon></span>
+        <span class="nb-reopen-text">My Checklist</span>
       </button>
 
-      <!-- Expanded: the notebook page -->
-      <aside *ngIf="showPanel" class="nb-panel" aria-label="Notebook checklist">
-        <div class="nb-spiral" aria-hidden="true">
-          <span *ngFor="let h of holes"></span>
-        </div>
-        <div class="nb-paper">
-          <div class="nb-head">
+      <!-- Expanded: light floating checklist card -->
+      <aside *ngIf="showPanel" class="nb-panel" [class.complete]="doneCount === total" aria-label="Checklist">
+        <div class="nb-head">
+          <span class="nb-badge" aria-hidden="true"><mat-icon fontIcon="fa-clipboard-check"></mat-icon></span>
+          <div class="nb-titles">
             <span class="nb-title" role="heading" aria-level="2">My Checklist</span>
-            <button type="button" class="nb-collapse" (click)="toggle()"
-                    [attr.aria-expanded]="true" aria-label="Collapse the notebook checklist">
-              <mat-icon fontIcon="fa-chevron-left"></mat-icon>
-            </button>
+            <span class="nb-sub">Your first {{ total }} steps</span>
           </div>
-          <ul class="nb-list">
-            <li *ngFor="let m of milestones" class="nb-item" [class.done]="isDone(m.key)">
-              <span class="nb-box" aria-hidden="true">
-                <mat-icon *ngIf="isDone(m.key)" fontIcon="fa-check"></mat-icon>
-              </span>
-              <span class="nb-label">{{ m.label }}</span>
-              <span class="nb-sr" *ngIf="isDone(m.key)"> - done</span>
-            </li>
-          </ul>
-          <p class="nb-foot">{{ doneCount }} of {{ total }} done</p>
+          <button type="button" class="nb-collapse" (click)="toggle()"
+                  [attr.aria-expanded]="true" aria-label="Collapse the checklist">
+            <mat-icon fontIcon="fa-chevron-left"></mat-icon>
+          </button>
+        </div>
+
+        <ul class="nb-list">
+          <li *ngFor="let m of milestones" class="nb-item" [class.done]="isDone(m.key)">
+            <span class="nb-box" aria-hidden="true">
+              <mat-icon *ngIf="isDone(m.key)" fontIcon="fa-check"></mat-icon>
+            </span>
+            <span class="nb-label">{{ m.label }}</span>
+            <span class="nb-sr" *ngIf="isDone(m.key)"> - done</span>
+          </li>
+        </ul>
+
+        <div class="nb-done"><mat-icon fontIcon="fa-trophy"></mat-icon> You're all set, nice work!</div>
+
+        <div class="nb-foot">
+          <span class="nb-count">{{ doneCount }} of {{ total }}</span>
+          <div class="nb-bar"><span [style.width.%]="total ? doneCount / total * 100 : 0"></span></div>
         </div>
       </aside>
     </div>
   `,
   styles: [`
     .nb-root { position: fixed; left: 0; top: 0; bottom: 0; z-index: 2400;
-      pointer-events: none; font-family: 'Caveat', 'Comic Sans MS', cursive; }
+      pointer-events: none; font-family: 'Montserrat', Helvetica, Arial, sans-serif; }
     .nb-root > * { pointer-events: auto; }
 
-    /* ---------- collapsed tab ---------- */
-    .nb-tab {
-      position: fixed; left: 0; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      border: none; padding: 12px 8px; cursor: pointer;
-      background: #fdf6e3; border: 1px solid #e5d9b6; border-left: none;
-      border-radius: 0 12px 12px 0; box-shadow: 3px 3px 10px rgba(0,0,0,0.18);
-      color: #3a3320;
-    }
-    .nb-tab:hover { background: #fbefcf; }
-    .nb-tab:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
-    .nb-tab-icon { color: #7a6a3a; }
-    .nb-tab-text { writing-mode: vertical-rl; transform: rotate(180deg);
-      font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; }
-    .nb-tab-count { font-size: 1rem; font-weight: 700; color: #6b5d2f;
-      font-family: 'Montserrat', sans-serif; }
-
-    /* ---------- expanded notebook ---------- */
+    /* ---------- light floating checklist card ---------- */
     .nb-panel {
-      position: fixed; left: 14px; top: 172px; width: 236px; max-height: calc(100vh - 200px);
-      display: flex; overflow: hidden;
-      background: #fffdf5; border: 1px solid #e5d9b6; border-radius: 10px;
-      box-shadow: 4px 6px 18px rgba(0,0,0,0.22);
+      position: fixed; left: 16px; top: 150px; width: 300px; max-height: calc(100vh - 180px);
+      display: flex; flex-direction: column; overflow: hidden;
+      background: #f6f8fd; border-radius: 16px; color: #0b1541;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
       animation: nb-slide 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
     }
     @keyframes nb-slide { from { transform: translateX(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-    /* spiral binding down the left edge */
-    .nb-spiral {
-      flex-shrink: 0; width: 22px; background: #f3ead0; border-right: 1px dashed #d8c88f;
-      display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-      padding: 14px 0;
-    }
-    .nb-spiral span { width: 9px; height: 9px; border-radius: 50%;
-      background: #fffdf5; box-shadow: inset 0 0 0 2px #cbb985; }
+    /* Header with gradient badge */
+    .nb-head { display: flex; align-items: center; gap: 12px; padding: 16px 18px 14px;
+      background: linear-gradient(120deg, #eef2fe, #e3f7fb); }
+    .nb-badge { width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; color: #fff;
+      background: linear-gradient(135deg, #275ce4, #6c5ce7); box-shadow: 0 6px 16px rgba(39, 92, 228, 0.35); }
+    .nb-badge mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .nb-titles { flex: 1; min-width: 0; }
+    .nb-title { display: block; font-size: 18px; font-weight: 700; color: #0b1541; line-height: 1.1; }
+    .nb-sub { font-size: 11px; font-weight: 600; color: #5a6472; }
+    .nb-collapse { flex-shrink: 0; width: 28px; height: 28px; border: none; border-radius: 8px; cursor: pointer;
+      background: rgba(11, 21, 65, 0.08); color: #0b1541; line-height: 0;
+      display: flex; align-items: center; justify-content: center; }
+    .nb-collapse:hover { background: rgba(11, 21, 65, 0.16); }
+    .nb-collapse mat-icon { font-size: 16px; width: 16px; height: 16px; }
 
-    .nb-paper {
-      flex: 1; min-width: 0; padding: 12px 14px 14px; overflow-y: auto;
-      /* faint ruled lines */
-      background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 31px, #e7edf3 31px, #e7edf3 32px);
-      background-position: 0 6px;
-    }
-    .nb-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .nb-title { font-size: 1.5rem; font-weight: 700; color: #2b2a4a;
-      text-decoration: underline; text-decoration-color: #b9c2e0; text-underline-offset: 3px; }
-    .nb-collapse { border: none; background: transparent; cursor: pointer; color: #6b6b6b;
-      line-height: 0; padding: 2px; border-radius: 6px; }
-    .nb-collapse:hover { background: #eee7cf; color: #333; }
-    .nb-collapse:focus-visible, .nb-item:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
+    /* Items */
+    .nb-list { list-style: none; margin: 0; padding: 6px 18px 0; overflow-y: auto; }
+    .nb-item { display: flex; align-items: center; gap: 12px; padding: 11px 2px;
+      border-bottom: 1px solid rgba(11, 21, 65, 0.09); }
+    .nb-item:last-child { border-bottom: none; }
+    .nb-box { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; background: #e0e6f2;
+      display: flex; align-items: center; justify-content: center; }
+    .nb-box mat-icon { font-size: 13px; width: 13px; height: 13px; color: #06122a; }
+    .nb-item.done .nb-box { background: #36ebff; }
+    .nb-label { flex: 1; font-size: 15px; font-weight: 600; color: #0b1541; line-height: 1.3; }
+    .nb-item.done .nb-label { color: #6b7280; text-decoration: line-through; }
 
-    .nb-list { list-style: none; margin: 0; padding: 0; }
-    .nb-item { display: flex; align-items: flex-start; gap: 9px; padding: 5px 0; min-height: 32px; }
-    .nb-box {
-      flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px;
-      border: 2px solid #4a4636; border-radius: 4px; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .nb-box mat-icon { font-size: 18px; width: 18px; height: 18px; color: #1b7a2f; }
-    .nb-label { font-size: 1.28rem; line-height: 1.35; color: #23324a; }
+    /* Completion banner (shows at N/N) */
+    .nb-done { display: none; align-items: center; gap: 10px; margin: 12px 18px 0; padding: 12px 14px;
+      border-radius: 12px; background: #e1f3ea; color: #157347; font-size: 13px; font-weight: 700; }
+    .nb-done mat-icon { font-size: 20px; width: 20px; height: 20px; color: #157347; flex-shrink: 0; }
+    .nb-panel.complete .nb-done { display: flex; }
 
-    .nb-item.done .nb-box { background: #e6f4ea; border-color: #1b7a2f; }
-    .nb-item.done .nb-label { color: #6a6a6a; text-decoration: line-through;
-      text-decoration-color: #c0392b; text-decoration-thickness: 2px; }
+    /* Footer progress */
+    .nb-foot { display: flex; align-items: center; gap: 10px; margin: 14px 18px 16px; }
+    .nb-count { font-size: 13px; font-weight: 700; color: #3a4560; white-space: nowrap; }
+    .nb-bar { flex: 1; height: 8px; border-radius: 999px; background: rgba(11, 21, 65, 0.10); overflow: hidden; }
+    .nb-bar span { display: block; height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #275ce4, #36ebff); transition: width 0.3s ease; }
 
-    .nb-foot { margin: 8px 0 0; font-size: 1.05rem; color: #6b5d2f; text-align: right;
-      font-family: 'Montserrat', sans-serif; }
+    /* ---------- collapsed reopen tab ---------- */
+    .nb-reopen { position: fixed; left: 0; top: 150px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      border: none; border-radius: 0 12px 12px 0; padding: 16px 10px; cursor: pointer;
+      background: #f6f8fd; color: #0b1541; font-family: 'Montserrat', sans-serif;
+      font-size: 15px; font-weight: 700; letter-spacing: 0.02em; box-shadow: 4px 10px 30px rgba(11, 21, 65, 0.35); }
+    .nb-reopen:hover { background: #eef2fe; }
+    .nb-reopen-badge { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #275ce4, #6c5ce7); color: #fff; }
+    .nb-reopen-badge mat-icon { font-size: 15px; width: 15px; height: 15px; }
+    .nb-reopen-text { writing-mode: vertical-rl; transform: rotate(180deg); }
+
+    .nb-reopen:focus-visible, .nb-collapse:focus-visible, .nb-item:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
 
     .nb-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
       overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

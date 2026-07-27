@@ -30,18 +30,18 @@ import { FirstVisitService } from '../../services/first-visit.service';
     .page-intro {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      background: #eef4fc;
-      border: 1px solid #d4e3f7;
-      border-radius: 8px;
-      color: #33475b;
+      gap: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      background: rgba(39, 92, 228, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 12px;
+      color: #dfe6f7;
     }
-    .intro-icon { color: #275ce4; }
-    .intro-text { flex: 1; line-height: 1.4; }
-    .intro-close { margin: -8px -8px -8px 0; }
-    .intro-help { color: #275ce4; }
+    .intro-icon { color: #36ebff; }
+    .intro-text { flex: 1; line-height: 1.45; font-weight: 500; }
+    .intro-close { margin: -8px -8px -8px 0; color: #cfd9e0; }
+    .intro-help { color: #36ebff; }
   `]
 })
 export class PageIntroComponent implements OnInit {

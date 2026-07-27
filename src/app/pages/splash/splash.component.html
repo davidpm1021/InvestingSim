@@ -1,35 +1,23 @@
 <div class="splash">
-  <img src="images/logo.svg" alt="Investing Sim" class="splash-logo">
+  <div class="splash-tint"></div>
 
-  <section class="splash-card">
-    <p class="splash-eyebrow">Welcome to</p>
-    <h1 class="splash-title">Investing Sim</h1>
-    <p class="splash-intro">
-      This simulation lets you experience what it is like to open and manage your own
-      brokerage account, risk-free. With Investing Sim you can:
-    </p>
-
-    <ul class="splash-list">
-      <li>
-        <mat-icon aria-hidden="true" fontIcon="fa-circle-check"></mat-icon>
-        <span>Buy and sell stocks, funds, and bonds</span>
-      </li>
-      <li>
-        <mat-icon aria-hidden="true" fontIcon="fa-circle-check"></mat-icon>
-        <span>Track your portfolio's value over time</span>
-      </li>
-      <li>
-        <mat-icon aria-hidden="true" fontIcon="fa-circle-check"></mat-icon>
-        <span>Collect dividends and interest as cash</span>
-      </li>
-      <li>
-        <mat-icon aria-hidden="true" fontIcon="fa-circle-check"></mat-icon>
-        <span>Read your quarterly account statements</span>
-      </li>
-    </ul>
-
-    <div class="splash-actions">
-      <button type="button" class="splash-btn primary" (click)="getStarted()">Get Started</button>
+  <section class="panel">
+    <div class="panel-inner">
+      <img class="splash-logo" src="images/logo-splash.svg" alt="NGPF Investing Sim">
+      <h1>Start your investment journey.</h1>
+      <p class="intro">
+        This simulation lets you experience what it is like to open and manage your own
+        brokerage account, risk-free. With Investing Sim you can:
+      </p>
+      <ul class="bullets">
+        <li>Buy and sell stocks, funds, and bonds</li>
+        <li>Track your portfolio's value over time</li>
+        <li>Collect dividends and interest as cash</li>
+        <li>Read your quarterly account statements</li>
+      </ul>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" (click)="getStarted()">Get started</button>
+      </div>
     </div>
   </section>
 </div>
