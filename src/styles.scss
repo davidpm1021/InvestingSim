@@ -358,9 +358,16 @@ $dk-divider: rgba(255, 255, 255, 0.5);
 .mat-mdc-menu-panel:not(.notif-menu) {
   background: #233563 !important;
   .mat-mdc-option, .mat-mdc-menu-item { color: #fff; }
-  .mat-mdc-option .mdc-list-item__primary-text { color: #fff; }
+  .mat-mdc-option .mdc-list-item__primary-text,
+  .mat-mdc-menu-item .mdc-list-item__primary-text { color: #fff !important; }
   .mat-mdc-option:hover, .mat-mdc-menu-item:hover { background: rgba(255, 255, 255, 0.08); }
+  // Optgroup headers (Stocks / Funds / Bonds) default to dark grey (#44474e).
+  .mat-mdc-optgroup-label,
+  .mat-mdc-optgroup-label .mdc-list-item__primary-text { color: #aab4d0 !important; }
 }
+// Select trigger value/arrow on the dark form fields.
+.mat-mdc-select-value-text, .mat-mdc-select-placeholder { color: #fff; }
+.mat-mdc-select-arrow { color: #cfd9e0; }
 
 // ============================================================
 //  DARK THEME — contrast fixes (leftover light-theme colors that
