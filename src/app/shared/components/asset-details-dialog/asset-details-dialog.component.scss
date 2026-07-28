@@ -195,3 +195,6 @@ h1, h2, h3, .asset-title { color: #fff !important; }
 .positive { color: #01e294 !important; background: transparent !important; }
 .negative { color: #ff8087 !important; background: transparent !important; }
 .price-change-period, .asset-description, .asset-subtitle, .asset-type-label { color: #cfd9e0 !important; }
+// Close (×) icon defaulted to #666. The price-change chart icon keeps its
+// green/red from .positive/.negative.
+.close-button mat-icon { color: #cfd9e0 !important; }

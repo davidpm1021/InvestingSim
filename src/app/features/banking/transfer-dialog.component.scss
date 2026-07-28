@@ -178,3 +178,7 @@ mat-dialog-actions button:first-child {
 .account-service { color: #cfd9e0 !important; }
 .transfer-timing-note, .transfer-timing-note span { color: #cfd9e0 !important; }
 .transfer-timing-note { background: rgba(255, 255, 255, 0.06) !important; border-color: rgba(255, 255, 255, 0.12) !important; }
+
+// Icons (account logo #1f3b9b, arrow, clock) were dark on the translucent boxes.
+.account-icon { color: #36ebff !important; }
+mat-icon { color: #cfd9e0 !important; }
