@@ -1709,3 +1709,17 @@ h2 { color: #fff !important; }
   overflow: visible !important;
   font-size: 16px; width: 16px; height: 16px;
 }
+
+// Font-color audit fixes: recent-activity rows + holding hover/cash row on dark.
+.activity-date { color: #aab4d0 !important; }
+.activity-description,
+.activity-description span, .activity-description strong,
+.activity-description em, .activity-description b, .activity-description i { color: #e0e6f2 !important; }
+.activity-price.positive { color: #01e294 !important; }
+.activity-price.negative { color: #ff8087 !important; }
+.activity-item label { color: #aab4d0 !important; }
+.activity-item span { color: #e0e6f2 !important; }
+
+.holding-item:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
+.holding-item.cash-holding .holding-shares { color: #01e294 !important; }
+.holding-shares { color: #aab4d0 !important; }

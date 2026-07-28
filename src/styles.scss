@@ -510,3 +510,37 @@ $dk-divider: rgba(255, 255, 255, 0.5);
     font-family: 'Montserrat', Helvetica, Arial, sans-serif !important;
   }
 }
+
+// ============================================================
+//  Font-color audit fixes (contrast failures axe couldn't resolve)
+// ============================================================
+.browser-content {
+  // Chart / allocation DATA tables: the global "table th -> light" rule met
+  // these tables' LIGHT backgrounds (light-on-light). Dark-theme them instead.
+  .chart-table { background: transparent !important; }
+  .chart-table caption { color: #cfd9e0 !important; }
+  .chart-table thead th, .chart-table th {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #aab4d0 !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+  }
+  .chart-table td { color: #fff !important; border-color: rgba(255, 255, 255, 0.22) !important; }
+  .chart-toggle {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #36ebff !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+  }
+  .chart-toggle:hover { background: rgba(255, 255, 255, 0.16) !important; }
+}
+
+// Button toggles inside dialogs (e.g. the trade dialog Buy/Sell): same dark
+// treatment as in the sim body, so the selected option isn't light-on-light.
+.mat-mdc-dialog-container {
+  .mat-button-toggle-group { border-color: rgba(255, 255, 255, 0.24); }
+  .mat-button-toggle .mat-button-toggle-label-content { color: #cfd9e0; }
+  .mat-button-toggle-checked {
+    background: #36ebff !important;
+    --mat-standard-button-toggle-selected-state-background-color: #36ebff;
+  }
+  .mat-button-toggle-checked .mat-button-toggle-label-content { color: #06122a !important; }
+}
