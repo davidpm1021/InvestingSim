@@ -344,7 +344,11 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   textarea.mat-mdc-input-element,
   .mat-mdc-select-value-text,
   .mat-mdc-select-value { color: #fff !important; }
-  .mat-mdc-input-element::placeholder { color: #9aa6c4; }
+  // Material's default placeholder is #44474e (dark grey) — invisible on the navy
+  // field. Force the muted light grey and full opacity (AA on the field bg).
+  .mat-mdc-input-element::placeholder,
+  input.mat-mdc-input-element::placeholder,
+  textarea.mat-mdc-input-element::placeholder { color: #9aa6c4 !important; opacity: 1; }
   .mdc-floating-label,
   .mat-mdc-form-field-label,
   mat-label,
