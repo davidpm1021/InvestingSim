@@ -359,7 +359,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
             position: 'bottom',
             labels: {
               padding: 20,
-              usePointStyle: true
+              usePointStyle: true,
+              // Light legend text for the dark card (Chart.js defaults to #666).
+              color: '#e0e6f2'
             }
           },
           tooltip: {
