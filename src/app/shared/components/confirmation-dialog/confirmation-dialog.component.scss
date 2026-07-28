@@ -63,3 +63,14 @@
 .confirm-button {
   min-width: 100px;
 }
+
+// ---- Dark theme (design update) ----
+.confirmation-message { color: #e0e6f2 !important; }
+.trade-details, .transfer-details { background-color: rgba(255, 255, 255, 0.06) !important; }
+.detail-row { border-bottom-color: rgba(255, 255, 255, 0.18) !important; }
+.total-row { border-top-color: #36ebff !important; }
+.label { color: #cfd9e0 !important; }
+.value { color: #fff !important; }
+.total-amount { color: #36ebff !important; }
+.buy-action { color: #01e294 !important; }
+.sell-action { color: #ff8087 !important; }

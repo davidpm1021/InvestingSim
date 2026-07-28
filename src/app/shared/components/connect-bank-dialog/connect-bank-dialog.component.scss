@@ -50,3 +50,12 @@
     color: #2e7d32;
   }
 }
+
+// ---- Dark theme (design update) ----
+.connect-intro { color: #cfd9e0 !important; }
+.bank-details { border-color: rgba(255, 255, 255, 0.14) !important; }
+.detail-row:not(:last-child) { border-bottom-color: rgba(255, 255, 255, 0.14) !important; }
+.detail-label { color: #cfd9e0 !important; }
+.detail-value { color: #fff !important; }
+.connect-status p { color: #cfd9e0 !important; }
+.success-icon { color: #01e294 !important; }

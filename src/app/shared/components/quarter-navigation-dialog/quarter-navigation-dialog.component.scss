@@ -40,3 +40,12 @@ mat-dialog-actions {
   }
 }
 
+
+// ---- Dark theme (design update) ----
+.confirmation-message { color: #e0e6f2 !important; }
+.warning-message {
+  background-color: rgba(244, 173, 0, 0.12) !important;
+  border-color: rgba(244, 173, 0, 0.5) !important;
+  color: #ffd77a !important;
+}
+.warning-message mat-icon { color: #f4ad00 !important; }
