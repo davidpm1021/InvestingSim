@@ -79,7 +79,7 @@
   <button mat-button (click)="onCancel()">Cancel</button>
   <button mat-raised-button 
           color="primary" 
-          [disabled]="!isValidAmount()"
+          [disabled]="!isValidAmount() || submitting"
           (click)="onTransfer()">
     {{ data.transferDirection === 'to-brokerage' ? 'Add Funds' : 'Withdraw Funds' }}
   </button>

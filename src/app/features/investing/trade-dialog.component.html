@@ -34,7 +34,7 @@
   <div *ngIf="selectedAssetId" class="trade-details">
     <p class="current-price">Current price: <strong>${{ currentPrice | number:'1.2-2' }}</strong></p>
 
-    <mat-radio-group [(ngModel)]="inputType" class="amount-type">
+    <mat-radio-group [(ngModel)]="inputType" (change)="inputAmount = null" class="amount-type">
       <mat-radio-button value="dollars">Dollar amount</mat-radio-button>
       <mat-radio-button value="shares">Shares</mat-radio-button>
     </mat-radio-group>
@@ -76,7 +76,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="submit()">
+  <button mat-raised-button color="primary" [disabled]="!isValid() || submitting" (click)="submit()">
     {{ action === 'buy' ? 'Buy' : 'Sell' }}
   </button>
 </mat-dialog-actions>

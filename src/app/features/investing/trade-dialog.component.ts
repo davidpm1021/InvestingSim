@@ -53,6 +53,9 @@ export class TradeDialogComponent {
   selectedAssetId = '';
   inputType: 'dollars' | 'shares' = 'dollars';
   inputAmount: number | null = null;
+  // True once a confirmation has been opened, so a rapid double-click can't stack two
+  // confirmation dialogs. Reset if the confirmation is cancelled.
+  submitting = false;
   currentPrice = 0;
   readonly minPurchase = 1;
   // Shares are fractional and accumulate as floats, so the true position can sit
@@ -176,7 +179,7 @@ export class TradeDialogComponent {
   }
 
   submit(): void {
-    if (!this.isValid()) return;
+    if (this.submitting || !this.isValid()) return;
     const asset = this.dataService.getAssetById(this.selectedAssetId);
     if (!asset) return;
     let shares = this.getCalculatedShares();
@@ -200,6 +203,7 @@ export class TradeDialogComponent {
       tradeData: { action: this.action, assetName: asset.name, shares, price: this.currentPrice, totalAmount: dollars }
     };
 
+    this.submitting = true;
     this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: confirmationData })
       .afterClosed().subscribe(confirmed => {
         if (confirmed) {
@@ -211,6 +215,9 @@ export class TradeDialogComponent {
             timestamp: new Date().toISOString()
           };
           this.dialogRef.close(trade);
+        } else {
+          // Confirmation cancelled — let the student adjust and try again.
+          this.submitting = false;
         }
       });
   }

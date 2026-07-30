@@ -29,6 +29,8 @@ export interface TransferDialogResult {
 })
 export class TransferDialogComponent {
   transferAmount: number | null = null;
+  // Guards against a rapid double-click opening two confirmation dialogs; reset on cancel.
+  submitting = false;
 
   constructor(
     public dialogRef: MatDialogRef<TransferDialogComponent>,
@@ -101,7 +103,7 @@ export class TransferDialogComponent {
   }
 
   onTransfer(): void {
-    if (this.isValidAmount() && this.transferAmount !== null) {
+    if (!this.submitting && this.isValidAmount() && this.transferAmount !== null) {
       // Transfer exactly the available balance when the entered amount rounds to the
       // full max (leaves the source at 0 and conserves money to the cent); otherwise
       // snap the entered amount to whole cents so no sub-cent noise enters the ledger.
@@ -123,6 +125,7 @@ export class TransferDialogComponent {
         }
       };
 
+      this.submitting = true;
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
         data: confirmationData
@@ -131,6 +134,8 @@ export class TransferDialogComponent {
       dialogRef.afterClosed().subscribe(confirmed => {
         if (confirmed) {
           this.dialogRef.close({ amount });
+        } else {
+          this.submitting = false;
         }
       });
     }

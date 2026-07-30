@@ -588,6 +588,17 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     return transaction.amount;
   }
 
+  // Disable Add Funds / Withdraw when there's nothing to move — matching the max the
+  // dialog would show — so the buttons don't open a dead-end $0 modal. Uses
+  // getMaxWithdrawable (not the raw balance) so the back-dated cap is respected too.
+  get canAddFunds(): boolean {
+    return this.transactionsService.getMaxWithdrawable('banking001', this.currentDate) > 0;
+  }
+
+  get canWithdraw(): boolean {
+    return this.transactionsService.getMaxWithdrawable('brokerage001', this.currentDate) > 0;
+  }
+
   openWithdrawDialog(): void {
     const dialogRef = this.dialog.open(TransferDialogComponent, {
       width: '600px',

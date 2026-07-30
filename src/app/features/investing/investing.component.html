@@ -74,13 +74,14 @@
                   <button mat-raised-button
                           color="primary"
                           (click)="openAddFundsDialog()"
+                          [disabled]="!canAddFunds"
                           class="add-funds-button">
                     Add Funds
                   </button>
                   <button mat-stroked-button
                           color="primary"
                           (click)="openWithdrawDialog()"
-                          [disabled]="brokerageBalance <= 0"
+                          [disabled]="!canWithdraw"
                           class="withdraw-button">
                     Withdraw Funds
                   </button>
