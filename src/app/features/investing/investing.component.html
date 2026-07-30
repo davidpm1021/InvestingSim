@@ -227,9 +227,10 @@
                 <ng-container matColumnDef="gainLoss">
                   <th mat-header-cell *matHeaderCellDef>Gain/Loss</th>
                   <td mat-cell *matCellDef="let holding"
-                      [class.positive]="getHoldingPriceChange(holding) > 0"
-                      [class.negative]="getHoldingPriceChange(holding) < 0">
-                    {{ getHoldingPriceChange(holding) > 0 ? '+' : '' }}{{ getHoldingPriceChange(holding) | number:'1.2-2' }}%
+                      [class.positive]="holding.gainLoss > 0"
+                      [class.negative]="holding.gainLoss < 0">
+                    {{ holding.gainLoss > 0 ? '+' : '' }}{{ holding.gainLoss | currency:'USD':'symbol':'1.2-2' }}
+                    ({{ holding.gainLossPercent > 0 ? '+' : '' }}{{ holding.gainLossPercent | number:'1.2-2' }}%)
                   </td>
                 </ng-container>
 
