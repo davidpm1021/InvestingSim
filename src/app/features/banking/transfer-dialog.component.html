@@ -50,13 +50,19 @@
         <input matInput
                type="number"
                [(ngModel)]="transferAmount"
-               [max]="data.maxAmount"
+               [max]="maxAmountCents"
                min="0.01"
                step="0.01"
                placeholder="Enter amount to transfer"
                [attr.aria-describedby]="validationMessage() ? 'transfer-amount-error' : null">
         <mat-hint>Maximum: ${{ data.maxAmount | number:'1.2-2' }}</mat-hint>
       </mat-form-field>
+
+      <div class="transfer-max-row">
+        <button mat-button type="button" class="transfer-max-btn" (click)="setMax()">
+          Transfer max (${{ data.maxAmount | number:'1.2-2' }})
+        </button>
+      </div>
 
       <div *ngIf="validationMessage()" id="transfer-amount-error" role="alert" class="validation-error">
         {{ validationMessage() }}

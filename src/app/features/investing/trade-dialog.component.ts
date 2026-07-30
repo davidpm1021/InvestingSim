@@ -135,8 +135,13 @@ export class TradeDialogComponent {
   isValid(): boolean {
     if (!this.selectedAssetId || this.inputAmount === null) return false;
     if (this.action === 'buy') {
-      const dollars = this.getCalculatedDollars();
-      return dollars >= this.minPurchase && dollars <= this.data.brokerageBalance;
+      // Compare in whole cents. The running balance is a floating-point sum of
+      // trade amounts (each buy debits shares*price, shares rounded to 6 decimals),
+      // so it carries sub-cent noise; a raw `dollars <= balance` compare would then
+      // reject spending your full cash (e.g. $505 against a balance of 504.9999864
+      // that displays as $505.00). Rounding both sides to cents removes that noise.
+      const cents = Math.round(this.getCalculatedDollars() * 100);
+      return cents >= Math.round(this.minPurchase * 100) && cents <= Math.round(this.data.brokerageBalance * 100);
     }
     const holding = this.getHolding(this.selectedAssetId);
     const shares = this.getCalculatedShares();
@@ -148,9 +153,9 @@ export class TradeDialogComponent {
   validationMessage(): string {
     if (!this.selectedAssetId || this.inputAmount === null) return '';
     if (this.action === 'buy') {
-      const dollars = this.getCalculatedDollars();
-      if (dollars > 0 && dollars < this.minPurchase) return `Minimum purchase is $${this.minPurchase.toFixed(2)}.`;
-      if (dollars > this.data.brokerageBalance) return `Insufficient cash. Available: $${this.data.brokerageBalance.toFixed(2)}`;
+      const cents = Math.round(this.getCalculatedDollars() * 100);
+      if (cents > 0 && cents < Math.round(this.minPurchase * 100)) return `Minimum purchase is $${this.minPurchase.toFixed(2)}.`;
+      if (cents > Math.round(this.data.brokerageBalance * 100)) return `Insufficient cash. Available: $${this.data.brokerageBalance.toFixed(2)}`;
     } else {
       const shares = this.getCalculatedShares();
       if (shares <= 0) return 'Enter an amount greater than zero.';

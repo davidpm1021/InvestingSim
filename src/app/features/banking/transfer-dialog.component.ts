@@ -65,7 +65,24 @@ export class TransferDialogComponent {
   }
 
   isValidAmount(): boolean {
-    return this.transferAmount !== null && this.transferAmount > 0 && this.transferAmount <= this.data.maxAmount;
+    if (this.transferAmount === null || this.transferAmount <= 0) { return false; }
+    // Compare in whole cents. maxAmount is a floating-point balance sum that carries
+    // sub-cent noise (trade debits are shares*price), so a raw compare would reject
+    // transferring your full displayed balance (e.g. $700 against 699.99993562, which
+    // renders as "$700.00"). Same fix as the buy dialog.
+    return Math.round(this.transferAmount * 100) <= Math.round(this.data.maxAmount * 100);
+  }
+
+  /** Available balance rounded to whole cents — used for the input's native `max` and
+   *  the "Transfer max" fill, so the field's native validation agrees with our cent-wise
+   *  check (the raw maxAmount carries sub-cent noise that would flag the full amount). */
+  get maxAmountCents(): number {
+    return Math.round(this.data.maxAmount * 100) / 100;
+  }
+
+  /** Fill in the full available balance (rounded to cents for a clean display value). */
+  setMax(): void {
+    this.transferAmount = this.maxAmountCents;
   }
 
   /** Programmatic error text so keyboard/screen-reader users learn why the transfer
@@ -73,7 +90,7 @@ export class TransferDialogComponent {
   validationMessage(): string {
     if (this.transferAmount === null) { return ''; }
     if (this.transferAmount <= 0) { return 'Enter an amount greater than zero.'; }
-    if (this.transferAmount > this.data.maxAmount) {
+    if (Math.round(this.transferAmount * 100) > Math.round(this.data.maxAmount * 100)) {
       return `Amount exceeds your available balance. Maximum: $${this.data.maxAmount.toFixed(2)}.`;
     }
     return '';
@@ -85,6 +102,13 @@ export class TransferDialogComponent {
 
   onTransfer(): void {
     if (this.isValidAmount() && this.transferAmount !== null) {
+      // Transfer exactly the available balance when the entered amount rounds to the
+      // full max (leaves the source at 0 and conserves money to the cent); otherwise
+      // snap the entered amount to whole cents so no sub-cent noise enters the ledger.
+      const amount = Math.round(this.transferAmount * 100) === Math.round(this.data.maxAmount * 100)
+        ? this.data.maxAmount
+        : Math.round(this.transferAmount * 100) / 100;
+
       const confirmationData: ConfirmationDialogData = {
         title: `Confirm ${this.dialogTitle}`,
         message: `Are you sure you want to ${this.data.transferDirection === 'to-brokerage' ? 'add' : 'withdraw'} these funds?`,
@@ -93,7 +117,7 @@ export class TransferDialogComponent {
         type: 'transfer',
         transferData: {
           direction: this.data.transferDirection,
-          amount: this.transferAmount,
+          amount: amount,
           fromAccount: this.data.transferDirection === 'to-brokerage' ? 'banking001' : 'brokerage001',
           toAccount: this.data.transferDirection === 'to-brokerage' ? 'brokerage001' : 'banking001'
         }
@@ -106,7 +130,7 @@ export class TransferDialogComponent {
 
       dialogRef.afterClosed().subscribe(confirmed => {
         if (confirmed) {
-          this.dialogRef.close({ amount: this.transferAmount });
+          this.dialogRef.close({ amount });
         }
       });
     }

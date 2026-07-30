@@ -182,3 +182,7 @@ mat-dialog-actions button:first-child {
 // Icons (account logo #1f3b9b, arrow, clock) were dark on the translucent boxes.
 .account-icon { color: #36ebff !important; }
 mat-icon { color: #cfd9e0 !important; }
+
+// "Transfer max" shortcut, right-aligned under the amount field.
+.transfer-max-row { display: flex; justify-content: flex-end; margin: -4px 0 4px; }
+.transfer-max-btn { color: #36ebff !important; font-size: 0.85rem; }
