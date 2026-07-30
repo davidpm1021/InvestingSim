@@ -170,7 +170,8 @@ export class TradeDialogComponent {
   /** Fill the input with the entire held position so a student can sell all of it. */
   sellAll(): void {
     this.inputType = 'shares';
-    // Show the same 4-decimal figure as the table; submit() clamps to the exact held amount.
+    // Show a clean 4-decimal figure; submit() snaps to the exact held amount so this
+    // rounding can't leave dust behind.
     this.inputAmount = Math.round(this.getMaxSellable(this.selectedAssetId) * 1e4) / 1e4;
   }
 
@@ -181,8 +182,12 @@ export class TradeDialogComponent {
     let shares = this.getCalculatedShares();
     let dollars = this.getCalculatedDollars();
     if (this.action === 'sell') {
-      // Clamp to the true held amount so rounding can never record an oversell.
-      shares = Math.min(shares, this.getMaxSellable(this.selectedAssetId));
+      const max = this.getMaxSellable(this.selectedAssetId);
+      // Snap to the full position when the order is within a dust threshold of it (and
+      // clamp an over-amount down to it). Without the snap, the 4-decimal "Sell all"
+      // figure (e.g. 0.3636 of 0.363636 held) under-sells and strands ~0.00003
+      // un-closeable shares that show as a phantom "0.00 shares / $0.01" row.
+      shares = shares >= max - this.SELL_EPS ? max : shares;
       dollars = Math.round(shares * this.currentPrice * 100) / 100;
     }
 
