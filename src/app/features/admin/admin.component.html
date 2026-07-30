@@ -164,6 +164,10 @@
                             <span class="detail-value">{{ selectedAsset.dividendYield ? (selectedAsset.dividendYield * 100).toFixed(2) + '%' : 'N/A' }}</span>
                           </div>
                           <div class="detail-row">
+                            <span class="detail-label">SEC Yield:</span>
+                            <span class="detail-value">{{ selectedAsset.secYield ? (selectedAsset.secYield * 100).toFixed(2) + '%' : 'N/A' }}</span>
+                          </div>
+                          <div class="detail-row">
                             <span class="detail-label">Expense Ratio:</span>
                             <span class="detail-value">{{ selectedAsset.expenseRatio ? (selectedAsset.expenseRatio * 100).toFixed(2) + '%' : 'N/A' }}</span>
                           </div>

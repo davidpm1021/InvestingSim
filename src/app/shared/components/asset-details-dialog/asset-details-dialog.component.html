@@ -17,9 +17,10 @@
           <div class="asset-details-inline">
             <span class="detail-inline"><strong>Type:</strong> <app-define [term]="typeTermKey()" [label]="asset.type | assetType"></app-define></span>
             <span class="detail-inline"><strong>Sector:</strong> {{ asset.sector }}</span>
-            <div class="detail-block-line" *ngIf="asset.dividendYield || asset.interestRate || asset.expenseRatio">
+            <div class="detail-block-line" *ngIf="asset.dividendYield || asset.interestRate || asset.secYield || asset.expenseRatio">
               <span class="detail-inline" *ngIf="asset.dividendYield"><strong><app-define term="Dividend" label="Dividend"></app-define>:</strong> {{ (asset.dividendYield * 100) | number:'1.2-2' }}%</span>
               <span class="detail-inline" *ngIf="asset.interestRate"><strong><app-define term="Interest" label="Interest"></app-define>:</strong> {{ (asset.interestRate * 100) | number:'1.2-2' }}%</span>
+              <span class="detail-inline" *ngIf="asset.secYield"><strong><app-define term="30-day SEC yield" label="SEC yield"></app-define>:</strong> {{ (asset.secYield * 100) | number:'1.2-2' }}%</span>
               <span class="detail-inline" *ngIf="asset.expenseRatio"><strong><app-define term="Expense ratio" label="Expense Ratio"></app-define>:</strong> {{ (asset.expenseRatio * 100) | number:'1.3-3' }}%</span>
             </div>
           </div>
