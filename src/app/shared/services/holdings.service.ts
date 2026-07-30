@@ -24,6 +24,21 @@ export interface RealizedSale {
   term: 'short' | 'long';
 }
 
+/** A persisted holding row is usable only if it has the right field shapes. Malformed
+ *  rows (from tampering, a bad migration, or a truncated write) are dropped rather than
+ *  trusted, so junk like {} or a string-typed shares/price can't poison share math. */
+function isValidHoldingTransaction(row: any): boolean {
+  return !!row && typeof row === 'object'
+    && typeof row.assetId === 'string' && row.assetId !== ''
+    && (row.action === 'buy' || row.action === 'sell')
+    && Number.isFinite(Number(row.shares)) && Number.isFinite(Number(row.price))
+    && typeof row.date === 'string' && typeof row.time === 'string';
+}
+
+function normalizeHoldingTransaction(row: any): HoldingTransaction {
+  return { ...row, shares: Number(row.shares), price: Number(row.price) };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -132,15 +147,24 @@ export class HoldingsService {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          return parsed;
+          // Keep only well-formed rows and coerce numeric fields (see the validator).
+          return parsed.filter(isValidHoldingTransaction).map(normalizeHoldingTransaction);
         }
       }
     } catch (error) {
       console.warn('Error reading holding transactions from localStorage:', error);
     }
-    
+
     // Default empty array for holding transactions
     return [];
+  }
+
+  /** Reset holdings to empty (subject + storage). Used when the transaction ledger is
+   *  found corrupt, so the two stores can't be left referencing each other inconsistently. */
+  public clearHoldingTransactions(): void {
+    this.detailsCache.clear();
+    this.saveHoldingTransactionsToStorage([]);
+    this.holdingTransactionsSubject.next([]);
   }
 
   /**

@@ -18,12 +18,32 @@ export interface Transaction {
   description_to?: string; // For transfer transactions (to account perspective)
 }
 
+/** A persisted transaction row is usable only if it has a string type/date/time and a
+ *  finite numeric amount (coerced from a possible string). Malformed rows are dropped so
+ *  a tampered entry like a string amount can't concatenate into balances ("0"+"5000") or
+ *  NaN the ledger, and a junk row like {} can't sit in the array contributing nothing. */
+function isValidTransaction(row: any): boolean {
+  return !!row && typeof row === 'object'
+    && typeof row.type === 'string'
+    && typeof row.date === 'string' && typeof row.time === 'string'
+    && Number.isFinite(Number(row.amount));
+}
+
+function normalizeTransaction(row: any): Transaction {
+  return { ...row, amount: Number(row.amount) };
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionsService {
   private readonly TRANSACTIONS_KEY = 'investing_sim__transactions';
-  
+
+  // Set true when the transactions key exists but can't be read as a usable array
+  // (parse error, non-array, or all rows malformed). Declared before transactionsSubject
+  // so it is initialized when getStoredTransactions() first runs in the field below.
+  private storageWasCorrupt = false;
+
   private accounts: {
     banking001: {name: string, initialBalance: number, type: "banking", apy: number},
     brokerage001: {name: string, initialBalance: number, type: "brokerage", apy: number}
@@ -104,26 +124,38 @@ export class TransactionsService {
    * Ensure localStorage is properly initialized with default values
    */
   private ensureLocalStorageInitialized(): void {
-    // Only initialize with default data if there are no transactions at all
     const currentTransactions = this.transactionsSubject.value;
-    if (currentTransactions.length === 0) {
-      // Initialize with default transaction only if completely empty
-      const defaultTransactions = [
-        {
-          type: "transaction",
-          account: "banking001",
-          amount: 5000,
-          date: "2024-12-01",
-          time: "00:00:00",
-          description: "Initial deposit"
-        }
-      ];
-      this.transactionsSubject.next(defaultTransactions);
-      this.saveTransactionsToStorage(defaultTransactions);
+    if (this.storageWasCorrupt) {
+      // The transactions key existed but was unreadable, so its balance is unrecoverable.
+      // Holdings persisted under a separate key would now reference a ledger that no longer
+      // exists — a desync that would show shares with no matching cash. Reset BOTH stores
+      // to a clean baseline rather than silently reseeding cash while stale holdings survive.
+      console.error('investing_sim__transactions was corrupt; resetting to a clean state.');
+      this.holdingsService.clearHoldingTransactions();
+      this.seedInitialTransactions();
+    } else if (currentTransactions.length === 0) {
+      // Genuinely new (or post-reset) user: seed the starting deposit.
+      this.seedInitialTransactions();
     } else {
-      // Just save current transactions
+      // Valid existing data: persist it (round-trips through the validated parse).
       this.saveTransactionsToStorage(currentTransactions);
     }
+  }
+
+  /** Seed the one-time $5000 opening deposit into Savings. */
+  private seedInitialTransactions(): void {
+    const defaultTransactions: Transaction[] = [
+      {
+        type: "transaction",
+        account: "banking001",
+        amount: 5000,
+        date: "2024-12-01",
+        time: "00:00:00",
+        description: "Initial deposit"
+      }
+    ];
+    this.saveTransactionsToStorage(defaultTransactions);
+    this.transactionsSubject.next(defaultTransactions);
   }
 
   /**
@@ -139,19 +171,28 @@ export class TransactionsService {
    * Get stored transactions from local storage
    */
   private getStoredTransactions(): Transaction[] {
+    const stored = localStorage.getItem(this.TRANSACTIONS_KEY);
+    // Key absent = genuinely new (or post-reset) user; seeding is correct.
+    if (stored === null) {
+      return [];
+    }
     try {
-      const stored = localStorage.getItem(this.TRANSACTIONS_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed;
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        const valid = parsed.filter(isValidTransaction).map(normalizeTransaction);
+        // A non-empty stored array that yields no usable rows is corrupt, not "new" —
+        // flag it so init resets both stores instead of silently reseeding cash.
+        if (parsed.length > 0 && valid.length === 0) {
+          this.storageWasCorrupt = true;
         }
+        return valid;
       }
     } catch (error) {
       console.warn('Error reading transactions from localStorage:', error);
     }
-    
-    // Return empty array if no stored transactions (after reset)
+
+    // Present but unparseable or not an array: corrupt, not a new user.
+    this.storageWasCorrupt = true;
     return [];
   }
 
