@@ -170,11 +170,22 @@ export class TransactionsService {
    * Add a new transaction
    */
   addTransaction(transaction: Transaction): void {
-    const currentTransactions = this.transactionsSubject.value;
-    const updatedTransactions = [...currentTransactions, transaction];
+    this.addTransactions([transaction]);
+  }
+
+  /**
+   * Append one or more transactions as a single atomic update: persist to storage first,
+   * then a single notify. Passing both legs of a transfer here (rather than two
+   * addTransaction calls) guarantees a subscriber that throws mid-way cannot leave one
+   * leg saved without the other, which would create or destroy money.
+   */
+  private addTransactions(newTransactions: Transaction[]): void {
+    const updatedTransactions = [...this.transactionsSubject.value, ...newTransactions];
     this.ledgerCache.clear();
-    this.transactionsSubject.next(updatedTransactions);
+    // Persist BEFORE notifying (see addHoldingTransaction) so a throwing subscriber
+    // can't drop the write.
     this.saveTransactionsToStorage(updatedTransactions);
+    this.transactionsSubject.next(updatedTransactions);
   }
 
   /**
@@ -203,8 +214,7 @@ export class TransactionsService {
       description: "Transfer from banking"
     };
 
-    this.addTransaction(bankingTransaction);
-    this.addTransaction(brokerageTransaction);
+    this.addTransactions([bankingTransaction, brokerageTransaction]);
   }
 
   /**
@@ -233,8 +243,7 @@ export class TransactionsService {
       description: "Transfer from brokerage"
     };
 
-    this.addTransaction(brokerageTransaction);
-    this.addTransaction(bankingTransaction);
+    this.addTransactions([brokerageTransaction, bankingTransaction]);
   }
 
   /**

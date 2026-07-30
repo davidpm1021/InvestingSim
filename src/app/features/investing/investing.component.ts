@@ -698,26 +698,30 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     
-    // Add holding transaction
-    this.holdingsService.addHoldingTransaction(
-      tradeData.assetId,
-      tradeData.action.toLowerCase() as 'buy' | 'sell',
-      tradeData.shares,
-      currentPrice,
-      this.currentDate
-    );
-    
-    // Add corresponding brokerage transaction using the new method
-    this.transactionsService.addTradeTransaction(
-      'brokerage001',
-      tradeData.assetId,
-      tradeData.action.toLowerCase() as 'buy' | 'sell',
-      tradeData.shares,
-      currentPrice,
-      this.currentDate,
-      asset.name,
-      asset.type
-    );
+    // Record the holding leg and the cash leg together. Each service persists to
+    // localStorage before notifying subscribers, and the finally guarantees the cash
+    // debit is still written even if the holding fan-out throws — so a trade can never
+    // persist shares without the matching cash movement (or vice versa).
+    try {
+      this.holdingsService.addHoldingTransaction(
+        tradeData.assetId,
+        tradeData.action.toLowerCase() as 'buy' | 'sell',
+        tradeData.shares,
+        currentPrice,
+        this.currentDate
+      );
+    } finally {
+      this.transactionsService.addTradeTransaction(
+        'brokerage001',
+        tradeData.assetId,
+        tradeData.action.toLowerCase() as 'buy' | 'sell',
+        tradeData.shares,
+        currentPrice,
+        this.currentDate,
+        asset.name,
+        asset.type
+      );
+    }
     
     this.notificationsService.add(
       `${tradeData.action} order filled: ${tradeData.shares.toFixed(4)} shares of ${asset.name}`,

@@ -176,8 +176,11 @@ export class HoldingsService {
     const currentHoldingTransactions = this.holdingTransactionsSubject.value;
     const updatedHoldingTransactions = [...currentHoldingTransactions, holdingTransaction];
     this.detailsCache.clear();
-    this.holdingTransactionsSubject.next(updatedHoldingTransactions);
+    // Persist BEFORE notifying: subscribers run synchronously on next(), and if one
+    // throws (e.g. a chart error) the exception would otherwise unwind before the save,
+    // losing the write. Saving first guarantees the transaction is durable.
     this.saveHoldingTransactionsToStorage(updatedHoldingTransactions);
+    this.holdingTransactionsSubject.next(updatedHoldingTransactions);
   }
 
   /**
