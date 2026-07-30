@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { QUARTERS, SIM_YEAR_START } from '../data/quarters.data';
+import { QUARTERS, SIM_YEAR_START, getQuarterForDate } from '../data/quarters.data';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,8 @@ export class CurrentDateService {
   private initializeCurrentDate(): void {
     const storedDate = this.getStoredCurrentDate();
     this.currentDateSubject.next(storedDate);
+    // Persist the resolved value so a snapped legacy/tampered date is cleaned up on disk.
+    this.saveCurrentDateToStorage(storedDate);
   }
 
   /**
@@ -47,13 +49,33 @@ export class CurrentDateService {
     try {
       const stored = localStorage.getItem(this.CURRENT_DATE_KEY);
       if (stored && this.isValidDateString(stored)) {
-        return stored;
+        return this.snapToPlayableQuarter(stored);
       }
     } catch (error) {
       console.warn('Error reading current date from localStorage:', error);
     }
-    
+
     // Default to the first playable quarter
+    return SIM_YEAR_START;
+  }
+
+  /**
+   * Resolve any calendar-valid date to a playable quarter's start value. A tampered or
+   * legacy stored date that isn't itself a playable quarter value (mid-quarter, the
+   * excluded Q4 2024, or out of range) would otherwise map to "Unknown Quarter" and the
+   * header's quarter dropdown would find no match, disabling navigation and stranding the
+   * user. Snap it to the start of its containing quarter, falling back to the first
+   * playable quarter.
+   */
+  private snapToPlayableQuarter(date: string): string {
+    const playable = this.getQuarterOptions();
+    if (playable.some(o => o.value === date)) {
+      return date;
+    }
+    const quarter = getQuarterForDate(date);
+    if (quarter && playable.some(o => o.value === quarter.value)) {
+      return quarter.value;
+    }
     return SIM_YEAR_START;
   }
 
