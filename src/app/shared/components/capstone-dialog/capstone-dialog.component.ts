@@ -43,11 +43,14 @@ export class CapstoneDialogComponent implements OnInit {
     const dividends = ledger.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
     const interest = ledger.filter(t => t.type === 'interest').reduce((s, t) => s + t.amount, 0);
 
-    // Return on money invested: what you still hold PLUS anything you withdrew back to
-    // Savings, against gross deposits. Without the withdrawn term, cashing out vanishes
-    // from the result and the net-contributions denominator inflates the percentage.
+    // Gain = what you still hold PLUS anything withdrawn back to Savings, minus what you
+    // deposited (value earned over your net contributions). Return % is that gain over
+    // net contributions (deposits - withdrawals), matching the Overview. Null (shown as a
+    // dash) when net contributions are <= 0 — you have withdrawn at least as much as you
+    // put in, so a percentage is undefined.
+    const netContributions = deposits - withdrawn;
     const gainLoss = finalValue + withdrawn - deposits;
-    const gainLossPct = deposits > 0 ? (gainLoss / deposits) * 100 : 0;
+    const gainLossPct = netContributions > 0 ? (gainLoss / netContributions) * 100 : null;
 
     const { stocks, bonds } = this.dataService.getAssetClassTotals(
       this.holdingsService.getHoldingDetailsAtDate(asOf)

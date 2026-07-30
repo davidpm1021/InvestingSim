@@ -127,6 +127,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   netContributions = 0;
   accountGainLoss = 0;
   accountGainLossPct = 0;
+  // False when net contributions are <= 0 (you have withdrawn at least as much as you
+  // put in), where a return percentage is undefined — the template shows a dash instead.
+  accountReturnDefined = false;
   
   private subscription = new Subscription();
 
@@ -454,7 +457,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter(t => t.account === 'brokerage001' && t.type === 'transaction')
       .reduce((sum, t) => sum + t.amount, 0);
     this.accountGainLoss = this.accountValue - this.netContributions;
-    this.accountGainLossPct = this.netContributions > 0 ? (this.accountGainLoss / this.netContributions) * 100 : 0;
+    // Return on net contributions. Undefined (dash) once net contributions are <= 0,
+    // rather than a misleading 0.00% next to a real dollar gain.
+    this.accountReturnDefined = this.netContributions > 0;
+    this.accountGainLossPct = this.accountReturnDefined ? (this.accountGainLoss / this.netContributions) * 100 : 0;
   }
 
   private initializeLineChart(): void {

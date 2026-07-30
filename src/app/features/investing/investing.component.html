@@ -50,7 +50,7 @@
                   <span class="av-label">Up / down</span>
                   <span class="av-value">
                     {{ accountGainLoss >= 0 ? '+' : '' }}{{ accountGainLoss | currency:'USD':'symbol':'1.2-2' }}
-                    ({{ accountGainLossPct | number:'1.2-2' }}%)
+                    (<ng-container *ngIf="accountReturnDefined; else naReturn">{{ accountGainLossPct | number:'1.2-2' }}%</ng-container><ng-template #naReturn>&ndash;</ng-template>)
                   </span>
                 </div>
               </div>
