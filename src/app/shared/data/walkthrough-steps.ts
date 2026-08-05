@@ -221,7 +221,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: [
       'Buy at least three different types. Spreading your money around (diversification) means when one drops, another may rise. Trades are free in this simulation.',
     ],
-    action: 'Click Buy and purchase three different types of investment.',
+    action: 'Click Buy and purchase three different types of investments.',
     questions: [
       {
         id: 'cfu-gain-zero',
