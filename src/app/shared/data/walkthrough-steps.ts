@@ -333,6 +333,40 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'Sell part of a holding, then open the Activity tab.',
   },
   {
+    part: 'Part IV · Review',
+    title: 'See how each investment did',
+    scrollTop: true,
+    body: [
+      'Before your next moves, look at how each holding actually performed. On the Overview, every holding shows its own Gain/Loss in dollars and percent, and the Performance chart plots each investment as a percent change since the start.',
+      'Open the Holdings tab too: it shows your portfolio value over time and the price history of any holding you select.',
+    ],
+    action: "On the Overview, read each holding's Gain/Loss and the Performance chart, then open the Holdings tab to compare price histories.",
+    questions: [
+      {
+        id: 'cfu-holdings-diverge',
+        kind: 'mc',
+        prompt: 'Look at the Gain/Loss next to each holding. In the same quarter, one is up (green) and another is down (red). What does that tell you?',
+        choices: [
+          { text: 'Different investments move differently, so some can rise while others fall in the same period.', correct: true },
+          { text: 'One of the numbers must be an error, because holdings always move together.' },
+          { text: 'The holding that is down is guaranteed to recover by next quarter.' },
+        ],
+        explanation: 'Prices move independently, so in any quarter some holdings gain while others lose. Holding a mix is what lets a winner cushion a loser. That is diversification doing its job.',
+      },
+      {
+        id: 'cfu-trim-winner',
+        kind: 'mc',
+        prompt: 'After a strong run, one holding has grown into a much bigger slice of your portfolio than the rest. Why might someone sell part of it (trim it)?',
+        choices: [
+          { text: 'To rebalance: when one holding gets large, more of your outcome rides on that single investment.', correct: true },
+          { text: 'Because a gain disappears unless you sell it within the same quarter.' },
+          { text: 'Because an investment that just went up is certain to fall next quarter.' },
+        ],
+        explanation: 'As a winner grows, it becomes a bigger part of your mix, so your results lean more on that one holding. Trimming brings the mix back toward balance. It is a choice, not a rule: you could also let it run, or buy a holding that dipped.',
+      },
+    ],
+  },
+  {
     part: 'Part IV · The year',
     title: 'Play out the year',
     body: [
