@@ -16,7 +16,7 @@
                 <mat-icon fontIcon="la-arrow-right"></mat-icon>
                 Jump to {{ nextQuarterLabel }}
               </button>
-              <button mat-raised-button color="warn" class="reset-button" (click)="onReset()">
+              <button *ngIf="showDevControls" mat-raised-button color="warn" class="reset-button" (click)="onReset()">
                 <mat-icon fontIcon="la-sync"></mat-icon>
                 Reset
               </button>
@@ -31,7 +31,7 @@
                   <span class="notif-date" *ngIf="n.date">{{ n.date | evergreenDate:'short' }}</span>
                 </button>
               </mat-menu>
-              <button mat-raised-button color="primary" class="account-button" [matMenuTriggerFor]="accountMenu">
+              <button *ngIf="showDevControls" mat-raised-button color="primary" class="account-button" [matMenuTriggerFor]="accountMenu">
                 <mat-icon fontIcon="la-user-circle"></mat-icon>
                 Account
               </button>

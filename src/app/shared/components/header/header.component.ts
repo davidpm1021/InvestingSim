@@ -43,6 +43,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // True while the guided walkthrough is running but hasn't reached its "Fast-forward a
   // quarter" step — keeps "Jump to Quarter" disabled so the student can't skip the guide.
   quarterJumpDisabled: boolean = false;
+  // Dev/teacher-only header controls (Reset and Account/Admin). Hidden from students;
+  // flip to true to bring them back for development or admin work.
+  showDevControls: boolean = false;
   notifications: AppNotification[] = [];
   unreadCount: number = 0;
   private subscription = new Subscription();
