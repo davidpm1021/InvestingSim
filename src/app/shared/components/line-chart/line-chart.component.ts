@@ -282,16 +282,16 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
           }
         },
         scales: {
-          // Light axis labels + subtle grid for the dark chart background.
+          // White axis labels + subtle grid for the dark chart background.
           x: {
             display: true,
-            ticks: { maxRotation: 0, autoSkip: true, color: '#aab4d0' },
+            ticks: { maxRotation: 0, autoSkip: true, color: '#ffffff' },
             grid: { color: 'rgba(255, 255, 255, 0.09)' }
           },
           y: {
             display: true,
-            title: { display: true, text: this.yLabel, color: '#9aa6c4' },
-            ticks: { color: '#aab4d0' },
+            title: { display: true, text: this.yLabel, color: '#ffffff' },
+            ticks: { color: '#ffffff' },
             grid: { color: 'rgba(255, 255, 255, 0.09)' },
             beginAtZero: this.yMax != null,
             max: this.yMax
