@@ -8,9 +8,10 @@
                 <span class="current-quarter-label">Current: {{ currentQuarterLabel }}</span>
               </div>
               <button *ngIf="canNavigateToNext"
-                      mat-raised-button 
-                      color="primary" 
-                      class="jump-quarter-button" 
+                      mat-raised-button
+                      color="primary"
+                      class="jump-quarter-button"
+                      [disabled]="quarterJumpDisabled"
                       (click)="onJumpToNextQuarter()">
                 <mat-icon fontIcon="la-arrow-right"></mat-icon>
                 Jump to {{ nextQuarterLabel }}

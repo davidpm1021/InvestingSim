@@ -17,6 +17,7 @@ import { TransactionsService } from '../../services/transactions.service';
 import { QuarterNavigationDialogComponent, QuarterNavigationDialogData } from '../quarter-navigation-dialog/quarter-navigation-dialog.component';
 import { CapstoneDialogComponent } from '../capstone-dialog/capstone-dialog.component';
 import { isFinalQuarter } from '../../data/quarters.data';
+import { WalkthroughService } from '../../services/walkthrough.service';
 
 interface QuarterOption {
   label: string;
@@ -36,18 +37,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentQuarterLabel: string = 'Quarter 1';
   nextQuarterLabel: string = '';
   canNavigateToNext: boolean = false;
+  // True while the guided walkthrough is running but hasn't reached its "Fast-forward a
+  // quarter" step — keeps "Jump to Quarter" disabled so the student can't skip the guide.
+  quarterJumpDisabled: boolean = false;
   notifications: AppNotification[] = [];
   unreadCount: number = 0;
   private subscription = new Subscription();
 
   constructor(
-    private dataService: DataService, 
+    private dataService: DataService,
     private currentDateService: CurrentDateService,
     private transactionsService: TransactionsService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private walkthroughService: WalkthroughService
   ) {}
 
   ngOnInit(): void {
@@ -70,6 +75,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.notificationsService.notifications$.subscribe(list => {
         this.notifications = list;
         this.unreadCount = list.filter(n => !n.read).length;
+      })
+    );
+
+    // Gate "Jump to Quarter" while the guided walkthrough is before its quarter-advance step.
+    this.subscription.add(
+      this.walkthroughService.quarterNavGated$.subscribe(gated => {
+        this.quarterJumpDisabled = gated;
       })
     );
   }
@@ -130,7 +142,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onJumpToNextQuarter(): void {
-    if (!this.canNavigateToNext || !this.nextQuarterLabel) {
+    if (!this.canNavigateToNext || !this.nextQuarterLabel || this.quarterJumpDisabled) {
       return;
     }
 

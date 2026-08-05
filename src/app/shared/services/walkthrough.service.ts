@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { filter, skip, distinctUntilChanged } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { filter, skip, distinctUntilChanged, map } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
 import { WALKTHROUGH_STEPS, WalkthroughStep } from '../data/walkthrough-steps';
 import { OnboardingService } from './onboarding.service';
@@ -47,6 +47,11 @@ export class WalkthroughService {
 
   readonly steps: WalkthroughStep[] = expandSteps(WALKTHROUGH_STEPS);
 
+  // Runtime index of the step that teaches advancing a quarter (trigger 'quarter-advanced').
+  // Until the guide reaches it, the header keeps "Jump to Quarter" disabled so the student
+  // can't skip ahead of the guided flow.
+  private readonly quarterStepIndex = this.steps.findIndex(s => s.trigger === 'quarter-advanced');
+
   private indexSubject = new BehaviorSubject<number>(this.loadStep());
   private activeSubject = new BehaviorSubject<boolean>(false);
   // A step always arrives maximized; minimizing is session-only and does not
@@ -56,6 +61,13 @@ export class WalkthroughService {
   readonly active$ = this.activeSubject.asObservable();
   readonly expanded$ = this.expandedSubject.asObservable();
   readonly index$ = this.indexSubject.asObservable();
+
+  // True while the guide is active and hasn't yet reached the "advance a quarter" step,
+  // so the header disables "Jump to Quarter" to keep the student on the guided flow.
+  readonly quarterNavGated$ = combineLatest([this.active$, this.index$]).pipe(
+    map(([active, index]) => active && this.quarterStepIndex >= 0 && index < this.quarterStepIndex),
+    distinctUntilChanged()
+  );
 
   constructor(
     private router: Router,
