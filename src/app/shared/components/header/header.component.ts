@@ -24,6 +24,9 @@ interface QuarterOption {
   value: string;
 }
 
+/** Sentinel notification link that reopens the Year-End Review capstone (not a route). */
+const CAPSTONE_LINK = 'year-end-review';
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -91,11 +94,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onNotificationClick(n: AppNotification): void {
+    // The Year-End Review has no route; reopen the capstone summary instead, so it's
+    // reachable again after the student closes it.
+    if (n.link === CAPSTONE_LINK) {
+      this.openCapstone();
+      return;
+    }
     if (n.link) {
       // navigateByUrl (not navigate([...])) so links with a query param, e.g.
       // '/investing?tab=statements', land on the right tab.
       this.router.navigateByUrl(n.link);
     }
+  }
+
+  /** Open the Year-End Review (capstone) summary dialog. */
+  openCapstone(): void {
+    this.dialog.open(CapstoneDialogComponent, { width: '640px', maxHeight: '90vh' });
   }
   
   updateQuarterInfo(): void {
@@ -165,9 +179,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.currentDateService.setCurrentDate(nextQuarter.value);
           this.router.navigate(['/investing']);
           if (isFinalQuarter(nextQuarter.value)) {
-            // Reaching the Year-End Review — show the capstone summary.
-            this.notificationsService.add('Your Year-End Review is ready.', '/investing', nextQuarter.value);
-            this.dialog.open(CapstoneDialogComponent, { width: '640px', maxHeight: '90vh' });
+            // Reaching the Year-End Review — show the capstone summary, and leave a
+            // notification that reopens it (it has no route of its own).
+            this.notificationsService.add('Your Year-End Review is ready.', CAPSTONE_LINK, nextQuarter.value);
+            this.openCapstone();
           } else {
             this.notificationsService.add(`Your ${completedLabel} statement is ready.`, '/investing?tab=statements', nextQuarter.value);
             this.snackBar.open(`Your ${completedLabel} statement is ready.`, 'View', { duration: 6000 })

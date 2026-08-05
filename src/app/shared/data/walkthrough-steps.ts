@@ -30,7 +30,7 @@ export interface WalkthroughStep {
   cta?: string;
   /** Auto-advance trigger, only for steps with one obvious completion event.
    *  Open-ended steps (buy, sell, explore) have none and proceed manually. */
-  trigger?: 'browser-open' | 'bank-linked' | 'funded' | 'quarter-advanced';
+  trigger?: 'browser-open' | 'bank-linked' | 'funded' | 'quarter-advanced' | 'year-end';
   /** CSS selector to spotlight for a page-tour step: the overlay highlights the
    *  element and anchors a small callout to it instead of centering a modal. */
   target?: string;
@@ -374,6 +374,16 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         explanation: "A holding's gain is not spendable until you sell. After selling, Withdraw Funds moves the cash from your cash settlement account back to Evergreen Bank.",
       },
     ],
+  },
+  {
+    part: 'Part V · Wrap up',
+    title: 'See your Year-End Review',
+    trigger: 'year-end',
+    requireAction: true,
+    body: [
+      'One last jump. The Year-End Review sums up your whole year: what your account is worth, your total gain or loss, and the income you earned. You can reopen it any time from the Notifications bell.',
+    ],
+    action: 'At the top, click Jump to Year-End Review, then confirm.',
   },
   {
     part: 'Part V · Reflect',

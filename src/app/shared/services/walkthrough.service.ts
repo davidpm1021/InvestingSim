@@ -8,7 +8,7 @@ import { CurrentDateService } from './current-date.service';
 import { ChecklistService } from './checklist.service';
 import { ResponsesService } from './responses.service';
 import { HoldingsService } from './holdings.service';
-import { SIM_YEAR_START } from '../data/quarters.data';
+import { SIM_YEAR_START, isFinalQuarter } from '../data/quarters.data';
 
 /**
  * Split any step that carries questions into two runtime steps: the instruction
@@ -227,6 +227,7 @@ export class WalkthroughService {
       case 'bank-linked': return this.onboarding.bankLinked;
       case 'funded': return this.onboarding.hasFunded;
       case 'quarter-advanced': return this.currentDate.getCurrentDate() !== SIM_YEAR_START;
+      case 'year-end': return isFinalQuarter(this.currentDate.getCurrentDate());
       default: return true;
     }
   }
