@@ -194,7 +194,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         kind: 'mc',
         prompt: 'Which of these investments is an ETF?',
         choices: [
-          { text: 'Total Stock Market ETF', correct: true },
+          { text: 'Total Stock Market', correct: true },
           { text: 'Total Stock Market Index Fund' },
           { text: 'Target Date 2070 Fund' },
         ],
