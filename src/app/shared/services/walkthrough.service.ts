@@ -6,6 +6,7 @@ import { WALKTHROUGH_STEPS, WalkthroughStep } from '../data/walkthrough-steps';
 import { OnboardingService } from './onboarding.service';
 import { CurrentDateService } from './current-date.service';
 import { ChecklistService } from './checklist.service';
+import { ResponsesService } from './responses.service';
 import { SIM_YEAR_START } from '../data/quarters.data';
 
 /**
@@ -74,6 +75,7 @@ export class WalkthroughService {
     private onboarding: OnboardingService,
     private currentDate: CurrentDateService,
     private checklist: ChecklistService,
+    private responses: ResponsesService,
   ) {
     // Auto-advance, but ONLY for steps with one obvious completion event, and
     // only while the student is minimized on that step (actively doing it).
@@ -186,6 +188,14 @@ export class WalkthroughService {
    */
   canProceed(): boolean {
     const s = this.current;
+    // A "Check yourself" step: every multiple-choice question must be answered before
+    // moving on (so collapsing to the coach bar can't skip past unanswered questions).
+    // Free-text reflections stay optional.
+    if (s.kind === 'question') {
+      return (s.questions || []).every(
+        q => q.kind !== 'mc' || this.responses.get(q.id)?.choiceIndex !== undefined
+      );
+    }
     if (s.gate) { return this.checklist.isDone(s.gate); }
     if (!s.requireAction) { return true; }
     switch (s.trigger) {
