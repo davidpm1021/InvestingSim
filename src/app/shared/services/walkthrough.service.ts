@@ -7,6 +7,7 @@ import { OnboardingService } from './onboarding.service';
 import { CurrentDateService } from './current-date.service';
 import { ChecklistService } from './checklist.service';
 import { ResponsesService } from './responses.service';
+import { HoldingsService } from './holdings.service';
 import { SIM_YEAR_START } from '../data/quarters.data';
 
 /**
@@ -76,6 +77,7 @@ export class WalkthroughService {
     private currentDate: CurrentDateService,
     private checklist: ChecklistService,
     private responses: ResponsesService,
+    private holdings: HoldingsService,
   ) {
     // Auto-advance, but ONLY for steps with one obvious completion event, and
     // only while the student is minimized on that step (actively doing it).
@@ -94,7 +96,18 @@ export class WalkthroughService {
     // Gate steps advance when their checklist milestone (buy/sell/statement/
     // withdraw) is reached while the student is minimized on that step.
     this.checklist.completed$.subscribe(() => this.autoAdvanceGate());
+
+    // Track how many DISTINCT investments have been bought, for the "buy three
+    // different types" gate. Fires immediately with the current holdings, so the gate
+    // unlocks right away if the student already bought enough.
+    this.holdings.holdingTransactions$.subscribe(txns => {
+      this.distinctBuys = new Set(txns.filter(t => t.action === 'buy').map(t => t.assetId)).size;
+      this.autoAdvanceDistinctBuys();
+    });
   }
+
+  // Distinct investments bought so far (assetIds with a buy).
+  private distinctBuys = 0;
 
   get index(): number { return this.indexSubject.value; }
   get total(): number { return this.steps.length; }
@@ -180,6 +193,13 @@ export class WalkthroughService {
     }
   }
 
+  private autoAdvanceDistinctBuys(): void {
+    const n = this.current.requireDistinctBuys;
+    if (n && this.activeSubject.value && !this.expandedSubject.value && this.distinctBuys >= n) {
+      this.next();
+    }
+  }
+
   /**
    * Whether the student may advance from the current step. Gated steps
    * (requireAction or gate) return false until their condition is met — but
@@ -196,6 +216,7 @@ export class WalkthroughService {
         q => q.kind !== 'mc' || this.responses.get(q.id)?.choiceIndex !== undefined
       );
     }
+    if (s.requireDistinctBuys) { return this.distinctBuys >= s.requireDistinctBuys; }
     if (s.gate) { return this.checklist.isDone(s.gate); }
     if (!s.requireAction) { return true; }
     switch (s.trigger) {

@@ -48,6 +48,11 @@ export interface WalkthroughStep {
    *  than a one-shot event. Auto-advances when the milestone is reached, and
    *  unlocks immediately if the student already did it before arriving here. */
   gate?: 'buy' | 'sell' | 'statement' | 'withdraw';
+  /** Lock forward progress until the student has bought this many DISTINCT investments
+   *  (used by "Build your portfolio", which asks for three different types). Unlike
+   *  gate:'buy' (one buy), this requires several, and auto-advances only once the count
+   *  is reached. Unlocks immediately if the student already bought that many. */
+  requireDistinctBuys?: number;
   /** Seal off Back at this step: earlier steps referenced a screen that is no
    *  longer visible (the desktop), so hide Back so the student can't rewind
    *  into stale, out-of-context instructions. */
@@ -216,7 +221,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     part: 'Part II · Buy',
     title: 'Build your portfolio',
-    gate: 'buy',
+    requireDistinctBuys: 3,
     noGlossary: true,
     body: [
       'Buy at least three different types. Spreading your money around (diversification) means when one drops, another may rise. Trades are free in this simulation.',
