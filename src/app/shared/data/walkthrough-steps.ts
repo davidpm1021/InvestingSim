@@ -284,7 +284,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     gate: 'statement',
     body: [
       'Your brokerage account only sends facts, like the "statement is ready" alert in the Notifications bell, never advice. The decisions stay yours.',
-      "A holding's gain is not real money until you sell it (it is unrealized). That is why the statement splits Cash Available from Investments.",
+      "Until you sell a holding, its gain is unrealized: not real money yet, just value on paper. Selling is what turns it into cash. That is why the statement splits Cash Available from Investments.",
     ],
     action: "Open the Statements tab, or click the \"statement is ready\" notification, then open your Quarter 1 statement.",
     questions: [
