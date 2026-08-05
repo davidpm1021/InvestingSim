@@ -296,7 +296,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-unrealized',
         kind: 'mc',
-        prompt: 'Your statement shows a holding worth more than you paid. Is that gain money you actually have yet?',
+        prompt: 'Your statement shows a holding worth more than you paid. Is that gain money you can spend yet?',
         choices: [
           { text: 'No. It is an unrealized gain that only becomes real money when you sell.', correct: true },
           { text: 'Yes. It is already sitting in your cash settlement account.' },
