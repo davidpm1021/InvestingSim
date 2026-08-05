@@ -399,7 +399,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-cash-out',
         kind: 'mc',
-        prompt: "The cash in your cash settlement account has piled up. How do you turn that, or a holding's gain, into money in your bank?",
+        prompt: "Any dividends or interest you earned have collected as cash in your cash settlement account. How do you turn that, or a holding's gain, into money in your bank?",
         choices: [
           { text: 'Sell any holdings you want to cash out, then use Withdraw Funds to move the cash from your cash settlement account to your bank.', correct: true },
           { text: 'The brokerage account sends it to your bank automatically at year end.' },
