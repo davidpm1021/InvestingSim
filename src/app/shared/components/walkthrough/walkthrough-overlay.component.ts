@@ -406,8 +406,11 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     this.sub.add(
       combineLatest([this.svc.active$, this.svc.index$, this.svc.expanded$])
         .subscribe(() => {
+          // Define each distinct glossary term only once per step (first occurrence);
+          // repeats render as plain text so the same word isn't underlined twice.
+          const seen = new Set<string>();
           this.bodySegments = (this.svc.current?.body || []).map(
-            p => this.svc.current?.noGlossary ? [{ t: p, def: null }] : this.defineSegments(p)
+            p => this.svc.current?.noGlossary ? [{ t: p, def: null }] : this.defineSegments(p, seen)
           );
           // The coach bar is a fixed bottom overlay; flag it so the page can pad
           // its scroll area and content never hides behind the bar.
@@ -417,15 +420,23 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     );
   }
 
-  /** Split a paragraph into plain text and glossary-term segments (term carries its definition). */
-  private defineSegments(text: string): Segment[] {
+  /** Split a paragraph into plain text and glossary-term segments (term carries its
+   *  definition). `seen` holds the definitions already surfaced earlier in this step, so a
+   *  term (or a synonym sharing its definition) is only linked on its first appearance. */
+  private defineSegments(text: string, seen: Set<string>): Segment[] {
     const out: Segment[] = [];
     let last = 0;
     this.termRe.lastIndex = 0;
     let m: RegExpExecArray | null;
     while ((m = this.termRe.exec(text)) !== null) {
       if (m.index > last) { out.push({ t: text.slice(last, m.index), def: null }); }
-      out.push({ t: m[0], def: this.defFor(m[0]) });
+      const def = this.defFor(m[0]);
+      if (def && !seen.has(def)) {
+        seen.add(def);
+        out.push({ t: m[0], def });
+      } else {
+        out.push({ t: m[0], def: null });
+      }
       last = m.index + m[0].length;
     }
     if (last < text.length) { out.push({ t: text.slice(last), def: null }); }
