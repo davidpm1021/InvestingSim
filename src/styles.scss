@@ -368,6 +368,15 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   // Optgroup headers (Stocks / Funds / Bonds) default to dark grey (#44474e).
   .mat-mdc-optgroup-label,
   .mat-mdc-optgroup-label .mdc-list-item__primary-text { color: #aab4d0 !important; }
+  // Disabled options (e.g. "No holdings to sell") default to faded dark grey (Material
+  // applies a disabled colour AND 0.38 opacity). Show a readable muted light grey.
+  .mat-mdc-option.mdc-list-item--disabled,
+  .mat-mdc-option.mdc-list-item--disabled .mdc-list-item__primary-text,
+  .mat-mdc-menu-item.mdc-list-item--disabled,
+  .mat-mdc-menu-item.mdc-list-item--disabled .mdc-list-item__primary-text {
+    color: #aab4d0 !important;
+    opacity: 1 !important;
+  }
 }
 // Select trigger value/arrow on the dark form fields.
 .mat-mdc-select-value-text, .mat-mdc-select-placeholder { color: #fff; }
