@@ -287,7 +287,7 @@
               <h2 mat-card-title>Performance</h2>
             </mat-card-header>
             <mat-card-content>
-              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to focus on it.</p>
+              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to hide or show its line.</p>
               <app-line-chart [labels]="compareLabels" [series]="compareSeries"
                               [showLegend]="true" yLabel="% change since start" valueFormat="percent"
                               [height]="320" ariaLabel="Line chart comparing each investment's percent change since the start"></app-line-chart>
