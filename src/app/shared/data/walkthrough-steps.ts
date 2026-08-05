@@ -373,9 +373,8 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part V · Reflect',
     title: 'Take a moment',
     body: [
-      'You funded a brokerage account, invested, rode the ups and downs, and read your statements. Before you finish, take a moment to reflect.',
+      'You funded a brokerage account, invested, rode the ups and downs, and read your statements. Before you finish, take a moment to reflect. Click Next to jot down a thought.',
     ],
-    action: 'Click Next to jot down a thought.',
     questions: [
       {
         id: 'cfu-reflect',
