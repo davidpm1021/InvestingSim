@@ -1013,7 +1013,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   openAssetDetailsDialog(asset: any): void {
     const dialogData: AssetDetailsDialogData = {
       asset: asset,
-      currentDate: this.currentDate
+      currentDate: this.currentDate,
+      // Offer "Sell this" only when the student actually holds this investment.
+      held: this.holdings.some(h => h.assetId === asset.id)
     };
 
     const ref = this.dialog.open(AssetDetailsDialogComponent, {
@@ -1022,10 +1024,13 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       data: dialogData
     });
 
-    // "Buy this" in the details dialog opens the trade dialog preset to this asset.
+    // "Buy this" / "Sell this" in the details dialog open the trade dialog preset to
+    // this asset in the matching mode.
     ref.afterClosed().subscribe((result: any) => {
       if (result?.buy && result.assetId) {
         this.openTradeDialog('buy', result.assetId);
+      } else if (result?.sell && result.assetId) {
+        this.openTradeDialog('sell', result.assetId);
       }
     });
   }

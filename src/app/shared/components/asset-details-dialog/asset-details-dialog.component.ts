@@ -15,6 +15,8 @@ import { DefineComponent } from '../define/define.component';
 export interface AssetDetailsDialogData {
   asset: any;
   currentDate: string;
+  /** True when the student holds this asset, so a "Sell this" action is offered. */
+  held?: boolean;
 }
 
 @Component({
@@ -75,6 +77,10 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
   /** Close and signal the caller to open the trade dialog preset to this asset. */
   buy(): void {
     this.dialogRef.close({ buy: true, assetId: this.asset?.id });
+  }
+
+  sell(): void {
+    this.dialogRef.close({ sell: true, assetId: this.asset?.id });
   }
 
   close(): void {

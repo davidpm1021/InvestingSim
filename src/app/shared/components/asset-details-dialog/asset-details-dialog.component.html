@@ -48,6 +48,7 @@
 
   <mat-dialog-actions align="end">
     <button mat-button (click)="close()">Close</button>
+    <button *ngIf="data.held" mat-stroked-button color="primary" (click)="sell()">Sell this</button>
     <button mat-raised-button color="primary" (click)="buy()">Buy this</button>
   </mat-dialog-actions>
 </div>
