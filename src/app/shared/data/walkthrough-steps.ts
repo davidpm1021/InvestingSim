@@ -252,7 +252,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: [
       'Your savings earns interest each month. Your investments can pay dividends or bond income each quarter, added as cash to your cash settlement account, not as trades. A dividend can even arrive while a price falls.',
     ],
-    action: 'On the Summit Invest Overview, find your dividend or bond income in Recent Transactions, just below Recent Trade Activity.',
+    action: 'On the Summit Invest Overview, scroll down to Recent Transactions. Find your dividend or bond income.',
     questions: [
       {
         id: 'cfu-income-lands',
