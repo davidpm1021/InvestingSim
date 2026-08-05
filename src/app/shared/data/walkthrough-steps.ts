@@ -142,6 +142,12 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: ['Your quarterly statements show up here, once each quarter ends.'],
   },
   {
+    part: 'Tour',
+    title: 'Your checklist',
+    target: '.nb-panel',
+    body: ['This notebook tracks your progress through the seven steps and crosses each one off as you go. Need more room? Minimize it with the button in its top corner, then reopen it whenever you like.'],
+  },
+  {
     part: 'Part I · Look around',
     title: 'Two accounts, two jobs',
     body: [

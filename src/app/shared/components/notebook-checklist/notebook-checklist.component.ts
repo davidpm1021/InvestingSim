@@ -203,7 +203,10 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
     // Step aside while the walkthrough is showing a pop-up or spotlight callout;
     // it reappears once the guide is minimized to the coach bar or finished.
     const guideOpen = this.walkthrough.active && this.walkthrough.expanded;
-    return onSim && browserLayout && !guideOpen;
+    // ...unless the guide is spotlighting the checklist itself (its own tour step),
+    // where it must stay on screen to be highlighted.
+    const spotlightingSelf = this.walkthrough.active && this.walkthrough.current?.target === '.nb-panel';
+    return onSim && browserLayout && (!guideOpen || spotlightingSelf);
   }
 
   /** Panel shows only when the student wants it AND there is room for it. */
