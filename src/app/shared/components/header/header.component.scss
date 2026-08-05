@@ -58,6 +58,17 @@
   &:hover { filter: brightness(1.08); }
 }
 
+// Disabled "Jump to Quarter" (e.g. gated during the guided walkthrough): grey it out so
+// it clearly reads as not-yet-available rather than broken. The unconditional blue rule
+// above would otherwise keep it looking clickable.
+.jump-quarter-button.mat-mdc-raised-button.mat-mdc-button-disabled {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.42) !important;
+  cursor: not-allowed;
+  &:hover { filter: none; }
+  .mat-icon { color: rgba(255, 255, 255, 0.42) !important; }
+}
+
 .reset-button.mat-mdc-raised-button {
   background: rgba(255, 255, 255, 0.12) !important;
   color: #fff !important;
