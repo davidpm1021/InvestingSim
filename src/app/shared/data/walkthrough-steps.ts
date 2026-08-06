@@ -421,20 +421,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'At the top, click Jump to Year-End Review, then confirm.',
   },
   {
-    part: 'Part V · Reflect',
-    title: 'Take a moment',
-    body: [
-      'You funded a brokerage account, invested, rode the ups and downs, and read your statements. Before you finish, take a moment to reflect. Click Next to jot down a thought.',
-    ],
-    questions: [
-      {
-        id: 'cfu-reflect',
-        kind: 'free',
-        prompt: 'Looking back over the year, what surprised you about how your investments behaved? Or: what is one thing you would want to know before opening a real brokerage account?',
-      },
-    ],
-  },
-  {
     part: 'You did it',
     title: 'One year as an investor',
     body: [
