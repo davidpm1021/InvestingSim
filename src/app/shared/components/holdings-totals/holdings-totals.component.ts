@@ -8,7 +8,7 @@ import { DataService } from '../../services/data.service';
 import { CurrentDateService } from '../../services/current-date.service';
 import { SIM_YEAR_START } from '../../data/quarters.data';
 
-type PerfRange = '1M' | '3M' | 'YTD' | 'All';
+type PerfRange = '1M' | '3M' | 'YTD';
 
 @Component({
   selector: 'app-holdings-totals',
@@ -25,11 +25,14 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
   range: PerfRange = 'YTD';
   performance = { percentage: 0, amount: 0 };
 
+  // No "All" range: the simulation only ever covers one year, so YTD already spans
+  // everything the student could have owned. "All" measured from the start of the
+  // price data (a year before the sim begins), reporting a change from before they
+  // held anything, which read as a contradiction next to YTD.
   readonly ranges: Array<{ key: PerfRange; label: string }> = [
     { key: '1M', label: '1M' },
     { key: '3M', label: '3M' },
-    { key: 'YTD', label: 'YTD' },
-    { key: 'All', label: 'All' }
+    { key: 'YTD', label: 'YTD' }
   ];
 
   private readonly YEAR_START = SIM_YEAR_START;
@@ -70,8 +73,7 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
     switch (this.range) {
       case '1M': return 'Past Month';
       case '3M': return 'Past 3 Months';
-      case 'YTD': return 'Year to Date';
-      default: return 'All Time';
+      default: return 'Year to Date';
     }
   }
 
@@ -115,7 +117,6 @@ export class HoldingsTotalsComponent implements OnInit, OnDestroy {
 
   private windowStart(): string {
     if (this.range === 'YTD') return this.YEAR_START;
-    if (this.range === 'All') return '2024-01-01';
     const months = this.range === '1M' ? 1 : 3;
     const d = new Date(this.currentDate + 'T00:00:00');
     const dayOfMonth = d.getDate();

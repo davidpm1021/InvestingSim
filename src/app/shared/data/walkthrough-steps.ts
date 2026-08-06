@@ -279,7 +279,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         id: 'cfu-quarter-change',
         kind: 'mc',
         dynamic: 'account-change',
-        prompt: 'These three numbers are all on your Portfolio Summary right now. Which one is how much your account value has changed?',
+        prompt: 'Look at the Portfolio Summary card, the one listing Account value, You\'ve added, and Up / down. Which of these numbers is how much your account value has changed?',
         explanation: 'The "Up / down" row is the change: what your account is worth now, minus the money you added. The other two are the account total and your contributions, and neither one on its own tells you whether you gained or lost.',
       },
     ],
