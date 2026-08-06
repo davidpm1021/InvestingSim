@@ -234,7 +234,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireDistinctBuys: 3,
     noGlossary: true,
     body: [
-      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment can make or break your results. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together.',
+      'Buy three different investments. Spreading your money out is called diversification, and it means no single investment can make or break your results. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together.',
     ],
     action: 'Click Buy and purchase three different investments.',
     note: 'Trades are free in this simulation.',
@@ -248,7 +248,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'The brokerage account hides your gain until the quarter ends.' },
           { text: 'Buying always starts you at a small loss from fees.' },
         ],
-        explanation: 'A gain or loss only appears once the price moves away from what you paid, which happens as time passes, not the instant you buy. (Trades here are free.)',
+        explanation: 'A gain or loss only appears once the price moves away from what you paid, which happens as time passes, not the instant you buy.',
       },
     ],
   },
