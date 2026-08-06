@@ -37,7 +37,6 @@ import { WalkthroughService } from '../../services/walkthrough.service';
           <span class="nb-badge" aria-hidden="true"><mat-icon fontIcon="la-clipboard-check"></mat-icon></span>
           <div class="nb-titles">
             <span class="nb-title" role="heading" aria-level="2">My Checklist</span>
-            <span class="nb-sub">Your first {{ total }} steps</span>
           </div>
           <button type="button" class="nb-collapse" (click)="toggle()"
                   [attr.aria-expanded]="true" aria-label="Collapse the checklist">
