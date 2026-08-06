@@ -383,19 +383,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'Your dividends and interest pile up in your cash settlement account. To bank it, sell what you want, then use Withdraw Funds.',
     ],
     action: 'Use Withdraw Funds to move some cash from your cash settlement account back to your bank.',
-    questions: [
-      {
-        id: 'cfu-cash-out',
-        kind: 'mc',
-        prompt: "Any dividends or interest you earned have collected as cash in your cash settlement account. How do you turn that, or a holding's gain, into money in your bank?",
-        choices: [
-          { text: 'Sell any holdings you want to cash out, then use Withdraw Funds to move the cash from your cash settlement account to your bank.', correct: true },
-          { text: 'The brokerage account sends it to your bank automatically at year end.' },
-          { text: 'Gains cannot be moved to a bank; they stay in the brokerage account.' },
-        ],
-        explanation: "A holding's gain is not spendable until you sell. After selling, Withdraw Funds moves the cash from your cash settlement account back to Evergreen Bank.",
-      },
-    ],
   },
   {
     part: 'Part V · Wrap up',
