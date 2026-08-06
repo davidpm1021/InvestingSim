@@ -290,7 +290,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: [
       'Your savings earns interest each month. Your investments can pay dividends or bond income each quarter, added as cash to your cash settlement account, not as trades. A dividend can even arrive while a price falls.',
     ],
-    action: 'Open the Activity tab and scroll to Income Received. Find your dividend or bond income, and see that it was paid into your cash settlement account.',
+    action: 'Open the Activity tab and scroll to Income Received. Find your dividend or bond income, and look at where it landed.',
     questions: [
       {
         id: 'cfu-income-lands',
