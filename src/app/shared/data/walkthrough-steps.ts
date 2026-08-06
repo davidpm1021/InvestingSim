@@ -374,19 +374,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       "Now play out the rest of the year. Watch each holding's Gain/Loss and the Performance chart, and trade as you see fit: buy a dip, add to a winner, or trim a position.",
     ],
     action: 'Repeat through Quarter 4: trade if you want, jump a quarter, then open the new statement.',
-    questions: [
-      {
-        id: 'cfu-allocation',
-        kind: 'mc',
-        prompt: 'Why does it matter how your money is split across stocks, bonds, and cash (your allocation)?',
-        choices: [
-          { text: 'Different types move differently, so one falling may be offset by another rising.', correct: true },
-          { text: 'A brokerage account charges you less when you hold more types.' },
-          { text: 'Allocation only matters for taxes, not for risk.' },
-        ],
-        explanation: 'Stocks tend to swing more than bonds, and cash barely moves. Your mix drives both how bumpy the ride is and how much room you have to grow. That is diversification.',
-      },
-    ],
   },
   {
     part: 'Part IV · Cash out',
