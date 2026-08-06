@@ -695,8 +695,12 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       } as StatementDialogData
     });
 
-    // Opening a statement counts as reading it (no other data trace exists).
-    this.checklistService.complete('statement');
+    // Opening a statement counts as reading it (no other data trace exists), but the
+    // milestone waits for the close: completing it advances the guide, and doing that
+    // while the dialog is open leaves the walkthrough's focus-trapping card behind it
+    // (the CDK overlay sits at z-index 3100, above the walkthrough's 3000), stealing
+    // focus out of the statement the student is still reading.
+    dialogRef.afterClosed().subscribe(() => this.checklistService.complete('statement'));
   }
 
   onSubmitTrade(tradeData: TradeData): void {
