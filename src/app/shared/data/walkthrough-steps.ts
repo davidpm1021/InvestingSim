@@ -27,8 +27,10 @@ export interface WalkthroughStep {
   title: string;
   /** Short paragraphs: the point + the "why" (the learning moment). */
   body: string[];
-  /** The concrete thing to do in the app, highlighted as a call to action. */
-  action?: string;
+  /** The concrete thing to do in the app, highlighted as a call to action. Pass an
+   *  array for a multi-step task and it renders as a numbered list; the coach bar
+   *  joins them back into one line so the docked bar stays compact. */
+  action?: string | string[];
   /** An aside about how the simulation works, shown small and muted at the foot of
    *  the step. For housekeeping facts that would interrupt the teaching copy. */
   note?: string;
@@ -357,7 +359,12 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: [
       'Selling for a profit can mean paying capital gains tax. A sale is tagged short-term (ST) if you held the investment for a year or less, or long-term (LT) if you held it longer. This simulation covers a single year, so every sale here is short-term. In real life, long-term gains are usually taxed at a lower rate, which is one reason people hold on longer.',
     ],
-    action: 'On the Overview tab, click Sell in the Portfolio Summary card. Pick one of your holdings from the Investment list, choose Shares, and enter fewer shares than you own so you keep part of it. Confirm the sale, then open the Activity tab to find it.',
+    action: [
+      'On the Overview tab, click Sell in the Portfolio Summary card.',
+      'Pick one of your holdings from the Investment list.',
+      'Choose Shares, then enter fewer shares than you own so you keep part of it.',
+      'Confirm the sale, then open the Activity tab to find it.',
+    ],
   },
   {
     part: 'Part IV · Review',

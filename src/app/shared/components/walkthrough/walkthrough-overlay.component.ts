@@ -128,7 +128,10 @@ interface Segment { t: string; def: string | null; }
             <p class="wt-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
             <div class="wt-action" *ngIf="svc.current.action">
               <mat-icon fontIcon="la-hand-pointer"></mat-icon>
-              <span>{{ svc.current.action }}</span>
+              <ol class="wt-action-list" *ngIf="actionSteps; else singleAction">
+                <li *ngFor="let s of actionSteps">{{ s }}</li>
+              </ol>
+              <ng-template #singleAction><span>{{ actionText }}</span></ng-template>
             </div>
             <p class="wt-note" *ngIf="svc.current.note">{{ svc.current.note }}</p>
             <div class="wt-progress-wrap"
@@ -151,7 +154,7 @@ interface Segment { t: string; def: string | null; }
         <!-- Real button so the step is re-openable by keyboard, not just mouse. -->
         <button type="button" class="wt-coach-text" (click)="svc.expand()" aria-label="Open the current step">
           <span class="wt-chip sm">{{ svc.current.part }}</span>
-          <span class="wt-coach-action">{{ svc.current.action || svc.current.title }}</span>
+          <span class="wt-coach-action">{{ actionText || svc.current.title }}</span>
         </button>
         <div class="wt-coach-actions">
           <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev(); $event.stopPropagation()">Back</button>
@@ -206,6 +209,10 @@ interface Segment { t: string; def: string | null; }
       border-radius: 9px; font-size: 0.92rem; font-weight: 600; color: #12513a;
     }
     .wt-action mat-icon { color: #0a9d67; flex-shrink: 0; }
+    /* Multi-step tasks: numbered so each instruction is its own line to follow. */
+    .wt-action-list { margin: 0; padding-left: 20px; }
+    .wt-action-list li { margin-bottom: 6px; }
+    .wt-action-list li:last-child { margin-bottom: 0; }
 
     /* Housekeeping aside about the simulation: present, but out of the way of the
        teaching copy. */
@@ -568,6 +575,18 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
    */
   get hasAction(): boolean {
     return !!this.svc.current.action;
+  }
+
+  /** The action's steps when it was authored as a list, else null. */
+  get actionSteps(): string[] | null {
+    const a = this.svc.current?.action;
+    return Array.isArray(a) ? a : null;
+  }
+
+  /** The action as one line, for the docked coach bar (and single-string steps). */
+  get actionText(): string {
+    const a = this.svc.current?.action;
+    return Array.isArray(a) ? a.join(' ') : (a || '');
   }
 
   get primaryLabel(): string {
