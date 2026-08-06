@@ -90,7 +90,14 @@ export class WalkthroughService {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
       const url = (e as NavigationEnd).urlAfterRedirects;
       if (url.startsWith('/investing') || url.startsWith('/banking')) {
-        this.autoAdvance('browser-open');
+        // Wait for the window to finish opening before the tour takes over: advancing
+        // on NavigationEnd dimmed the page mid-animation, and the first spotlight
+        // measured its target while the window was still scaling into place.
+        clearTimeout(this.browserOpenTimer);
+        this.browserOpenTimer = setTimeout(
+          () => this.autoAdvance('browser-open'),
+          this.BROWSER_OPEN_SETTLE_MS,
+        );
       }
     });
     this.onboarding.bankLinked$.pipe(skip(1), distinctUntilChanged(), filter(v => v))
@@ -114,6 +121,15 @@ export class WalkthroughService {
 
   // Distinct investments bought so far (assetIds with a buy).
   private distinctBuys = 0;
+
+  /**
+   * How long to let the faux browser window settle before the guide auto-advances
+   * off the "open your brokerage account" step. The window plays a 0.4s
+   * `browser-window-open` animation (main-layout.component.scss), and this leaves a
+   * beat after it so the student sees the opened window before the tour dims it.
+   */
+  private readonly BROWSER_OPEN_SETTLE_MS = 1200;
+  private browserOpenTimer?: ReturnType<typeof setTimeout>;
 
   get index(): number { return this.indexSubject.value; }
   get total(): number { return this.steps.length; }
