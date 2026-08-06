@@ -165,7 +165,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'To earn a higher interest rate than the bank pays.' },
           { text: 'To keep your money safer than in a bank.' },
         ],
-        explanation: 'Here, your cash settlement account earns less than savings, so moving money over is about investing (which can grow faster than cash, though it can also fall), not interest. In real life that is not a rule, though: some cash settlement accounts pay more than a basic savings account and some pay less, so it is worth checking the actual rates.',
+        explanation: 'Here, your cash settlement account earns less than savings, so moving money over is about investing, not interest. Investing can grow faster than cash over time, though it can also lose value. In real life this is not a rule: some cash settlement accounts pay more than a basic savings account and some pay less, so it is worth checking the actual rates.',
       },
     ],
   },
