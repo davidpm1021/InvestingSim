@@ -355,7 +355,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'Selling, and the tax twist',
     gate: 'sell',
     body: [
-      'Selling for a profit can mean paying capital gains tax. A sale is tagged short-term (ST) if you held the investment for a year or less, or long-term (LT) if you held it longer. This simulation covers a single year, so nearly every sale here is short-term. In real life, long-term gains are usually taxed at a lower rate, which is one reason people hold on longer.',
+      'Selling for a profit can mean paying capital gains tax. A sale is tagged short-term (ST) if you held the investment for a year or less, or long-term (LT) if you held it longer. This simulation covers a single year, so every sale here is short-term. In real life, long-term gains are usually taxed at a lower rate, which is one reason people hold on longer.',
     ],
     action: 'On the Overview tab, click Sell in the Portfolio Summary card. Pick one of your holdings from the Investment list, choose Shares, and enter fewer shares than you own so you keep part of it. Confirm the sale, then open the Activity tab to find it.',
   },
