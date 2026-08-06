@@ -39,7 +39,14 @@
     </div>
   </div>
 
+  <p class="capstone-copy-status" role="status" aria-live="polite" *ngIf="copyStatus">{{ copyStatus }}</p>
+
   <div class="capstone-actions">
+    <button mat-stroked-button type="button" class="capstone-copy-btn"
+            [disabled]="copyBusy" (click)="copyImage()">
+      <mat-icon fontIcon="la-image"></mat-icon>
+      {{ copyBusy ? 'Working...' : 'Copy image' }}
+    </button>
     <button mat-raised-button color="primary" (click)="close()">Done</button>
   </div>
 </div>

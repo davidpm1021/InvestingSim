@@ -70,5 +70,21 @@
 
 .capstone-actions {
   margin-top: 20px;
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.capstone-copy-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.capstone-copy-status {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: #0f7a4f;
 }
