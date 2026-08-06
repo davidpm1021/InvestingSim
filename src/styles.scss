@@ -111,9 +111,10 @@ h4, h5, h6 {
 // While the walkthrough coach bar is docked at the bottom (a fixed overlay),
 // reserve space at the bottom of the scroll area so page content (e.g. the
 // statement cards) can scroll clear of the bar instead of hiding behind it.
+// Sized for a bar whose instruction wraps onto a second or third line.
 body.wt-coach-open .browser-content,
 body.wt-coach-open .main-content {
-  padding-bottom: 110px;
+  padding-bottom: 150px;
 }
 
 // The notebook checklist is a fixed overlay in the left gutter. When its panel is

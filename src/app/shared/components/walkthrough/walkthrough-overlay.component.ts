@@ -190,7 +190,7 @@ interface Segment { t: string; def: string | null; }
       background: #36ebff; color: #06122a; font-size: 0.72rem; font-weight: 800;
       letter-spacing: 0.5px; text-transform: uppercase; padding: 5px 11px; border-radius: 6px; white-space: nowrap;
     }
-    .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; }
+    .wt-chip.sm { font-size: 0.66rem; padding: 3px 8px; flex-shrink: 0; white-space: nowrap; }
 
     .wt-title { margin: 0 0 12px; font-size: 1.5rem; font-weight: 700; color: #0d1157; }
     .wt-body { margin: 0 0 12px; font-size: 0.98rem; line-height: 1.55; color: #41496b; }
@@ -282,8 +282,8 @@ interface Segment { t: string; def: string | null; }
     .wt-coach {
       position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
       z-index: 2500; display: flex; align-items: center; gap: 14px;
-      width: min(720px, calc(100vw - 32px));
-      padding: 10px 12px 10px 18px; background: #ffffff; color: #2a3554; border: 1px solid #e1e7f4;
+      width: min(900px, calc(100vw - 32px));
+      padding: 12px 14px 12px 22px; background: #ffffff; color: #2a3554; border: 1px solid #e1e7f4;
       border-radius: 999px; box-shadow: 0 20px 50px rgba(6, 11, 36, 0.32);
       font-family: 'Montserrat', sans-serif; animation: wt-rise 0.2s ease; cursor: pointer;
     }
@@ -294,10 +294,12 @@ interface Segment { t: string; def: string | null; }
       font: inherit; color: inherit; text-align: left; border-radius: 8px;
     }
     .wt-coach-text:focus-visible { outline: 2px solid #275ce4; outline-offset: 2px; }
-    .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2a3554; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* Wraps rather than truncating: the step's instruction is the whole point of
+       the coach bar, so it must be readable in full while the guide is minimized. */
+    .wt-coach-action { font-size: 0.9rem; font-weight: 600; color: #2a3554; line-height: 1.4; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
     .wt-coach-actions .mat-mdc-raised-button { border-radius: 999px; }
-    @media (max-width: 600px) { .wt-coach-action { display: none; } }
+    @media (max-width: 600px) { .wt-coach-action { font-size: 0.82rem; } }
   `]
 })
 export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
