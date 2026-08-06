@@ -300,86 +300,83 @@ $dk-divider: rgba(255, 255, 255, 0.5);
 }
 
 // ============================================================
-//  DARK THEME — dialogs & overlays (design update)
-//  Dialogs live in the CDK overlay, outside .browser-content, so
-//  they are themed here to match the dark sim.
+//  LIGHT THEME — dialogs & overlays
+//  Dialogs live in the CDK overlay, outside .browser-content, so they are themed
+//  here. They read as light cards floating over the dark sim, matching the
+//  walkthrough pop-ups and the notebook checklist.
 // ============================================================
 .mat-mdc-dialog-container {
-  color: #fff;
+  color: #0b1541;
 
   .mat-mdc-dialog-surface,
-  .mdc-dialog__surface { background: #1b3167; color: #fff; }
+  .mdc-dialog__surface { background: #ffffff; color: #0b1541; }
 
   h1, h2, h3, h4, h5, h6,
   .mat-mdc-dialog-title,
-  [mat-dialog-title] { color: #fff !important; }
+  [mat-dialog-title] { color: #0d1157 !important; }
 
-  .mat-mdc-dialog-content { color: #e0e6f2; }
-  // Component stylesheets scope their own dark text on labels/values; force the
-  // common ones light so nothing stays dark-on-dark.
+  .mat-mdc-dialog-content { color: #41496b; }
+  // Component stylesheets scope their own colors on labels/values; force the
+  // common ones dark so nothing stays light-on-light.
   .mat-mdc-dialog-content,
   .mat-mdc-dialog-content span,
   .mat-mdc-dialog-content label,
   .mat-mdc-dialog-content li,
-  .mat-mdc-dialog-content strong { color: #e0e6f2; }
-  .mat-mdc-dialog-content a { color: #36ebff; }
-  p, span, label, li, small, strong, div { border-color: rgba(255, 255, 255, 0.5); }
-  a { color: #36ebff; }
+  .mat-mdc-dialog-content strong { color: #41496b; }
+  .mat-mdc-dialog-content a { color: #275ce4; }
+  p, span, label, li, small, strong, div { border-color: rgba(11, 21, 65, 0.16); }
+  a { color: #275ce4; }
 
-  // Tables (statement dialog) on dark.
-  table th, th { color: #aab4d0; border-color: rgba(255, 255, 255, 0.4); }
-  table td, td { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
-  .pos { color: #01e294; }
-  .neg { color: #ff8087; }
+  // Tables (statement dialog) on light.
+  table th, th { color: #5a6480; border-color: rgba(11, 21, 65, 0.14); }
+  table td, td { color: #0b1541; border-color: rgba(11, 21, 65, 0.14); }
+  // Gains / losses: darkened from the sim's neon pair so they pass AA on white.
+  .pos { color: #0f7a4f; }
+  .neg { color: #c0322b; }
 
-  // Inner "boxes" / sections that were pale.
-  .summary-box, .how-to-read-body, .statement-meta,
-  .account-value-summary, .meta-value, .meta-label { background: transparent; }
-
-  // Form fields -> dark inputs.
-  .mdc-text-field--filled:not(.mdc-text-field--disabled) { background: rgba(255, 255, 255, 0.06); }
-  .mdc-text-field--outlined .mdc-notched-outline > * { border-color: rgba(255, 255, 255, 0.3); }
+  // Form fields -> light inputs.
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) { background: #f2f5fc; }
+  .mdc-text-field--outlined .mdc-notched-outline > * { border-color: rgba(11, 21, 65, 0.24); }
   input.mat-mdc-input-element,
   textarea.mat-mdc-input-element,
   .mat-mdc-select-value-text,
-  .mat-mdc-select-value { color: #fff !important; }
-  // Material's default placeholder is #44474e (dark grey) — invisible on the navy
-  // field. Force the muted light grey and full opacity (AA on the field bg).
+  .mat-mdc-select-value { color: #0b1541 !important; }
   .mat-mdc-input-element::placeholder,
   input.mat-mdc-input-element::placeholder,
-  textarea.mat-mdc-input-element::placeholder { color: #9aa6c4 !important; opacity: 1; }
+  textarea.mat-mdc-input-element::placeholder { color: #6b7590 !important; opacity: 1; }
   .mdc-floating-label,
   .mat-mdc-form-field-label,
   mat-label,
-  .mat-mdc-form-field-hint { color: #cfd9e0 !important; }
-  .mat-mdc-select-arrow { color: #cfd9e0; }
-  .mdc-line-ripple::before { border-bottom-color: rgba(255, 255, 255, 0.3); }
+  .mat-mdc-form-field-hint { color: #5a6480 !important; }
+  .mat-mdc-select-arrow { color: #5a6480; }
+  .mdc-line-ripple::before { border-bottom-color: rgba(11, 21, 65, 0.24); }
 }
 
-// Select dropdown panels + menus on dark.
+// Select dropdown panels + menus on light. The notification menu keeps its own
+// styling; the header sits on navy and is themed separately.
 .mat-mdc-select-panel,
 .mat-mdc-menu-panel:not(.notif-menu) {
-  background: #233563 !important;
-  .mat-mdc-option, .mat-mdc-menu-item { color: #fff; }
+  background: #ffffff !important;
+  .mat-mdc-option, .mat-mdc-menu-item { color: #0b1541; }
   .mat-mdc-option .mdc-list-item__primary-text,
-  .mat-mdc-menu-item .mdc-list-item__primary-text { color: #fff !important; }
-  .mat-mdc-option:hover, .mat-mdc-menu-item:hover { background: rgba(255, 255, 255, 0.08); }
-  // Optgroup headers (Stocks / Funds / Bonds) default to dark grey (#44474e).
+  .mat-mdc-menu-item .mdc-list-item__primary-text { color: #0b1541 !important; }
+  .mat-mdc-option:hover, .mat-mdc-menu-item:hover { background: rgba(11, 21, 65, 0.06); }
+  // Optgroup headers (Stocks / Funds / Bonds).
   .mat-mdc-optgroup-label,
-  .mat-mdc-optgroup-label .mdc-list-item__primary-text { color: #aab4d0 !important; }
-  // Disabled options (e.g. "No holdings to sell") default to faded dark grey (Material
-  // applies a disabled colour AND 0.38 opacity). Show a readable muted light grey.
+  .mat-mdc-optgroup-label .mdc-list-item__primary-text { color: #5a6480 !important; }
+  // Disabled options (e.g. "No holdings to sell"): Material applies a disabled
+  // colour AND 0.38 opacity, which is unreadable. Show a readable muted grey.
   .mat-mdc-option.mdc-list-item--disabled,
   .mat-mdc-option.mdc-list-item--disabled .mdc-list-item__primary-text,
   .mat-mdc-menu-item.mdc-list-item--disabled,
   .mat-mdc-menu-item.mdc-list-item--disabled .mdc-list-item__primary-text {
-    color: #aab4d0 !important;
+    color: #6b7590 !important;
     opacity: 1 !important;
   }
 }
-// Select trigger value/arrow on the dark form fields.
-.mat-mdc-select-value-text, .mat-mdc-select-placeholder { color: #fff; }
-.mat-mdc-select-arrow { color: #cfd9e0; }
+// Select trigger value/arrow on the light form fields.
+.mat-mdc-select-value-text, .mat-mdc-select-placeholder { color: #0b1541; }
+.mat-mdc-select-arrow { color: #5a6480; }
 
 // ============================================================
 //  DARK THEME — contrast fixes (leftover light-theme colors that
@@ -419,13 +416,13 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .transaction-list th, .transaction-list label { color: #aab4d0 !important; }
 }
 
-// Statement dialog: leftover True Blue titles/labels -> light.
+// Statement dialog labels on the light surface.
 .mat-mdc-dialog-container {
   .statement-title, .statement-period, .meta-label, .meta-value,
-  .how-to-read-body strong, .breakdown-label { color: #e0e6f2 !important; }
-  .statement-title { color: #fff !important; }
-  .pos { color: #01e294 !important; }
-  .neg { color: #ff8087 !important; }
+  .how-to-read-body strong, .breakdown-label { color: #41496b !important; }
+  .statement-title { color: #0d1157 !important; }
+  .pos { color: #0f7a4f !important; }
+  .neg { color: #c0322b !important; }
 }
 
 // ---- Remaining dark contrast fixes (verified with axe) ----
@@ -437,24 +434,25 @@ $dk-divider: rgba(255, 255, 255, 0.5);
 }
 // Glossary terms sit on dark surfaces everywhere now: keep a cyan underline and
 // let the text inherit its (light) surrounding color.
-.browser-content .defined-term,
-.mat-mdc-dialog-container .defined-term { border-bottom-color: #36ebff; }
+.browser-content .defined-term { border-bottom-color: #36ebff; }
+// Dialogs are light surfaces, so the cyan underline would wash out there.
+.mat-mdc-dialog-container .defined-term { border-bottom-color: #275ce4; }
 
 // Transfer / account dialogs.
 .mat-mdc-dialog-container {
   .balance-label, .transfer-description, .transfer-timing-note,
-  .transfer-timing-note span, .account-label { color: #cfd9e0 !important; }
-  .balance-amount, .account-value { color: #36ebff !important; }
-  // Text buttons (Cancel) -> cyan; raised primary keeps its white-on-blue.
-  .mat-mdc-button:not(.mat-mdc-raised-button):not(.mat-mdc-unelevated-button) .mdc-button__label { color: #36ebff !important; }
+  .transfer-timing-note span, .account-label { color: #5a6480 !important; }
+  .balance-amount, .account-value { color: #275ce4 !important; }
+  // Text buttons (Cancel) -> blue; raised primary keeps its white-on-blue.
+  .mat-mdc-button:not(.mat-mdc-raised-button):not(.mat-mdc-unelevated-button) .mdc-button__label { color: #275ce4 !important; }
 }
 
-// ---- Dialog light boxes -> dark (so the light text on them is AA) ----
+// ---- Inner panels inside dialogs: a tinted card on the white surface ----
 .mat-mdc-dialog-container {
   .source-account, .destination-account, .account-balance,
   .transfer-summary, .transfer-info, .info-box, .summary-box,
-  .statement-meta, .how-to-read-body { background: rgba(255, 255, 255, 0.06) !important; }
-  .no-statements p { color: #cfd9e0 !important; }
+  .statement-meta, .how-to-read-body { background: #f2f5fc !important; }
+  .no-statements p { color: #5a6480 !important; }
 }
 .browser-content .no-statements p { color: #cfd9e0 !important; }
 
@@ -552,14 +550,17 @@ $dk-divider: rgba(255, 255, 255, 0.5);
   .chart-toggle:hover { background: rgba(255, 255, 255, 0.16) !important; }
 }
 
-// Button toggles inside dialogs (e.g. the trade dialog Buy/Sell): same dark
-// treatment as in the sim body, so the selected option isn't light-on-light.
+// Button toggles inside dialogs (e.g. the trade dialog Buy/Sell) sit on the light
+// surface: readable dark text unselected, blue fill with white text selected.
 .mat-mdc-dialog-container {
-  .mat-button-toggle-group { border-color: rgba(255, 255, 255, 0.24); }
-  .mat-button-toggle .mat-button-toggle-label-content { color: #cfd9e0; }
+  .mat-button-toggle-group { border-color: rgba(11, 21, 65, 0.24); }
+  .mat-button-toggle { background: transparent; }
+  .mat-button-toggle .mat-button-toggle-label-content { color: #41496b; }
+  .mat-button-toggle + .mat-button-toggle { border-left-color: rgba(11, 21, 65, 0.24); }
   .mat-button-toggle-checked {
-    background: #36ebff !important;
-    --mat-standard-button-toggle-selected-state-background-color: #36ebff;
+    background: #275ce4 !important;
+    --mat-standard-button-toggle-selected-state-background-color: #275ce4;
+    --mat-standard-button-toggle-selected-state-text-color: #ffffff;
   }
-  .mat-button-toggle-checked .mat-button-toggle-label-content { color: #06122a !important; }
+  .mat-button-toggle-checked .mat-button-toggle-label-content { color: #ffffff !important; }
 }

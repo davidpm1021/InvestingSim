@@ -72,29 +72,3 @@
   line-height: 1.4;
   margin: 8px 0 0;
 }
-
-// ---- Dark theme ----
-// The dialog surface is navy (#1b3167); the shipped light-theme text colors
-// (#333/#666/#1f3b9b/#c62828) fail WCAG AA on it.
-.current-price { color: #cfd9e0 !important; }
-.trade-note { color: #aab4d0 !important; }
-.conversion { color: #36ebff; }
-.avail, .held { color: #cfd9e0; }
-.held strong { color: #e0e6f2; }
-.held-alt { color: #aab4d0; }
-.sell-all-btn { color: #36ebff; }
-.validation-error { color: #ff8087; }
-
-// Unselected radio outline defaults to dark grey (invisible on navy). Light it up;
-// keep the selected dot cyan.
-::ng-deep .amount-type .mat-mdc-radio-button {
-  --mdc-radio-unselected-icon-color: #aab4d0;
-  --mdc-radio-unselected-hover-icon-color: #cfd9e0;
-  --mdc-radio-unselected-focus-icon-color: #cfd9e0;
-  --mdc-radio-unselected-pressed-icon-color: #cfd9e0;
-  --mdc-radio-selected-icon-color: #36ebff;
-  --mdc-radio-selected-hover-icon-color: #36ebff;
-  --mdc-radio-selected-focus-icon-color: #36ebff;
-  --mdc-radio-selected-pressed-icon-color: #36ebff;
-  --mat-radio-checked-ripple-color: #36ebff;
-}

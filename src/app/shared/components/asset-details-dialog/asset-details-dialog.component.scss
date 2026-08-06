@@ -114,13 +114,13 @@ mat-dialog-content {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #858585;
+    color: #5a6480;
     font-weight: 700;
   }
 
   .price-change-period {
     font-size: 0.72rem;
-    color: #858585;
+    color: #5a6480;
   }
 
   .current-price {
@@ -185,16 +185,3 @@ mat-dialog-actions {
   border-top: 1px solid #e0e0e0;
   margin: 0;
 }
-
-
-// ---- Dark theme (design update) ----
-.detail-inline, .detail-block-line, .detail-inline strong, .detail-label, strong { color: #e0e6f2 !important; }
-.price-label { color: #cfd9e0 !important; }
-.current-price { color: #36ebff !important; }
-h1, h2, h3, .asset-title { color: #fff !important; }
-.positive { color: #01e294 !important; background: transparent !important; }
-.negative { color: #ff8087 !important; background: transparent !important; }
-.price-change-period, .asset-description, .asset-subtitle, .asset-type-label { color: #cfd9e0 !important; }
-// Close (×) icon defaulted to #666. The price-change chart icon keeps its
-// green/red from .positive/.negative.
-.close-button mat-icon { color: #cfd9e0 !important; }

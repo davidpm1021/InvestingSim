@@ -72,17 +72,3 @@
   margin-top: 20px;
   text-align: right;
 }
-
-// ---- Dark theme (design update) ----
-.capstone-header h2 { color: #fff !important; }
-.capstone-intro { color: #cfd9e0 !important; }
-.stat { background: rgba(255, 255, 255, 0.06) !important; }
-.stat .stat-label { color: #aab4d0 !important; }
-.stat .stat-value { color: #fff !important; }
-.stat.pos .stat-value { color: #01e294 !important; }
-.stat.neg .stat-value { color: #ff8087 !important; }
-.capstone-allocation h3 { color: #fff !important; }
-.alloc-row { border-bottom-color: rgba(255, 255, 255, 0.14) !important; }
-.alloc-row .alloc-pct { color: #cfd9e0 !important; }
-// Close (×) icon defaulted to Material dark grey (#44474e) on the navy surface.
-.mat-icon { color: #cfd9e0 !important; }

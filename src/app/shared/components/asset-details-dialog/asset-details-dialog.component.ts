@@ -162,26 +162,26 @@ export class AssetDetailsDialogComponent implements OnInit, OnDestroy, AfterView
           }
         },
         scales: {
-          // White axis text + a subtle grid for the dark chart background.
+          // Dark axis text + a subtle grid for the light dialog surface.
           x: {
             display: true,
             title: {
               display: true,
               text: 'Date',
-              color: '#ffffff'
+              color: '#41496b'
             },
-            ticks: { color: '#ffffff' },
-            grid: { color: 'rgba(255, 255, 255, 0.09)' }
+            ticks: { color: '#5a6480' },
+            grid: { color: 'rgba(11, 21, 65, 0.10)' }
           },
           y: {
             display: true,
             title: {
               display: true,
               text: 'Price ($)',
-              color: '#ffffff'
+              color: '#41496b'
             },
-            ticks: { color: '#ffffff' },
-            grid: { color: 'rgba(255, 255, 255, 0.09)' },
+            ticks: { color: '#5a6480' },
+            grid: { color: 'rgba(11, 21, 65, 0.10)' },
             beginAtZero: useConsistentYAxis,
             max: useConsistentYAxis ? this.getMaxPriceAcrossAllAssets() : undefined
           }
