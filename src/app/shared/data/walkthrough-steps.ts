@@ -321,8 +321,8 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'Read your first statement',
     gate: 'statement',
     body: [
-      'A statement is the official record of your account for one period of time, here a single quarter. It shows what you started with, the money you added, what your investments earned or lost, and what you ended with. Every brokerage sends them, and it is how you check your own account rather than taking anyone\'s word for it.',
-      "Until you sell a holding, its gain is unrealized: not real money yet, just value on paper. Selling is what turns it into cash. That is why the statement splits Cash Available from Investments.",
+      'A statement is the official record of your account for one period of time. It shows what you started with, the money you added, what your investments earned or lost, and what you ended with.',
+      "A holding's gain is unrealized, which means that it's just the value on paper until you sell it. That is why the statement splits Cash Available from Investments.",
     ],
     action: "Open the Statements tab, or click the \"statement is ready\" notification, then open your Quarter 1 statement.",
     questions: [
