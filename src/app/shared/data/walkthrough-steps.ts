@@ -357,7 +357,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-trim-winner',
         kind: 'mc',
-        prompt: 'After a strong run, one holding has grown into a much bigger slice of your portfolio than the rest. Why might someone sell part of it (trim it)?',
+        prompt: 'After a strong run, one holding has grown into a much bigger slice of your portfolio than the rest. Why might someone sell part of it?',
         choices: [
           { text: 'To rebalance: when one holding gets large, more of your outcome rides on that single investment.', correct: true },
           { text: 'Because a gain disappears unless you sell it within the same quarter.' },
