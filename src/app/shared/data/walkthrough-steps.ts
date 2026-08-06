@@ -26,6 +26,9 @@ export interface WalkthroughStep {
   body: string[];
   /** The concrete thing to do in the app, highlighted as a call to action. */
   action?: string;
+  /** An aside about how the simulation works, shown small and muted at the foot of
+   *  the step. For housekeeping facts that would interrupt the teaching copy. */
+  note?: string;
   /** Primary button label (defaults to "Continue"). */
   cta?: string;
   /** Auto-advance trigger, only for steps with one obvious completion event.
@@ -231,9 +234,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireDistinctBuys: 3,
     noGlossary: true,
     body: [
-      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment can make or break your results. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together. Trades are free in this simulation.',
+      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment can make or break your results. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together.',
     ],
     action: 'Click Buy and purchase three different investments.',
+    note: 'Trades are free in this simulation.',
     questions: [
       {
         id: 'cfu-gain-zero',

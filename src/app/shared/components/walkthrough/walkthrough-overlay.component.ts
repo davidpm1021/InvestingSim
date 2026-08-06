@@ -48,6 +48,7 @@ interface Segment { t: string; def: string | null; }
           </div>
           <h3 class="wt-ct-title">{{ svc.current.title }}</h3>
           <p class="wt-ct-body" *ngFor="let segs of bodySegments"><ng-container *ngFor="let seg of segs"><app-define *ngIf="seg.def" [def]="seg.def" [label]="seg.t"></app-define><span *ngIf="!seg.def">{{ seg.t }}</span></ng-container></p>
+          <p class="wt-note" *ngIf="svc.current.note">{{ svc.current.note }}</p>
           <div class="wt-actions">
             <button mat-button type="button" class="wt-skip" (click)="svc.skipTour()">Skip tour</button>
             <span class="wt-spacer"></span>
@@ -126,6 +127,7 @@ interface Segment { t: string; def: string | null; }
               <mat-icon fontIcon="la-hand-pointer"></mat-icon>
               <span>{{ svc.current.action }}</span>
             </div>
+            <p class="wt-note" *ngIf="svc.current.note">{{ svc.current.note }}</p>
             <div class="wt-progress-wrap"
                  [attr.aria-label]="milestonesDone + ' of ' + milestonesTotal + ' notebook steps done'">
               <mat-icon class="wt-progress-icon" aria-hidden="true" fontIcon="la-book-open"></mat-icon>
@@ -201,6 +203,10 @@ interface Segment { t: string; def: string | null; }
       border-radius: 9px; font-size: 0.92rem; font-weight: 600; color: #12513a;
     }
     .wt-action mat-icon { color: #0a9d67; flex-shrink: 0; }
+
+    /* Housekeeping aside about the simulation: present, but out of the way of the
+       teaching copy. */
+    .wt-note { margin: 10px 0 0; font-size: 0.78rem; line-height: 1.4; color: #7b849e; }
 
     .wt-progress-wrap { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px; }
     .wt-progress-wrap .wt-progress { flex: 1; margin: 0; }
