@@ -70,7 +70,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Welcome',
     title: 'So you want to invest',
     body: [
-      "You have $5,000 in savings. Let's open a brokerage account and put a little of it to work.",
+      "You have $5,000 in savings. Let's open a brokerage account and put that money to work.",
     ],
     cta: "Let's go",
   },
