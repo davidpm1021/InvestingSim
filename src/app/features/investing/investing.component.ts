@@ -576,6 +576,15 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lineChart.update();
   }
 
+  /**
+   * Dividends, bond income and interest, for the Activity tab. These are cash
+   * transactions rather than trades, so they never appeared in the trading table
+   * and students had no place showing where the payment actually landed.
+   */
+  get incomeTransactions(): Array<Transaction & { runningBalance: number, displayDescription: string }> {
+    return this.transactions.filter(t => t.type === 'income' || t.type === 'interest');
+  }
+
   getTransactionAmount(transaction: Transaction & { runningBalance: number, displayDescription: string }): number {
     if (transaction.type === 'transfer') {
       // For transfers, show the amount from brokerage account's perspective

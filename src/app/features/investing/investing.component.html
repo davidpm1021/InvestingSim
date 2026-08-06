@@ -446,6 +446,33 @@
             </div>
           </div>
         </div>
+
+        <!-- Income is a cash event, not a trade, so it gets its own section here
+             rather than being forced into the share-based table above. -->
+        <div class="activity-section">
+          <h2>Income Received</h2>
+          <p class="income-note">
+            Dividends and bond income are paid at the end of each quarter, and savings interest monthly.
+            All of it arrives as cash in your <app-define term="Cash Settlement Account" label="cash settlement account"></app-define>, never as new shares.
+          </p>
+          <div *ngIf="incomeTransactions.length === 0" class="no-transactions">
+            <p>No income yet. Let a quarter pass to receive your first payments.</p>
+          </div>
+          <div *ngIf="incomeTransactions.length > 0" class="income-list" role="table" aria-label="Income received">
+            <div class="income-header" role="row">
+              <div role="columnheader">Date</div>
+              <div role="columnheader">Source</div>
+              <div role="columnheader">Paid into</div>
+              <div role="columnheader">Amount</div>
+            </div>
+            <div *ngFor="let t of incomeTransactions" class="income-item" role="row">
+              <div role="cell">{{ t.date | evergreenDate:'short' }}</div>
+              <div role="cell">{{ t.displayDescription }}</div>
+              <div role="cell">Cash settlement account</div>
+              <div class="income-amount positive" role="cell">+{{ t.amount | currency:'USD':'symbol':'1.2-2' }}</div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </mat-tab>

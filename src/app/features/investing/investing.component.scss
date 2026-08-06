@@ -1724,3 +1724,37 @@ h2 { color: #fff !important; }
 .holding-item:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
 .holding-item.cash-holding .holding-shares { color: #01e294 !important; }
 .holding-shares { color: #aab4d0 !important; }
+
+/* Income Received (Activity tab): a cash ledger, so no shares or share balance. */
+/* Outranks `.tab-content p`, which centres body copy at 1.2rem in near-black --
+   unreadable on the dark navy sim body and wrong for a caption. */
+.tab-content p.income-note {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: left;
+  color: #cfd9e0;
+}
+.income-list { margin-top: 15px; }
+.income-header,
+.income-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.5fr 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+}
+.income-header {
+  border-bottom: 2px solid #ddd;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.income-item { border-bottom: 1px solid #eee; }
+.income-item:last-child { border-bottom: none; }
+.income-amount { font-weight: 700; text-align: right; }
+
+@media (max-width: 768px) {
+  .income-header { display: none; }
+  .income-item { grid-template-columns: 1fr; gap: 4px; }
+  .income-amount { text-align: left; }
+}
