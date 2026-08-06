@@ -254,7 +254,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     trigger: 'quarter-advanced',
     requireAction: true,
     body: [
-      'Time moves one way, so finalize your trades first. Then jump ahead.',
+      'Prices change as time passes, so what you own will be worth more or less than you paid. Jumping to the next quarter is how you see that change. You cannot rewind, so make any trades you still want at today\'s prices first.',
     ],
     action: 'At the top of the page, click Jump to Quarter 2, then confirm.',
   },
