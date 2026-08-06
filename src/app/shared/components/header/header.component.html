@@ -16,6 +16,14 @@
                 <mat-icon fontIcon="la-arrow-right"></mat-icon>
                 Jump to {{ nextQuarterLabel }}
               </button>
+              <button *ngIf="atYearEnd"
+                      mat-raised-button
+                      color="primary"
+                      class="capstone-button"
+                      (click)="openCapstone()">
+                <mat-icon fontIcon="la-trophy"></mat-icon>
+                Open Review
+              </button>
               <button mat-raised-button color="warn" class="reset-button" (click)="onReset()">
                 <mat-icon fontIcon="la-sync"></mat-icon>
                 Reset

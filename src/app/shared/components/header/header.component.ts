@@ -46,6 +46,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Dev/teacher-only header control: the Account button (opens the Admin panel).
   // Hidden from students; flip to true to bring it back for development or admin work.
   showDevControls: boolean = false;
+  // At the Year-End Review the quarter-jump button is gone, so the header shows a
+  // button to reopen the capstone. It has no route, and closing it used to leave the
+  // Notifications bell as the only way back.
+  atYearEnd: boolean = false;
   notifications: AppNotification[] = [];
   unreadCount: number = 0;
   private subscription = new Subscription();
@@ -117,6 +121,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   updateQuarterInfo(): void {
     this.currentQuarterLabel = this.currentDateService.getQuarterLabel(this.selectedQuarter);
+    this.atYearEnd = isFinalQuarter(this.selectedQuarter);
     
     // Find the current quarter index and next quarter
     const currentIndex = this.quarterOptions.findIndex(option => option.value === this.selectedQuarter);
