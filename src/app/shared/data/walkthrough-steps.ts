@@ -238,7 +238,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-gain-zero',
         kind: 'mc',
-        prompt: "Right after you buy, a holding's Gain/Loss is about $0. Why?",
+        prompt: "Right after you buy, a holding's Gain/Loss is $0.00. Why?",
         choices: [
           { text: 'You just bought at the current price, so what you paid and what it is worth still match.', correct: true },
           { text: 'The brokerage account hides your gain until the quarter ends.' },
