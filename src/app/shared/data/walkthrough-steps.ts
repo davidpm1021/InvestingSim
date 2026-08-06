@@ -263,6 +263,23 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'At the top of the page, click Jump to Quarter 2, then confirm.',
   },
   {
+    part: 'Part III · Check in',
+    title: 'Three months later',
+    scrollTop: true,
+    body: [
+      'A quarter is three months, so three months of price movement just went by. Your investments are now worth whatever they would sell for today, which is probably not what you paid.',
+      'The Overview tab shows your account value and the Gain/Loss on each holding. The Holdings tab goes deeper, with your portfolio value over time and the price history of any holding you select.',
+    ],
+    action: "On the Overview tab, check your account value and each holding's Gain/Loss, then open the Holdings tab for a closer look.",
+    questions: [
+      {
+        id: 'cfu-quarter-change',
+        kind: 'free',
+        prompt: 'Find the "Up / down" row in your Portfolio Summary. How much has your account value changed in dollars, and is it up or down?',
+      },
+    ],
+  },
+  {
     part: 'Part III · Income',
     title: 'Unearned Income',
     body: [
