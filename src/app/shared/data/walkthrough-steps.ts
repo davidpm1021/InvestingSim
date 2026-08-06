@@ -231,7 +231,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireDistinctBuys: 3,
     noGlossary: true,
     body: [
-      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment decides how you do. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together. Trades are free in this simulation.',
+      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment can make or break your results. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together. Trades are free in this simulation.',
     ],
     action: 'Click Buy and purchase three different investments.',
     questions: [
