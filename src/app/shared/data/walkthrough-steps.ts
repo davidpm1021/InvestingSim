@@ -275,7 +275,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'Straight into your Evergreen Bank savings.' },
           { text: 'It was reinvested to buy more shares automatically.' },
         ],
-        explanation: 'Income lands as cash in your cash settlement account, ready to reinvest or move to your bank. It is not sent to your savings, and it is not reinvested for you unless you choose to buy more.',
+        explanation: 'Here, income lands as cash in your cash settlement account, ready to reinvest or move to your bank, and it is never sent to your savings. Real brokerages handle it differently: many can reinvest dividends for you automatically, buying more shares instead of leaving the cash sitting there. That is usually a setting you choose, so check with your brokerage to see what yours does.',
       },
       {
         id: 'cfu-dividend-signal',
