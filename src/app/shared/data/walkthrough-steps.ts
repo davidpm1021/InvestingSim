@@ -188,7 +188,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'Because real transfers charge a fee every time.' },
           { text: 'Because the price of investments changes while you wait.' },
         ],
-        explanation: 'If a real transfer takes a few days to clear, you cannot buy the moment you decide. Planning ahead means your cash is ready when you want to trade.',
+        explanation: 'A real transfer can take a few days to clear, so the money is not ready to invest right away. Moving cash over ahead of time means it is there when you want to trade.',
       },
     ],
   },
