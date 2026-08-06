@@ -146,7 +146,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Tour',
     title: 'Your checklist',
     target: '.nb-panel',
-    body: ['This notebook tracks your progress through the seven steps and crosses each one off as you go. Need more room? Minimize it with the button in its top corner, then reopen it whenever you like.'],
+    body: ['This notebook tracks your progress through the seven steps and crosses each one off as you go. You can minimize it with the button in its top corner and reopen it whenever you like.'],
   },
   {
     part: 'Part I · Look around',

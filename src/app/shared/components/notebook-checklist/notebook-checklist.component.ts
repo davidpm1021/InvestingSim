@@ -24,6 +24,11 @@ import { WalkthroughService } from '../../services/walkthrough.service';
   imports: [CommonModule, MatIconModule],
   template: `
     <div class="nb-root" *ngIf="visible">
+      <!-- Milestones are crossed off by actions taken elsewhere in the app, so the
+           progress change needs announcing. Lives outside the panel's *ngIf so it
+           still speaks while the checklist is collapsed to its tab. -->
+      <span class="nb-sr" role="status" aria-live="polite">{{ doneCount }} of {{ total }} steps done</span>
+
       <!-- Collapsed: a compact reopen tab on the left edge -->
       <button *ngIf="!showPanel" type="button" class="nb-reopen" (click)="toggle()"
               [attr.aria-expanded]="false" aria-label="Open your checklist">
@@ -58,7 +63,11 @@ import { WalkthroughService } from '../../services/walkthrough.service';
 
         <div class="nb-foot">
           <span class="nb-count">{{ doneCount }} of {{ total }}</span>
-          <div class="nb-bar"><span [style.width.%]="total ? doneCount / total * 100 : 0"></span></div>
+          <div class="nb-bar" role="progressbar" aria-valuemin="0"
+               [attr.aria-valuenow]="doneCount" [attr.aria-valuemax]="total"
+               [attr.aria-valuetext]="doneCount + ' of ' + total + ' steps done'">
+            <span [style.width.%]="total ? doneCount / total * 100 : 0"></span>
+          </div>
         </div>
       </aside>
     </div>
@@ -87,7 +96,6 @@ import { WalkthroughService } from '../../services/walkthrough.service';
     .nb-badge mat-icon { font-size: 20px; width: 20px; height: 20px; }
     .nb-titles { flex: 1; min-width: 0; }
     .nb-title { display: block; font-size: 18px; font-weight: 700; color: #0b1541; line-height: 1.1; }
-    .nb-sub { font-size: 11px; font-weight: 600; color: #5a6472; }
     .nb-collapse { flex-shrink: 0; width: 28px; height: 28px; border: none; border-radius: 8px; cursor: pointer;
       background: rgba(11, 21, 65, 0.08); color: #0b1541; line-height: 0;
       display: flex; align-items: center; justify-content: center; }
@@ -141,7 +149,6 @@ import { WalkthroughService } from '../../services/walkthrough.service';
 export class NotebookChecklistComponent implements OnInit, OnDestroy {
   readonly milestones = MILESTONES;
   readonly total = MILESTONES.length;
-  readonly holes = Array.from({ length: 8 });
 
   private readonly EXPANDED_KEY = 'investing_sim__notebook_expanded';
 
@@ -149,7 +156,13 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
   private currentUrl = '';
   private userExpanded = this.loadExpanded();
   private hasRoom = true;
-  private isBrowserMaximized = false;
+  // Set when the student explicitly opens the panel while there is no room for it,
+  // so a deliberate click always wins over the auto-collapse.
+  private forcedOpen = false;
+  private isBrowserMinimized = false;
+  // Cached so the `visible` getter (an *ngIf binding, re-run every change-detection
+  // pass) does not hit localStorage + JSON.parse on every tick.
+  private layout = '';
 
   private sub = new Subscription();
   private mo?: MutationObserver;
@@ -165,10 +178,14 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUrl = this.router.url;
+    this.layout = this.dataService.getOptions().layout;
     this.sub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd))
         .subscribe(e => {
           this.currentUrl = (e as NavigationEnd).urlAfterRedirects;
+          // The layout is only changed from the admin route, so a navigation always
+          // intervenes between a change and the next render.
+          this.layout = this.dataService.getOptions().layout;
           this.updateRoom();
           this.cdr.detectChanges();
         })
@@ -182,10 +199,16 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
     window.addEventListener('resize', this.onResize);
     this.updateRoom();
 
-    // Watch the faux-browser window's class so we can collapse when it is maximized.
-    // Class-only + subtree catches the `.browser-window.maximized` toggle without
-    // firing on every DOM insertion the way childList would.
-    this.mo = new MutationObserver(() => { this.updateRoom(); this.cdr.detectChanges(); });
+    // Watch the faux-browser window's class so we can react when it is maximized or
+    // minimized. Class-only + subtree catches the toggle without firing on every DOM
+    // insertion the way childList would, and the target filter keeps unrelated class
+    // churn (Material ripples, ng-touched while typing) from forcing a render pass.
+    this.mo = new MutationObserver(muts => {
+      const relevant = muts.some(m => (m.target as HTMLElement).classList?.contains('browser-window'));
+      if (!relevant) { return; }
+      this.updateRoom();
+      this.cdr.detectChanges();
+    });
     this.mo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
   }
 
@@ -196,21 +219,34 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
     document.body.classList.remove('nb-panel-open');
   }
 
+  /**
+   * True while the guide is spotlighting the checklist itself (its own tour step).
+   * The step targets '.nb-panel', so the panel must actually be rendered or the
+   * overlay keeps the previous step's box and highlights the wrong element.
+   */
+  private get spotlightingSelf(): boolean {
+    return this.walkthrough.active && this.walkthrough.current?.target === '.nb-panel';
+  }
+
   get visible(): boolean {
     const onSim = this.currentUrl.startsWith('/investing') || this.currentUrl.startsWith('/banking');
-    const browserLayout = this.dataService.getOptions().layout === 'web_browser';
+    const browserLayout = this.layout === 'web_browser';
+    // Nothing to sit beside once the browser window is minimized to its pill --
+    // staying up would float over an empty desktop and cover the restore pill.
+    if (this.isBrowserMinimized) { return false; }
     // Step aside while the walkthrough is showing a pop-up or spotlight callout;
     // it reappears once the guide is minimized to the coach bar or finished.
     const guideOpen = this.walkthrough.active && this.walkthrough.expanded;
-    // ...unless the guide is spotlighting the checklist itself (its own tour step),
-    // where it must stay on screen to be highlighted.
-    const spotlightingSelf = this.walkthrough.active && this.walkthrough.current?.target === '.nb-panel';
-    return onSim && browserLayout && (!guideOpen || spotlightingSelf);
+    return onSim && browserLayout && (!guideOpen || this.spotlightingSelf);
   }
 
-  /** Panel shows only when the student wants it AND there is room for it. */
+  /**
+   * Panel shows when the student wants it and there is room, but "no room" is an
+   * auto-collapse default rather than a veto: an explicit click still opens it.
+   */
   get showPanel(): boolean {
-    return this.userExpanded && this.hasRoom;
+    if (this.spotlightingSelf) { return true; }
+    return this.userExpanded && (this.hasRoom || this.forcedOpen);
   }
 
   get doneCount(): number { return this.completed.size; }
@@ -218,17 +254,29 @@ export class NotebookChecklistComponent implements OnInit, OnDestroy {
   isDone(key: MilestoneKey): boolean { return this.completed.has(key); }
 
   toggle(): void {
-    this.userExpanded = !this.userExpanded;
+    if (this.showPanel) {
+      this.userExpanded = false;
+      this.forcedOpen = false;
+    } else {
+      // No room means "collapsed by default", not "cannot open" -- without this the
+      // reopen tab is an inert button whenever the browser is maximized or the
+      // viewport is narrow, and a second click would persist a stuck hidden state.
+      this.userExpanded = true;
+      this.forcedOpen = !this.hasRoom;
+    }
     this.saveExpanded(this.userExpanded);
     this.syncBody();
   }
 
   private updateRoom(): void {
-    this.isBrowserMaximized = !!document.querySelector('.browser-window.maximized');
+    const maximized = !!document.querySelector('.browser-window.maximized');
+    this.isBrowserMinimized = !!document.querySelector('.browser-window.minimized');
     // Need enough width that shifting the browser window clear of the open panel
     // (see body.nb-panel-open in styles.scss) still leaves a usable window; below
     // this the panel collapses to the thin tab instead.
-    this.hasRoom = !this.isBrowserMaximized && window.innerWidth >= 1100;
+    this.hasRoom = !maximized && window.innerWidth >= 1100;
+    // Once there is real room again the override has served its purpose.
+    if (this.hasRoom) { this.forcedOpen = false; }
     this.syncBody();
   }
 
