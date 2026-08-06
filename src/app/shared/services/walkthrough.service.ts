@@ -46,6 +46,7 @@ function expandSteps(source: WalkthroughStep[]): WalkthroughStep[] {
 export class WalkthroughService {
   private readonly STEP_KEY = 'investing_sim__walkthrough_step';
   private readonly DONE_KEY = 'investing_sim__walkthrough_done';
+  private readonly TOUR_SKIPPED_KEY = 'investing_sim__walkthrough_tour_skipped';
 
   readonly steps: WalkthroughStep[] = expandSteps(WALKTHROUGH_STEPS);
 
@@ -53,6 +54,11 @@ export class WalkthroughService {
   // Until the guide reaches it, the header keeps "Jump to Quarter" disabled so the student
   // can't skip ahead of the guided flow.
   private readonly quarterStepIndex = this.steps.findIndex(s => s.trigger === 'quarter-advanced');
+
+  // Once the student skips the tour, EVERY remaining spotlight step drops out, not
+  // just the run they were on. The tour is split by required steps (e.g. "Connect
+  // your bank"), so skipping only the contiguous run made the tour resume after it.
+  private tourSkipped = localStorage.getItem(this.TOUR_SKIPPED_KEY) === '1';
 
   private indexSubject = new BehaviorSubject<number>(this.loadStep());
   private activeSubject = new BehaviorSubject<boolean>(false);
@@ -125,6 +131,9 @@ export class WalkthroughService {
 
   /** Restart from the top (for a "replay the guide" control). */
   start(): void {
+    // A replay is a fresh run, so the tour comes back with it.
+    this.tourSkipped = false;
+    localStorage.removeItem(this.TOUR_SKIPPED_KEY);
     this.setIndex(0);
     localStorage.removeItem(this.DONE_KEY);
     this.setExpanded(true);
@@ -136,28 +145,44 @@ export class WalkthroughService {
   /** Re-open the current step's full pop-up. */
   expand(): void { this.setExpanded(true); }
 
+  /** First index at or after i that should still be shown. */
+  private nextShown(i: number): number {
+    while (i < this.steps.length && this.tourSkipped && this.steps[i].target) { i++; }
+    return i;
+  }
+
+  /** Last index at or before i that should still be shown. */
+  private prevShown(i: number): number {
+    while (i > 0 && this.tourSkipped && this.steps[i].target) { i--; }
+    return i;
+  }
+
   /** Proceed to the next step (re-opens its pop-up), or finish on the last one. */
   next(): void {
     if (this.isLast) { this.finish(); return; }
-    this.setIndex(this.index + 1);
+    const i = this.nextShown(this.index + 1);
+    if (i >= this.steps.length) { this.finish(); return; }
+    this.setIndex(i);
     this.setExpanded(true);
   }
 
   prev(): void {
     if (this.index > 0) {
-      this.setIndex(this.index - 1);
+      this.setIndex(this.prevShown(this.index - 1));
       this.setExpanded(true);
     }
   }
 
   /**
-   * Skip just the page tour: jump past the contiguous spotlight steps to the
-   * next real task, instead of ending the whole guide. Finishes only if the
-   * tour is the very last thing left.
+   * Skip the page tour: drop every spotlight step for the rest of the guide, not
+   * just the run in progress, and jump to the next real task. Required steps in
+   * between (linking the bank, say) are still shown; finishes only if nothing but
+   * tour steps is left.
    */
   skipTour(): void {
-    let i = this.index;
-    while (i < this.steps.length && this.steps[i].target) { i++; }
+    this.tourSkipped = true;
+    localStorage.setItem(this.TOUR_SKIPPED_KEY, '1');
+    const i = this.nextShown(this.index);
     if (i >= this.steps.length) { this.finish(); return; }
     this.setIndex(i);
     this.setExpanded(true);
@@ -234,6 +259,8 @@ export class WalkthroughService {
 
   private loadStep(): number {
     const s = parseInt(localStorage.getItem(this.STEP_KEY) || '0', 10);
-    return Number.isNaN(s) || s < 0 || s >= this.steps.length ? 0 : s;
+    const i = Number.isNaN(s) || s < 0 || s >= this.steps.length ? 0 : s;
+    // A stored step from before the skip must not resurrect the tour on refresh.
+    return Math.min(this.nextShown(i), this.steps.length - 1);
   }
 }
