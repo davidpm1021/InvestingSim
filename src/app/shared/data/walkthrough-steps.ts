@@ -214,17 +214,6 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'Click a few investments to read about them, then compare the mutual fund (TSMX) and the ETF (TSME).',
     questions: [
       {
-        id: 'cfu-which-etf',
-        kind: 'mc',
-        prompt: 'Which of these investments is an ETF?',
-        choices: [
-          { text: 'Total Stock Market', correct: true },
-          { text: 'Total Stock Market Index Fund' },
-          { text: 'Target Date 2070 Fund' },
-        ],
-        explanation: 'The Total Stock Market ETF is the ETF, so it trades on an exchange all day, like a stock. The index fund is a mutual fund, and the target-date fund is a blended fund of stocks and bonds.',
-      },
-      {
         id: 'cfu-which-daily',
         kind: 'mc',
         prompt: 'Which of these is priced just once a day, after the market closes?',
@@ -394,7 +383,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-holdings-diverge',
         kind: 'mc',
-        prompt: 'Look at the Gain/Loss next to each holding. In the same quarter, one is up (green) and another is down (red). What does that tell you?',
+        prompt: 'Look at the Gain/Loss next to each holding. Suppose one is up and another is down in the same quarter. What does that tell you?',
         choices: [
           { text: 'Different investments move differently, so some can rise while others fall in the same period.', correct: true },
           { text: 'One of the numbers must be an error, because holdings always move together.' },
