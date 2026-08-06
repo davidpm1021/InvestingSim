@@ -1,5 +1,7 @@
 .capstone {
-  padding: 8px 8px 4px;
+  /* The dialog surface adds no padding of its own, so this is the only thing
+     keeping the content off the edges. */
+  padding: 26px 30px 22px;
 }
 
 .capstone-header {
@@ -15,7 +17,7 @@
 
 .capstone-intro {
   color: #666;
-  margin: 4px 0 16px;
+  margin: 6px 0 20px;
 }
 
 .stat-grid {
