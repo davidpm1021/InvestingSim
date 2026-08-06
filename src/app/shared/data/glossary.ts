@@ -34,6 +34,7 @@ export const GLOSSARY: { [term: string]: string } = {
   'Cost basis': 'What you originally paid for the shares you still hold, used to figure out your gain or loss.',
   'Gain/Loss': "The difference between what a holding is worth now and what you paid. It isn't 'realized' until you sell.",
   'Capital gain': 'The profit when you sell an investment for more than you paid.',
+  'Capital gains tax': 'Tax on the profit when you sell an investment for more than you paid. You owe it only once you sell, not while the value is still on paper.',
   'Short-term gain': 'Profit on an investment held one year or less, usually taxed at a higher rate than long-term gains.',
   'Long-term gain': 'Profit on an investment held more than one year, usually taxed at a lower rate than short-term gains.',
 

@@ -313,7 +313,7 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
 
   // Terms to auto-define in the copy, most specific first (so "bond fund" wins over the
   // bare "fund", and the verb in "Add Funds" is skipped via the lookbehind).
-  private readonly termRe = /(cash settlement accounts?|quarterly statements?|target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\binterest\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
+  private readonly termRe = /(capital gains tax|cash settlement accounts?|quarterly statements?|target-date funds?|bond funds?|mutual funds?|index funds?|\bETFs?\b|\bstocks?\b|(?<!add )(?<!withdraw )\bfunds?\b|\bdividends?\b|\binterest\b|\bdiversification\b|\bbrokerage(?: account)?\b|\bsettlement\b|\bcompounding\b|\bvolatility\b)/gi;
 
   constructor(
     public svc: WalkthroughService,
@@ -449,6 +449,7 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   private defFor(matched: string): string | null {
     const m = matched.toLowerCase();
     const key =
+      m.includes('capital gains tax') ? 'Capital gains tax' :
       m.includes('quarterly statement') ? 'Quarterly statement' :
       m.includes('target-date fund') ? 'Target-date fund' :
       m.includes('bond fund') ? 'Bond fund' :

@@ -329,7 +329,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'Selling, and the tax twist',
     gate: 'sell',
     body: [
-      'Selling for a profit can mean paying capital gains tax. Sales are tagged short-term (ST) or long-term (LT). Almost all here are short-term, held under a year; in real life, long-term gains are usually taxed less.',
+      'Selling for a profit can mean paying capital gains tax. A sale is tagged short-term (ST) if you held the investment for a year or less, or long-term (LT) if you held it longer. This simulation covers a single year, so nearly every sale here is short-term. In real life, long-term gains are usually taxed at a lower rate, which is one reason people hold on longer.',
     ],
     action: 'Sell part of a holding, then open the Activity tab.',
   },
