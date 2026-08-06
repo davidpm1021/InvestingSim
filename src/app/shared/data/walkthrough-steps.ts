@@ -303,7 +303,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-unrealized',
         kind: 'mc',
-        prompt: 'Your statement shows a holding worth more than you paid. Is that gain money you can spend yet?',
+        prompt: 'Suppose a holding is worth more than you paid. Is that gain money you can spend yet?',
         choices: [
           { text: 'No. It is an unrealized gain that only becomes real money when you sell.', correct: true },
           { text: 'Yes. It is already sitting in your cash settlement account.' },
@@ -314,13 +314,13 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       {
         id: 'cfu-statement-read',
         kind: 'mc',
-        prompt: 'Your account value rose this quarter. How does the statement show how much of that was real gains, not just money you added?',
+        prompt: 'Your account value changed this quarter. How does the statement show how much came from your investments, not just money you added?',
         choices: [
           { text: 'It lists "Money you added" separately from your investment gain/loss and income.', correct: true },
           { text: 'It does not; the statement only shows the ending total.' },
-          { text: 'All of the increase counts as your investment gains.' },
+          { text: 'The whole change counts as your investment gain or loss.' },
         ],
-        explanation: 'The statement splits the change in your account into money you added versus what your investments earned (gains plus income). That separation shows your true return.',
+        explanation: 'The statement splits the change in your account into money you added versus what your investments gained or lost, plus any income. That separation shows your true return.',
       },
     ],
   },
