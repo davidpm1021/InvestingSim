@@ -288,7 +288,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part III · Income',
     title: 'Unearned Income',
     body: [
-      'Your savings earns interest each month. Your investments can pay dividends or bond income each quarter, added as cash to your cash settlement account, not as trades. A dividend can even arrive while a price falls.',
+      'Your savings earns interest each month. Your investments can pay dividends or bond income each quarter. A dividend can even arrive while a price falls.',
     ],
     action: 'Open the Activity tab and scroll to Income Received. Find your dividend or bond income, and look at where it landed.',
     questions: [
