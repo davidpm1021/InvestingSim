@@ -199,7 +199,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'In this simulation, you have seven investments to choose from: three stocks, a mutual fund, an ETF, a target-date fund, and a bond fund.',
       'The mutual fund and the ETF track the same market. The mutual fund is priced once a day, after the market closes; the ETF trades live all day, like a stock.',
     ],
-    action: 'Click a few investments to read about them, then compare the mutual fund and the ETF.',
+    action: 'Click a few investments to read about them, then compare the mutual fund (TSMX) and the ETF (TSME).',
     questions: [
       {
         id: 'cfu-which-etf',
