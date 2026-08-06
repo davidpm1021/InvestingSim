@@ -267,7 +267,12 @@ export class WalkthroughService {
       }
       case 'bank-linked': return this.onboarding.bankLinked;
       case 'funded': return this.onboarding.hasFunded;
-      case 'quarter-advanced': return this.currentDate.getCurrentDate() !== SIM_YEAR_START;
+      case 'quarter-advanced': {
+        const cur = this.currentDate.getCurrentDate();
+        // A later jump names the quarter it needs, since "not the first quarter" is
+        // already satisfied by then. ISO dates compare correctly as strings.
+        return s.quarterAtLeast ? cur >= s.quarterAtLeast : cur !== SIM_YEAR_START;
+      }
       case 'year-end': return isFinalQuarter(this.currentDate.getCurrentDate());
       default: return true;
     }

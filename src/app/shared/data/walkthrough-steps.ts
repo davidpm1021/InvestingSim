@@ -36,6 +36,10 @@ export interface WalkthroughStep {
   note?: string;
   /** Primary button label (defaults to "Continue"). */
   cta?: string;
+  /** For a 'quarter-advanced' step, the quarter the student must actually reach
+   *  (e.g. '2025-07-01'). Without it the step only needs the date to differ from
+   *  the start, which is already true for any jump after the first. */
+  quarterAtLeast?: string;
   /** Auto-advance trigger, only for steps with one obvious completion event.
    *  Open-ended steps (buy, sell, explore) have none and proceed manually. */
   trigger?: 'browser-open' | 'bank-linked' | 'funded' | 'quarter-advanced' | 'year-end';
@@ -365,6 +369,17 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'Choose Shares, then enter fewer shares than you own so you keep part of it.',
       'Confirm the sale, then open the Activity tab to find it.',
     ],
+  },
+  {
+    part: 'Part IV · Time',
+    title: 'Move ahead another quarter',
+    trigger: 'quarter-advanced',
+    requireAction: true,
+    quarterAtLeast: '2025-07-01',
+    body: [
+      'Give your investments more time before you judge them. Another three months of price movement, and this time you have a sale and some income behind you too.',
+    ],
+    action: 'At the top of the page, click Jump to Quarter 3, then confirm.',
   },
   {
     part: 'Part IV · Review',
