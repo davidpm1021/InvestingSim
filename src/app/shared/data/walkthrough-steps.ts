@@ -14,6 +14,9 @@ export interface CfuQuestion {
   kind: 'mc' | 'free';
   /** Choices for an 'mc' question, in display order (mark the right one). */
   choices?: { text: string; correct?: boolean }[];
+  /** Build the choices from the student's own portfolio instead of authoring them,
+   *  so the right answer is a number they can actually read off the screen. */
+  dynamic?: 'account-change';
   /** The "why", revealed after an 'mc' question is answered. */
   explanation?: string;
 }
@@ -274,8 +277,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     questions: [
       {
         id: 'cfu-quarter-change',
-        kind: 'free',
-        prompt: 'Find the "Up / down" row in your Portfolio Summary. How much has your account value changed in dollars, and is it up or down?',
+        kind: 'mc',
+        dynamic: 'account-change',
+        prompt: 'These three numbers are all on your Portfolio Summary right now. Which one is how much your account value has changed?',
+        explanation: 'The "Up / down" row is the change: what your account is worth now, minus the money you added. The other two are the account total and your contributions, and neither one on its own tells you whether you gained or lost.',
       },
     ],
   },
@@ -359,10 +364,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'See how each investment did',
     scrollTop: true,
     body: [
-      'Before your next moves, look at how each holding actually performed. On the Overview, every holding shows its own Gain/Loss in dollars and percent, and the Performance chart plots each investment as a percent change since the start.',
-      'Open the Holdings tab too: it shows your portfolio value over time and the price history of any holding you select.',
+      'You have seen your account total move. Now compare your investments against each other. The Performance chart plots every investment as a percent change since the start, so you can see which pulled ahead and which lagged, on the same scale.',
+      'Percent matters more than dollars for this: a holding you put more money into will show a bigger dollar swing even if it barely moved.',
     ],
-    action: "On the Overview, read each holding's Gain/Loss and the Performance chart, then open the Holdings tab to compare price histories.",
+    action: 'On the Overview, use the Performance chart to compare your investments against each other, then open the Holdings tab to compare their price histories.',
     questions: [
       {
         id: 'cfu-holdings-diverge',

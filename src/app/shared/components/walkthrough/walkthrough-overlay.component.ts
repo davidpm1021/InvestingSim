@@ -9,6 +9,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { WalkthroughService } from '../../services/walkthrough.service';
 import { ResponsesService } from '../../services/responses.service';
 import { ChecklistService, MILESTONES } from '../../services/checklist.service';
+import { HoldingsService } from '../../services/holdings.service';
+import { TransactionsService } from '../../services/transactions.service';
+import { CurrentDateService } from '../../services/current-date.service';
 import { CfuQuestion } from '../../data/walkthrough-steps';
 import { GLOSSARY } from '../../data/glossary';
 
@@ -344,6 +347,9 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     private checklist: ChecklistService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private holdings: HoldingsService,
+    private transactions: TransactionsService,
+    private currentDate: CurrentDateService,
   ) {}
 
   /** The welcome splash ('/') is a pre-sim landing; the guide only appears once
@@ -357,10 +363,55 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   // (what ResponsesService stores and what correctness checks use).
   private shuffleCache = new Map<string, { c: { text: string; correct?: boolean }; i: number }[]>();
 
+  // Choices computed from the student's own numbers, held so every read (shuffle,
+  // correctness, feedback) sees the same array and the same indices.
+  private dynamicCache = new Map<string, { text: string; correct?: boolean }[]>();
+
+  /** Authored choices, or ones built from the student's portfolio. */
+  private choicesFor(q: CfuQuestion): { text: string; correct?: boolean }[] {
+    if (q.choices?.length) { return q.choices; }
+    if (q.dynamic === 'account-change') { return this.accountChangeChoices(q.id); }
+    return [];
+  }
+
+  /**
+   * The three figures on the Overview's Portfolio Summary: the change (correct), the
+   * account total, and what the student added. Mirrors recomputeAccountSummary() in
+   * the investing component so the options match what is on screen to the cent.
+   */
+  private accountChangeChoices(id: string): { text: string; correct?: boolean }[] {
+    const hit = this.dynamicCache.get(id);
+    if (hit) { return hit; }
+
+    const date = this.currentDate.getCurrentDate();
+    const value = this.holdings.getInvestmentsValueAtDate(date)
+      + this.transactions.getBalanceAtDate('brokerage001', date);
+    const added = this.transactions.getLedgerAsOf(date)
+      .filter(t => t.account === 'brokerage001' && t.type === 'transaction')
+      .reduce((sum, t) => sum + t.amount, 0);
+    const change = value - added;
+
+    const fmt = (n: number) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
+
+    const out: { text: string; correct?: boolean }[] = [{ text: fmt(change), correct: true }];
+    // Distractors are the other two rows. The trailing pair only comes into play if
+    // those collide with the answer (e.g. a student who has added nothing), so there
+    // are always three distinct options.
+    for (const candidate of [value, added, value + 25, added + 50, change + 100]) {
+      if (out.length >= 3) { break; }
+      const text = fmt(candidate);
+      if (!out.some(o => o.text === text)) { out.push({ text }); }
+    }
+
+    this.dynamicCache.set(id, out);
+    return out;
+  }
+
   shuffledChoices(q: CfuQuestion): { c: { text: string; correct?: boolean }; i: number }[] {
     const cached = this.shuffleCache.get(q.id);
     if (cached) { return cached; }
-    const items = (q.choices || []).map((c, i) => ({ c, i }));
+    const items = this.choicesFor(q).map((c, i) => ({ c, i }));
     for (let k = items.length - 1; k > 0; k--) {
       const j = Math.floor(Math.random() * (k + 1));
       [items[k], items[j]] = [items[j], items[k]];
@@ -384,7 +435,7 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
   }
   isSelectedCorrect(q: CfuQuestion): boolean {
     const i = this.responses.get(q.id)?.choiceIndex;
-    return i !== undefined && !!q.choices?.[i]?.correct;
+    return i !== undefined && !!this.choicesFor(q)[i]?.correct;
   }
   selectChoice(q: CfuQuestion, i: number): void {
     this.responses.setChoice(q.id, i);
