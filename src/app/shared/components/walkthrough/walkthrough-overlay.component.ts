@@ -262,18 +262,28 @@ interface Segment { t: string; def: string | null; }
 
     /* ---------- tour spotlight ---------- */
     .wt-block { position: fixed; inset: 0; z-index: 3000; background: transparent; }
+    /* The 9999px box-shadow IS the page dimmer, so fading this element in fades the
+       whole scrim up instead of snapping the page dark in a single frame. */
     .wt-spot {
       position: fixed; z-index: 3001; pointer-events: none;
       border: 2px solid #36ebff; border-radius: 10px;
       box-shadow: 0 0 0 9999px rgba(6, 11, 36, 0.7);
-      transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
+      animation: wt-fade 0.45s ease-out;
+      transition: top 0.3s cubic-bezier(0.3, 0.7, 0.3, 1), left 0.3s cubic-bezier(0.3, 0.7, 0.3, 1),
+                  width 0.3s cubic-bezier(0.3, 0.7, 0.3, 1), height 0.3s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
+    /* Comes in just after the dim has started, so the two do not land at once. */
     .wt-callout {
       position: fixed; z-index: 3002; box-sizing: border-box;
       background: #ffffff; color: #41496b; border-radius: 14px; box-shadow: 0 20px 50px rgba(6, 11, 36, 0.4);
       padding: 16px 18px 12px; font-family: 'Montserrat', sans-serif;
-      animation: wt-pop 0.2s cubic-bezier(0.2, 0.7, 0.3, 1);
-      transition: top 0.2s ease, left 0.2s ease;
+      animation: wt-callout-in 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) 0.15s both;
+      transition: top 0.3s cubic-bezier(0.3, 0.7, 0.3, 1), left 0.3s cubic-bezier(0.3, 0.7, 0.3, 1);
+    }
+    @keyframes wt-fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes wt-callout-in {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: none; }
     }
     .wt-ct-title { margin: 0 0 6px; font-size: 1.1rem; font-weight: 700; color: #0d1157; }
     .wt-ct-body { margin: 0 0 8px; font-size: 0.9rem; line-height: 1.5; color: #41496b; }
@@ -300,6 +310,13 @@ interface Segment { t: string; def: string | null; }
     .wt-coach-actions { flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
     .wt-coach-actions .mat-mdc-raised-button { border-radius: 999px; }
     @media (max-width: 600px) { .wt-coach-action { font-size: 0.82rem; } }
+
+    /* Keep the guide usable without the motion: the spotlight still needs its dim,
+       so only the movement and entrance timing are dropped. */
+    @media (prefers-reduced-motion: reduce) {
+      .wt-card, .wt-coach, .wt-spot, .wt-callout { animation: none; }
+      .wt-spot, .wt-callout { transition: none; }
+    }
   `]
 })
 export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
