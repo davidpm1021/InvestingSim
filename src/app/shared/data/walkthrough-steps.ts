@@ -49,7 +49,7 @@ export interface WalkthroughStep {
    *  unlocks immediately if the student already did it before arriving here. */
   gate?: 'buy' | 'sell' | 'statement' | 'withdraw';
   /** Lock forward progress until the student has bought this many DISTINCT investments
-   *  (used by "Build your portfolio", which asks for three different types). Unlike
+   *  (used by "Build your portfolio", which asks for three different ones). Unlike
    *  gate:'buy' (one buy), this requires several, and auto-advances only once the count
    *  is reached. Unlocks immediately if the student already bought that many. */
   requireDistinctBuys?: number;
@@ -231,9 +231,9 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireDistinctBuys: 3,
     noGlossary: true,
     body: [
-      'Buy at least three different types. Spreading your money around (diversification) means when one drops, another may rise. Trades are free in this simulation.',
+      'Buy at least three different investments. Spreading your money out is called diversification, and it means no single investment decides how you do. Mixing different types, say a stock, a fund and a bond fund, spreads it further, because they tend not to all move together. Trades are free in this simulation.',
     ],
-    action: 'Click Buy and purchase three different types of investments.',
+    action: 'Click Buy and purchase three different investments.',
     questions: [
       {
         id: 'cfu-gain-zero',

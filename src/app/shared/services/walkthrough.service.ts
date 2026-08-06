@@ -104,7 +104,7 @@ export class WalkthroughService {
     this.checklist.completed$.subscribe(() => this.autoAdvanceGate());
 
     // Track how many DISTINCT investments have been bought, for the "buy three
-    // different types" gate. Fires immediately with the current holdings, so the gate
+    // different investments" gate. Fires immediately with the current holdings, so the gate
     // unlocks right away if the student already bought enough.
     this.holdings.holdingTransactions$.subscribe(txns => {
       this.distinctBuys = new Set(txns.filter(t => t.action === 'buy').map(t => t.assetId)).size;
