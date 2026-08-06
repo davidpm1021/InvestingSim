@@ -81,7 +81,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     noGlossary: true,
     requireAction: true,
     body: [
-      'This account is different from a bank account. Bank accounts hold cash you can spend or save. A brokerage account holds investments you buy, sell and own.',
+      'A brokerage account is different from a bank account. Bank accounts hold cash you can spend or save. A brokerage account holds investments you buy, sell and own.',
       'You will connect (or "link") your bank account to your brokerage account later to move money between them.',
     ],
     action: 'Open the Web Browser on the desktop.',
