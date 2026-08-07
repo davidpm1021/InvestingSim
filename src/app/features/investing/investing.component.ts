@@ -537,19 +537,27 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         scales: {
+          // White axis text and a faint grid: this chart sits on the dark navy sim
+          // body, where Chart.js's default grey is barely legible.
           x: {
             display: true,
             title: {
               display: true,
-              text: 'Date'
-            }
+              text: 'Date',
+              color: '#ffffff'
+            },
+            ticks: { color: '#ffffff' },
+            grid: { color: 'rgba(255, 255, 255, 0.09)' }
           },
           y: {
             display: true,
             title: {
               display: true,
-              text: 'Price ($)'
+              text: 'Price ($)',
+              color: '#ffffff'
             },
+            ticks: { color: '#ffffff' },
+            grid: { color: 'rgba(255, 255, 255, 0.09)' },
             beginAtZero: useConsistentYAxis,
             max: useConsistentYAxis ? this.getMaxPriceAcrossAllAssets() : undefined
           }
