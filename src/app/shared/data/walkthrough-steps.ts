@@ -113,7 +113,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireAction: true,
     scrollTop: true,
     body: [
-      'Linking your bank is the first thing any brokerage asks for, and it only has to be done once.',
+      'Linking your bank is one of the first things any brokerage asks for, and it only has to be done once.',
     ],
     action: [
       'On the Summit Invest tab, go to Overview and click Connect Your Bank.',
