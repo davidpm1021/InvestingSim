@@ -283,7 +283,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'That is what your whole account is worth right now.' },
           { text: 'That is the total you have deposited so far.' },
         ],
-        explanation: 'The "Total gain / loss" row is the change: what your account is worth now, minus your deposits. The other two are the account total and the deposits themselves, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
+        explanation: 'The "Total gain / loss" row is the change: what your account is worth now, minus your deposits. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
       },
     ],
   },
