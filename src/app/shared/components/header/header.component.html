@@ -7,15 +7,24 @@
               <div class="quarter-info">
                 <span class="current-quarter-label">Current: {{ currentQuarterLabel }}</span>
               </div>
-              <button *ngIf="canNavigateToNext"
-                      mat-raised-button
-                      color="primary"
-                      class="jump-quarter-button"
-                      [disabled]="quarterJumpDisabled"
-                      (click)="onJumpToNextQuarter()">
-                <mat-icon fontIcon="la-arrow-right"></mat-icon>
-                Jump to {{ nextQuarterLabel }}
-              </button>
+              <!-- The wrapper carries the title: a disabled button cannot be hovered
+                   or focused, so the reason would otherwise be unreachable. -->
+              <span *ngIf="canNavigateToNext"
+                    [attr.title]="quarterJumpDisabled
+                      ? 'The guide unlocks this when it reaches the step that moves time forward.'
+                      : null">
+                <button mat-raised-button
+                        color="primary"
+                        class="jump-quarter-button"
+                        [disabled]="quarterJumpDisabled"
+                        [attr.aria-label]="quarterJumpDisabled
+                          ? 'Jump to ' + nextQuarterLabel + '. The guide unlocks this when it reaches the step that moves time forward.'
+                          : null"
+                        (click)="onJumpToNextQuarter()">
+                  <mat-icon fontIcon="la-arrow-right"></mat-icon>
+                  Jump to {{ nextQuarterLabel }}
+                </button>
+              </span>
               <button *ngIf="atYearEnd"
                       mat-raised-button
                       color="primary"

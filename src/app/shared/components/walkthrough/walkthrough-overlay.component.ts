@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -92,9 +92,14 @@ interface Segment { t: string; def: string | null; }
                   <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && opt.c.correct" fontIcon="la-check"></mat-icon>
                   <mat-icon class="wt-choice-mark" *ngIf="isChecked(q) && isSelected(q, opt.i) && !opt.c.correct" fontIcon="la-times"></mat-icon>
                 </label>
-                <p class="wt-cfu-exp" *ngIf="isChecked(q)" [class.right]="isSelectedCorrect(q)">
-                  <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
-                </p>
+                <!-- The live region has to exist before the feedback appears, or the
+                     insertion is not announced. Keep the wrapper mounted and let the
+                     explanation arrive inside it. -->
+                <div class="wt-cfu-live" role="status" aria-live="polite">
+                  <p class="wt-cfu-exp" *ngIf="isChecked(q)" [class.right]="isSelectedCorrect(q)">
+                    <strong>{{ isSelectedCorrect(q) ? 'Correct.' : 'Not quite.' }}</strong> {{ q.explanation }}
+                  </p>
+                </div>
               </fieldset>
               <div class="wt-cfu-free" *ngIf="q.kind === 'free'">
                 <label class="wt-cfu-q" [attr.for]="q.id">{{ q.prompt }}</label>
@@ -108,14 +113,16 @@ interface Segment { t: string; def: string | null; }
               <div class="wt-progress"><span class="wt-bar" [style.width.%]="milestonePct"></span></div>
               <span class="wt-progress-label">{{ milestonesDone }} / {{ milestonesTotal }}</span>
             </div>
+            <!-- A title on a disabled button is unreachable: it cannot take focus and
+                 cannot be hovered on touch. Say why in visible copy instead. -->
+            <p class="wt-gate-hint" *ngIf="needsCheck() && !canCheck()">Pick an answer to continue.</p>
             <div class="wt-actions">
               <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev()">Back</button>
               <span class="wt-spacer"></span>
               <button *ngIf="needsCheck()" mat-raised-button color="primary" type="button"
                       cdkFocusInitial [disabled]="!canCheck()"
-                      [attr.title]="!canCheck() ? 'Pick an answer first' : null"
                       (click)="checkAnswers()">{{ checkLabel }}</button>
-              <button *ngIf="!needsCheck()" mat-raised-button color="primary" type="button"
+              <button *ngIf="!needsCheck()" #primaryBtn mat-raised-button color="primary" type="button"
                       cdkFocusInitial (click)="svc.next()">
                 {{ svc.isLast ? 'Finish' : 'Continue' }}
               </button>
@@ -160,7 +167,9 @@ interface Segment { t: string; def: string | null; }
           <button mat-button type="button" *ngIf="!svc.isFirst && !svc.current.sealBack" (click)="svc.prev(); $event.stopPropagation()">Back</button>
           <button mat-raised-button color="primary" type="button"
                   [disabled]="!svc.canProceed()"
-                  [attr.title]="!svc.canProceed() ? 'Do the step to continue' : null"
+                  [attr.aria-label]="!svc.canProceed()
+                    ? (svc.isLast ? 'Finish' : 'Next step') + '. Finish the step above first.'
+                    : null"
                   (click)="svc.next(); $event.stopPropagation()">
             {{ svc.isLast ? 'Finish' : 'Next step' }}
           </button>
@@ -217,6 +226,8 @@ interface Segment { t: string; def: string | null; }
     /* Housekeeping aside about the simulation: present, but out of the way of the
        teaching copy. */
     .wt-note { margin: 10px 0 0; font-size: 0.78rem; line-height: 1.4; color: #7b849e; }
+    /* Why the primary button is disabled, said in visible copy. */
+    .wt-gate-hint { margin: 12px 0 0; font-size: 0.82rem; font-weight: 600; color: #8a5a00; }
 
     .wt-progress-wrap { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px; }
     .wt-progress-wrap .wt-progress { flex: 1; margin: 0; }
@@ -465,9 +476,17 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
     const mc = this.mcQuestions();
     return mc.length > 0 && mc.every(q => this.isAnswered(q));
   }
+  // read: ElementRef because the ref sits on a Material button, so the default query
+  // would hand back the MatButton directive rather than the element.
+  @ViewChild('primaryBtn', { read: ElementRef }) private primaryBtn?: ElementRef<HTMLButtonElement>;
+
   checkAnswers(): void {
     this.mcQuestions().forEach(q => this.checked.add(q.id));
     this.cdr.detectChanges();
+    // Revealing the answer disables the fieldset, which drops focus off the radio the
+    // student was standing on and strands it on <body> inside the focus trap. Hand it
+    // to Continue, which is both the next action and the button that just appeared.
+    setTimeout(() => this.primaryBtn?.nativeElement.focus());
   }
   get checkLabel(): string {
     return this.mcQuestions().length > 1 ? 'Check answers' : 'Check answer';
