@@ -372,7 +372,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'See how each investment did',
     scrollTop: true,
     body: [
-      'Now that you have watched your account total move, it is worth looking at how the investments did against each other. Every line on the Compare Investments chart begins at 0% on the far left, so you can see which ones pulled ahead and which fell behind no matter what they cost.',
+      'On the Compare Investments chart, every line starts at 0% on the far left, so you can see which investments pulled ahead and which fell behind.',
       'Measuring in percent rather than dollars is what makes that a fair comparison, since the same $5 move is a much bigger deal for a lower-priced fund than for a stock costing twice as much.',
     ],
     action: 'On the Overview, use the Compare Investments chart to see which investments pulled ahead and which fell behind, then open the Holdings tab to compare their price histories.',
