@@ -113,7 +113,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireAction: true,
     scrollTop: true,
     body: [
-      'A brokerage account holds investments, but the cash to buy them comes from your bank. Connecting it lets you move money in and out.',
+      'Linking your bank is the first thing any brokerage asks for, and it only has to be done once.',
     ],
     action: [
       'On the Summit Invest tab, go to Overview and click Connect Your Bank.',
@@ -176,7 +176,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         kind: 'mc',
         prompt: 'In this simulation, the cash settlement account earns less interest than your savings. So why move money into it at all?',
         choices: [
-          { text: 'To buy investments, which can grow faster than cash over time.', correct: true },
+          { text: 'It is the only account you can buy investments from.', correct: true },
           { text: 'To earn a higher interest rate than the bank pays.' },
           { text: 'To keep your money safer than in a bank.' },
         ],
@@ -329,22 +329,11 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         kind: 'mc',
         prompt: 'Suppose a holding is worth more than you paid. Is that gain money you can spend yet?',
         choices: [
-          { text: 'No. It is an unrealized gain that only becomes real money when you sell.', correct: true },
+          { text: 'No. Nothing is spendable until you sell and the cash lands in your account.', correct: true },
           { text: 'Yes. It is already sitting in your cash settlement account.' },
           { text: 'Yes. The brokerage account deposits gains into your bank each quarter.' },
         ],
         explanation: 'Until you sell, the price can still rise or fall. That is why the statement separates Cash Available (the real cash in your cash settlement account) from Investments (the current value of what you own).',
-      },
-      {
-        id: 'cfu-statement-read',
-        kind: 'mc',
-        prompt: 'Your account value changed this quarter. How does the statement show how much came from your investments, not just money you added?',
-        choices: [
-          { text: 'It lists "Money you added" separately from your investment gain/loss and income.', correct: true },
-          { text: 'It does not; the statement only shows the ending total.' },
-          { text: 'The whole change counts as your investment gain or loss.' },
-        ],
-        explanation: 'The statement splits the change in your account into money you added versus what your investments gained or lost, plus any income. That separation shows your true return.',
       },
     ],
   },
