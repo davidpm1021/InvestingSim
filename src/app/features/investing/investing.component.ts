@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, Inject, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -52,7 +53,7 @@ export interface Holding {
 @Component({
   selector: 'app-investing',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, MatTooltipModule, FormsModule, AssetTypePipe, EvergreenDatePipe, HoldingsTotalsComponent, LineChartComponent, DefineComponent, PageIntroComponent, ClickableDirective],
+  imports: [CommonModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatSelectModule, MatSlideToggleModule, MatTableModule, MatTabsModule, MatTooltipModule, FormsModule, AssetTypePipe, EvergreenDatePipe, HoldingsTotalsComponent, LineChartComponent, DefineComponent, PageIntroComponent, ClickableDirective],
   templateUrl: './investing.component.html',
   styleUrl: './investing.component.scss'
 })
@@ -120,6 +121,9 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   // Performance charts (Chunk 5)
   compareLabels: string[] = [];
   compareSeries: LineSeries[] = [];
+  // Compare chart scope: every investment on offer, or only the ones held. Seven
+  // lines is a lot to read when you own three.
+  compareScope: 'all' | 'mine' = 'all';
   // Index in compareLabels where the simulation year begins, for the chart marker.
   compareStartIndex = -1;
   // The portfolio chart runs on its own, shorter range (simulation year only).
@@ -443,7 +447,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.compareStartIndex = dates.findIndex(d => d >= SIM_YEAR_START);
     // Normalize each asset to % change from its first visible point — raw prices sit
     // at different levels ($44–$116), which flattens every line on a shared $ axis.
-    this.compareSeries = this.dataService.assets.map(a => {
+    // "What I own" falls back to everything if the student holds nothing, so the card
+    // never renders an empty chart.
+    const owned = new Set(this.holdings.map(h => h.assetId));
+    const shown = this.compareScope === 'mine' && owned.size > 0
+      ? this.dataService.assets.filter(a => owned.has(a.id))
+      : this.dataService.assets;
+
+    this.compareSeries = shown.map(a => {
       const prices = dates.map(d => this.holdingsService.getCurrentPrice(a, d));
       const base = prices[0] || 1;
       return {
@@ -461,6 +472,11 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       label: 'Portfolio Value',
       data: portfolioDates.map(d => this.holdingsService.getInvestmentsValueAtDate(d))
     }];
+  }
+
+  setCompareScope(scope: 'all' | 'mine'): void {
+    this.compareScope = scope;
+    this.updatePerformanceCharts();
   }
 
   // Account-value summary for the Overview (QA4): value vs. what you put in.

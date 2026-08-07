@@ -1758,3 +1758,10 @@ h2 { color: #fff !important; }
   .income-item { grid-template-columns: 1fr; gap: 4px; }
   .income-amount { text-align: left; }
 }
+
+/* Compare Investments scope toggle (All / What I own). */
+.compare-scope {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}

@@ -287,6 +287,15 @@
               <h2 mat-card-title>Compare Investments</h2>
             </mat-card-header>
             <mat-card-content>
+              <div class="compare-scope">
+                <mat-button-toggle-group [value]="compareScope"
+                                         (change)="setCompareScope($event.value)"
+                                         hideSingleSelectionIndicator="true"
+                                         aria-label="Which investments to compare">
+                  <mat-button-toggle value="all">All investments</mat-button-toggle>
+                  <mat-button-toggle value="mine" [disabled]="holdings.length === 0">What I own</mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
               <p class="chart-hint">Every line begins at 0% on the far left, then shows how much that investment's price has risen or fallen since that point. The chart reaches back a year before your simulation, so you can see how each one behaved before you began. The dashed line marks where your year starts. Click a name in the legend to hide or show its line.</p>
               <app-line-chart [labels]="compareLabels" [series]="compareSeries"
                               [showLegend]="true" yLabel="% change" valueFormat="percent"
