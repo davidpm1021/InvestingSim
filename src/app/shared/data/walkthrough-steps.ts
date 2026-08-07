@@ -363,7 +363,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     requireAction: true,
     quarterAtLeast: '2025-07-01',
     body: [
-      'You have bought, sold and collected income. Now give your investments more time. Another three months of prices will tell you more than a single quarter can.',
+      "Let's give your investments more time to see how they change, since a single quarter on its own does not tell you much about how any of them behave.",
     ],
     action: 'At the top of the page, click Jump to Quarter 3, then confirm.',
   },
