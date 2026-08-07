@@ -422,6 +422,18 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     action: 'Use Withdraw Funds to move some cash from your cash settlement account back to your bank.',
   },
   {
+    part: 'Part IV · Review',
+    title: 'See how the year changed things',
+    scrollTop: true,
+    body: [
+      'Before you wrap up, look at what a year of investing did to your holdings, since what you own now and what each investment is worth will have drifted from the day you bought.',
+    ],
+    action: [
+      'On the Overview, check the Gain/Loss on each holding.',
+      'Switch the Compare Investments chart to "What I own" to see the whole year at once.',
+    ],
+  },
+  {
     part: 'Part V · Wrap up',
     title: 'See your Year-End Review',
     trigger: 'year-end',
