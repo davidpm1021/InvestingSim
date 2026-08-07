@@ -11,11 +11,11 @@
       <span class="stat-value">{{ model.finalValue | currency:'USD':'symbol':'1.2-2' }}</span>
     </div>
     <div class="stat">
-      <span class="stat-label">You added</span>
+      <span class="stat-label">Deposits</span>
       <span class="stat-value">{{ model.added | currency:'USD':'symbol':'1.2-2' }}</span>
     </div>
     <div class="stat" *ngIf="model.withdrawn > 0">
-      <span class="stat-label">You withdrew</span>
+      <span class="stat-label">Withdrawals</span>
       <span class="stat-value">{{ model.withdrawn | currency:'USD':'symbol':'1.2-2' }}</span>
     </div>
     <div class="stat" [class.pos]="model.gainLoss >= 0" [class.neg]="model.gainLoss < 0">

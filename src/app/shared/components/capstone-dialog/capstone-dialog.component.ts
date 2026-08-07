@@ -97,10 +97,10 @@ export class CapstoneDialogComponent implements OnInit {
     const m = this.model;
     const rows: Array<{ label: string; value: string; color?: string }> = [
       { label: 'Account value', value: this.money(m.finalValue) },
-      { label: 'You added', value: this.money(m.added) },
+      { label: 'Deposits', value: this.money(m.added) },
     ];
     if (m.withdrawn > 0) {
-      rows.push({ label: 'You withdrew', value: this.money(m.withdrawn) });
+      rows.push({ label: 'Withdrawals', value: this.money(m.withdrawn) });
     }
     const pct = m.gainLossPct === null ? '–' : `${m.gainLossPct.toFixed(2)}%`;
     rows.push({
