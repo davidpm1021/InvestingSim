@@ -82,7 +82,7 @@ interface Segment { t: string; def: string | null; }
             </div>
             <div class="wt-cfu" *ngFor="let q of svc.current.questions">
               <fieldset class="wt-cfu-mc" *ngIf="q.kind === 'mc'" [disabled]="isChecked(q)">
-                <legend class="wt-cfu-q">{{ q.prompt }}</legend>
+                <legend class="wt-cfu-q">{{ promptFor(q) }}</legend>
                 <label class="wt-choice" *ngFor="let opt of shuffledChoices(q)"
                        [class.selected]="isSelected(q, opt.i)"
                        [class.correct]="isChecked(q) && opt.c.correct"
@@ -102,7 +102,7 @@ interface Segment { t: string; def: string | null; }
                 </div>
               </fieldset>
               <div class="wt-cfu-free" *ngIf="q.kind === 'free'">
-                <label class="wt-cfu-q" [attr.for]="q.id">{{ q.prompt }}</label>
+                <label class="wt-cfu-q" [attr.for]="q.id">{{ promptFor(q) }}</label>
                 <textarea [id]="q.id" class="wt-cfu-text" rows="4" [value]="textFor(q)"
                           (input)="saveText(q, $event)" placeholder="Type your answer..."></textarea>
               </div>
@@ -383,47 +383,44 @@ export class WalkthroughOverlayComponent implements OnInit, OnDestroy {
 
   // Choices computed from the student's own numbers, held so every read (shuffle,
   // correctness, feedback) sees the same array and the same indices.
-  private dynamicCache = new Map<string, { text: string; correct?: boolean }[]>();
+  // Resolved prompt text per question, so the figure stays put across re-renders.
+  private dynamicCache = new Map<string, string>();
 
-  /** Authored choices, or ones built from the student's portfolio. */
+  /** Authored choices (dynamic questions put the student's figure in the prompt). */
   private choicesFor(q: CfuQuestion): { text: string; correct?: boolean }[] {
-    if (q.choices?.length) { return q.choices; }
-    if (q.dynamic === 'account-change') { return this.accountChangeChoices(q.id); }
-    return [];
+    return q.choices ?? [];
   }
 
   /**
-   * The three figures on the Overview's Portfolio Summary: the change (correct), the
-   * account total, and what the student added. Mirrors recomputeAccountSummary() in
-   * the investing component so the options match what is on screen to the cent.
+   * The prompt with {value} replaced by the student's own figure, so the question is
+   * about a number they can read off their screen.
+   *
+   * The figure goes in the PROMPT rather than the choices on purpose. When the options
+   * were the three Portfolio Summary numbers, the answer was a difference between the
+   * other two and so always the smallest, which let a student pick it on size without
+   * reading a label. Interpretations of one shared number leave no such tell.
    */
-  private accountChangeChoices(id: string): { text: string; correct?: boolean }[] {
-    const hit = this.dynamicCache.get(id);
-    if (hit) { return hit; }
+  promptFor(q: CfuQuestion): string {
+    if (q.dynamic !== 'account-change' || !q.prompt.includes('{value}')) { return q.prompt; }
+    const cached = this.dynamicCache.get(q.id);
+    if (cached) { return cached; }
 
     const date = this.currentDate.getCurrentDate();
     const value = this.holdings.getInvestmentsValueAtDate(date)
       + this.transactions.getBalanceAtDate('brokerage001', date);
+    // Mirrors recomputeAccountSummary() in the investing component, so this matches the
+    // "Total gain / loss" row to the cent.
     const added = this.transactions.getLedgerAsOf(date)
       .filter(t => t.account === 'brokerage001' && t.type === 'transaction')
       .reduce((sum, t) => sum + t.amount, 0);
     const change = value - added;
 
-    const fmt = (n: number) =>
-      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-
-    const out: { text: string; correct?: boolean }[] = [{ text: fmt(change), correct: true }];
-    // Distractors are the other two rows. The trailing pair only comes into play if
-    // those collide with the answer (e.g. a student who has added nothing), so there
-    // are always three distinct options.
-    for (const candidate of [value, added, value + 25, added + 50, change + 100]) {
-      if (out.length >= 3) { break; }
-      const text = fmt(candidate);
-      if (!out.some(o => o.text === text)) { out.push({ text }); }
-    }
-
-    this.dynamicCache.set(id, out);
-    return out;
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+      .format(Math.abs(change));
+    const shown = `${change >= 0 ? '+' : '-'}${money}`;
+    const text = q.prompt.replace('{value}', shown);
+    this.dynamicCache.set(q.id, text);
+    return text;
   }
 
   shuffledChoices(q: CfuQuestion): { c: { text: string; correct?: boolean }; i: number }[] {

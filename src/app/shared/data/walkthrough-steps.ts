@@ -277,7 +277,12 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         id: 'cfu-quarter-change',
         kind: 'mc',
         dynamic: 'account-change',
-        prompt: 'Look at the "Total gain / loss" row of the Portfolio Summary card. How much has your account increased or decreased in value?',
+        prompt: 'Your "Total gain / loss" row shows {value}. What does that number tell you?',
+        choices: [
+          { text: 'That is how much more, or less, your account is worth than the money you put in.', correct: true },
+          { text: 'That is what your whole account is worth right now.' },
+          { text: 'That is the total you have deposited so far.' },
+        ],
         explanation: 'The "Total gain / loss" row is the change: what your account is worth now, minus your deposits. The other two are the account total and the deposits themselves, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
       },
     ],
