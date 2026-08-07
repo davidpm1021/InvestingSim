@@ -167,7 +167,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part I · Look around',
     title: 'Two accounts, two jobs',
     body: [
-      'In this simulation, your savings account and your cash settlement account pay different interest rates. You move money into your cash settlement account not to earn interest, but to buy investments, which can grow faster than cash over time (though they can also fall).',
+      'In this simulation, your savings account and your cash settlement account pay different interest rates. You move money into your cash settlement account to buy investments, which can grow faster than leaving it in a bank account. They can also fall, so it is not a sure thing.',
     ],
     action: 'Switch between the two tabs and see which account pays more interest.',
     questions: [
