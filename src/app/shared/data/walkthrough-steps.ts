@@ -278,7 +278,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         kind: 'mc',
         dynamic: 'account-change',
         prompt: 'Look at the "Up / down" row of the Portfolio Summary card. How much has your account increased or decreased in value?',
-        explanation: 'The "Up / down" row is the change: what your account is worth now, minus the money you added. The other two are the account total and the money you added, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
+        explanation: 'The "Up / down" row is the change: what your account is worth now, minus your deposits. The other two are the account total and the deposits themselves, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
       },
     ],
   },

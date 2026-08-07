@@ -10,6 +10,7 @@ export const GLOSSARY: { [term: string]: string } = {
   'Cash Available': "Cash in your brokerage account that isn't invested, ready to buy investments or to withdraw.",
   'Settlement': 'The short delay before a trade is final and the cash is available, usually the next business day (T+1).',
   'Transfer': 'Moving money between accounts, for example, from your bank to your brokerage account to fund investing.',
+  'Deposits': 'The money you have moved in from your bank, less anything you have moved back out. It is what you put in, not what it is worth now.',
   'APY': 'Annual Percentage Yield: the interest you earn on cash over a year, including compounding.',
   'Compounding': 'Earning returns on your past returns, so growth builds on itself over time.',
 

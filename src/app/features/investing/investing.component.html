@@ -43,7 +43,7 @@
                   <strong class="av-value">${{ accountValue | number:'1.2-2' }}</strong>
                 </div>
                 <div class="av-row">
-                  <span class="av-label">You've added</span>
+                  <span class="av-label"><app-define term="Deposits" label="Deposits"></app-define></span>
                   <span class="av-value">${{ netContributions | number:'1.2-2' }}</span>
                 </div>
                 <div class="av-row" [class.positive]="accountGainLoss >= 0" [class.negative]="accountGainLoss < 0">
