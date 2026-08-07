@@ -389,7 +389,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'One of the numbers must be an error, because holdings always move together.' },
           { text: 'The holding that is down is guaranteed to recover by next quarter.' },
         ],
-        explanation: 'Prices move independently, so in any quarter some holdings gain while others lose. Holding a mix is what lets a winner cushion a loser. That is diversification doing its job.',
+        explanation: 'Prices move independently, so in any quarter some holdings gain while others lose. Holding a spread of investments is what lets a winner cushion a loser. That is diversification doing its job.',
       },
       {
         id: 'cfu-trim-winner',
@@ -400,7 +400,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
           { text: 'Because a gain disappears unless you sell it within the same quarter.' },
           { text: 'Because an investment that just went up is certain to fall next quarter.' },
         ],
-        explanation: 'As a winner grows, it becomes a bigger part of your mix, so your results lean more on that one holding. Trimming brings the mix back toward balance. It is a choice, not a rule: you could also let it run, or buy a holding that dipped.',
+        explanation: 'As a winner grows it takes up more of your allocation, so more of your result rides on that one holding. Selling some of a larger holding brings your allocation back toward balance, though that is a choice rather than a rule, since you could equally leave it alone or buy more of something that dipped.',
       },
     ],
   },
@@ -408,7 +408,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part IV · The year',
     title: 'Play out the year',
     body: [
-      "Now play out the rest of the year. Watch each holding's Gain/Loss and the Compare Investments chart, and trade as you see fit: buy a dip, add to a winner, or trim a position.",
+      "Now play out the rest of the year. Watch each holding's Gain/Loss and the Compare Investments chart, and trade as you see fit: buy after a price drops, add to one that is doing well, or sell part of a holding that has grown large.",
     ],
     action: 'Repeat through Quarter 4: trade if you want, jump a quarter, then open the new statement.',
   },
