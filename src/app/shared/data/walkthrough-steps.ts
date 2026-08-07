@@ -375,7 +375,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
       'On the Compare Investments chart, every line starts at 0% on the far left, so you can see how each one performed over time.',
       'Measuring in percent rather than dollars is what makes that a fair comparison, since the same $5 move is a much bigger deal for a lower-priced fund than for a stock costing twice as much.',
     ],
-    action: 'On the Overview, use the Compare Investments chart to see which investments pulled ahead and which fell behind, then open the Holdings tab to compare their price histories.',
+    action: [
+      'On the Overview, switch the Compare Investments chart to "What I own".',
+      'Open the Holdings tab to compare price histories.',
+    ],
     questions: [
       {
         id: 'cfu-holdings-diverge',
