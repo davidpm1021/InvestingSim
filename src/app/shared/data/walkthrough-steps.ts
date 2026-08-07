@@ -417,7 +417,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'Turning investments back into money',
     gate: 'withdraw',
     body: [
-      'Your dividends and interest pile up in your cash settlement account. To bank it, sell what you want, then use Withdraw Funds.',
+      'Your dividends and interest build up as cash in your cash settlement account. To move that money to your bank, first sell any investments you want to cash out, then use Withdraw Funds.',
     ],
     action: 'Use Withdraw Funds to move some cash from your cash settlement account back to your bank.',
   },
