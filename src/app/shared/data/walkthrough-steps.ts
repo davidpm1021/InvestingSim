@@ -167,7 +167,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part I · Look around',
     title: 'Two accounts, two jobs',
     body: [
-      'In this simulation, your savings account and your cash settlement account pay different interest rates. You move money into the settlement account not to earn interest, but to buy investments, which can grow faster than cash over time (though they can also fall).',
+      'In this simulation, your savings account and your cash settlement account pay different interest rates. You move money into your cash settlement account not to earn interest, but to buy investments, which can grow faster than cash over time (though they can also fall).',
     ],
     action: 'Switch between the two tabs and see which account pays more interest.',
     questions: [
@@ -278,13 +278,13 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
         kind: 'mc',
         dynamic: 'account-change',
         prompt: 'Look at the "Up / down" row of the Portfolio Summary card. How much has your account increased or decreased in value?',
-        explanation: 'The "Up / down" row is the change: what your account is worth now, minus the money you added. The other two are the account total and your contributions, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
+        explanation: 'The "Up / down" row is the change: what your account is worth now, minus the money you added. The other two are the account total and the money you added, and neither one on its own tells you whether you gained or lost. Not all of that change came from prices moving, though. Some of it is dividend and interest payments, which is what you will look at next.',
       },
     ],
   },
   {
     part: 'Part III · Income',
-    title: 'Unearned Income',
+    title: 'Money your money makes',
     body: [
       'Both your savings and your cash settlement account earn interest each month. Your investments can pay dividends or bond income each quarter. A dividend can even arrive while a price falls.',
     ],
@@ -427,7 +427,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'You did it',
     title: 'One year as an investor',
     body: [
-      'You funded a brokerage account, invested, weathered the ups and downs, and read your statements. The real thing works just like this.',
+      'You funded a brokerage account, invested, weathered the ups and downs, and read your statements.',
     ],
     action: 'Close the guide and keep exploring.',
     cta: 'Finish',

@@ -38,11 +38,11 @@
     </div>
     
     <div class="transfer-amount-section">
-      <h4>{{ data.transferDirection === 'to-brokerage' ? 'Add Funds to Investment Account' : 'Withdraw Funds to Bank Account' }}</h4>
+      <h4>{{ data.transferDirection === 'to-brokerage' ? 'Add Funds to Brokerage Account' : 'Withdraw Funds to Bank Account' }}</h4>
       <p class="transfer-description">
         {{ data.transferDirection === 'to-brokerage' 
-           ? 'Transfer money from your connected bank account to your investment account to start investing.' 
-           : 'Transfer money from your investment account back to your connected bank account.' }}
+           ? 'Transfer money from your connected bank account to your brokerage account to start investing.' 
+           : 'Transfer money from your brokerage account back to your connected bank account.' }}
       </p>
       
       <mat-form-field appearance="outline" class="full-width">

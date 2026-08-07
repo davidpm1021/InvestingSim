@@ -10,7 +10,7 @@
   </div>
 
   <div class="page-description">
-    <p>Build and manage your investment portfolio with professional tools and real-time market data.</p>
+    <p>Buy and sell investments, and track how your portfolio does over time.</p>
   </div>
 
   <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
@@ -129,7 +129,7 @@
                   </div>
                 </div>
                 <div class="no-holdings-message" *ngIf="holdingsValue === 0">
-                  <p>You haven't purchased any assets yet.</p>
+                  <p>You haven't bought any investments yet.</p>
                   <p class="message-hint">Start building your portfolio by placing your first trade!</p>
                 </div>
               </div>
