@@ -375,7 +375,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'See how each investment did',
     scrollTop: true,
     body: [
-      'You have seen your account total move. Now compare the investments against each other. The Compare Investments chart plots every one as a percent change on the same scale. It starts a year before your simulation, and a marker shows where your own year begins.',
+      'You have seen your account total move. Now compare the investments against each other. On the Compare Investments chart, every line begins at 0% on the far left and shows how much that price has risen or fallen since. Putting them all on one scale is what lets you compare a $45 fund with a $110 stock.',
       'Percent matters more than dollars for this: a holding you put more money into will show a bigger dollar swing even if it barely moved.',
     ],
     action: 'On the Overview, use the Compare Investments chart to see which investments pulled ahead and which fell behind, then open the Holdings tab to compare their price histories.',

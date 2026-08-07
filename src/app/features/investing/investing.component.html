@@ -287,7 +287,7 @@
               <h2 mat-card-title>Compare Investments</h2>
             </mat-card-header>
             <mat-card-content>
-              <p class="chart-hint">How each investment has risen or fallen, in percent, across the whole chart. It starts a year before your simulation, so you can see how each one behaved before you began. Click a name in the legend to hide or show its line.</p>
+              <p class="chart-hint">Every line begins at 0% on the far left, then shows how much that investment's price has risen or fallen since that point. The chart reaches back a year before your simulation, so you can see how each one behaved before you began. The dashed line marks where your year starts. Click a name in the legend to hide or show its line.</p>
               <app-line-chart [labels]="compareLabels" [series]="compareSeries"
                               [showLegend]="true" yLabel="% change" valueFormat="percent"
                               [markerIndex]="compareStartIndex" markerLabel="Your year starts"
