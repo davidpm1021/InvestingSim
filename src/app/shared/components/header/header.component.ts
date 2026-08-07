@@ -16,6 +16,7 @@ import { CurrentDateService } from '../../services/current-date.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { QuarterNavigationDialogComponent, QuarterNavigationDialogData } from '../quarter-navigation-dialog/quarter-navigation-dialog.component';
 import { CapstoneDialogComponent } from '../capstone-dialog/capstone-dialog.component';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirmation-dialog/confirmation-dialog.component';
 import { isFinalQuarter } from '../../data/quarters.data';
 import { WalkthroughService } from '../../services/walkthrough.service';
 
@@ -142,6 +143,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onReset(): void {
+    // Reset wipes every account, holding and step of progress, so make the student
+    // say so first. It used to run on a single click of a button present on every
+    // screen, with no undo.
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '460px',
+      data: {
+        title: 'Start over?',
+        message: 'This clears your accounts, your investments and your progress, and returns you to the very beginning. It cannot be undone.',
+        confirmText: 'Start over',
+        cancelText: 'Cancel',
+        type: 'reset'
+      } as ConfirmationDialogData
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed === true) { this.performReset(); }
+    });
+  }
+
+  private performReset(): void {
     // Clear all transactions first
     this.transactionsService.clearAllTransactions();
 

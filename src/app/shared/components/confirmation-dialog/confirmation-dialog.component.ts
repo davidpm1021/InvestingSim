@@ -9,7 +9,8 @@ export interface ConfirmationDialogData {
   message: string;
   confirmText: string;
   cancelText: string;
-  type: 'trade' | 'transfer';
+  /** 'reset' carries no detail block, so the dialog renders as a plain confirm. */
+  type: 'trade' | 'transfer' | 'reset';
   tradeData?: {
     action: 'buy' | 'sell';
     assetName: string;

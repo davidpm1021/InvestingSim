@@ -115,7 +115,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     body: [
       'A brokerage account holds investments, but the cash to buy them comes from your bank. Connecting it lets you move money in and out.',
     ],
-    action: 'On the Overview tab, click "Connect Your Bank", then "Connect to your Bank".',
+    action: [
+      'On the Summit Invest tab, go to Overview and click Connect Your Bank.',
+      'In the pop-up, check the details and click Connect to your Bank.',
+    ],
     questions: [
       {
         id: 'cfu-connect-why',
