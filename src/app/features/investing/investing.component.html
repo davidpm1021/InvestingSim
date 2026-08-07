@@ -47,7 +47,7 @@
                   <span class="av-value">${{ netContributions | number:'1.2-2' }}</span>
                 </div>
                 <div class="av-row" [class.positive]="accountGainLoss >= 0" [class.negative]="accountGainLoss < 0">
-                  <span class="av-label">Up / down</span>
+                  <span class="av-label">Total gain / loss</span>
                   <span class="av-value">
                     {{ accountGainLoss >= 0 ? '+' : '' }}{{ accountGainLoss | currency:'USD':'symbol':'1.2-2' }}
                     (<ng-container *ngIf="accountReturnDefined; else naReturn">{{ accountGainLossPct | number:'1.2-2' }}%</ng-container><ng-template #naReturn>&ndash;</ng-template>)
