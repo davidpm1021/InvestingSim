@@ -375,10 +375,10 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     title: 'See how each investment did',
     scrollTop: true,
     body: [
-      'You have seen your account total move. Now compare your investments against each other. The Performance chart plots every investment as a percent change since the start, so you can see which pulled ahead and which lagged, on the same scale.',
+      'You have seen your account total move. Now compare the investments against each other. The Compare Investments chart plots every one as a percent change on the same scale. It starts a year before your simulation, and a marker shows where your own year begins.',
       'Percent matters more than dollars for this: a holding you put more money into will show a bigger dollar swing even if it barely moved.',
     ],
-    action: 'On the Overview, use the Performance chart to compare your investments against each other, then open the Holdings tab to compare their price histories.',
+    action: 'On the Overview, use the Compare Investments chart to see which investments pulled ahead and which fell behind, then open the Holdings tab to compare their price histories.',
     questions: [
       {
         id: 'cfu-holdings-diverge',
@@ -408,7 +408,7 @@ export const WALKTHROUGH_STEPS: WalkthroughStep[] = [
     part: 'Part IV · The year',
     title: 'Play out the year',
     body: [
-      "Now play out the rest of the year. Watch each holding's Gain/Loss and the Performance chart, and trade as you see fit: buy a dip, add to a winner, or trim a position.",
+      "Now play out the rest of the year. Watch each holding's Gain/Loss and the Compare Investments chart, and trade as you see fit: buy a dip, add to a winner, or trim a position.",
     ],
     action: 'Repeat through Quarter 4: trade if you want, jump a quarter, then open the new statement.',
   },

@@ -284,13 +284,14 @@
           <!-- Compare Investments (Chunk 5) -->
           <mat-card class="compare-card">
             <mat-card-header>
-              <h2 mat-card-title>Performance</h2>
+              <h2 mat-card-title>Compare Investments</h2>
             </mat-card-header>
             <mat-card-content>
-              <p class="chart-hint">How each investment has grown or fallen, in percent, since the start. Tap a name in the legend to hide or show its line.</p>
+              <p class="chart-hint">How each investment has risen or fallen, in percent, across the whole chart. It starts a year before your simulation, so you can see how each one behaved before you began. Click a name in the legend to hide or show its line.</p>
               <app-line-chart [labels]="compareLabels" [series]="compareSeries"
-                              [showLegend]="true" yLabel="% change since start" valueFormat="percent"
-                              [height]="320" ariaLabel="Line chart comparing each investment's percent change since the start"></app-line-chart>
+                              [showLegend]="true" yLabel="% change" valueFormat="percent"
+                              [markerIndex]="compareStartIndex" markerLabel="Your year starts"
+                              [height]="320" ariaLabel="Line chart comparing each investment's percent change, starting a year before the simulation"></app-line-chart>
             </mat-card-content>
           </mat-card>
           </div>
@@ -345,7 +346,7 @@
                   <h2 mat-card-title>Portfolio Value Over Time</h2>
                 </mat-card-header>
                 <mat-card-content>
-                  <app-line-chart [labels]="compareLabels" [series]="portfolioSeries"
+                  <app-line-chart [labels]="portfolioLabels" [series]="portfolioSeries"
                                   yLabel="Value ($)" ariaLabel="Line chart of your total portfolio value over time"
                                   [height]="240"></app-line-chart>
                 </mat-card-content>

@@ -120,6 +120,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
   // Performance charts (Chunk 5)
   compareLabels: string[] = [];
   compareSeries: LineSeries[] = [];
+  // Index in compareLabels where the simulation year begins, for the chart marker.
+  compareStartIndex = -1;
+  // The portfolio chart runs on its own, shorter range (simulation year only).
+  portfolioLabels: string[] = [];
   portfolioSeries: LineSeries[] = [];
 
   // Account summary (QA4) — shown on the Overview
@@ -433,6 +437,10 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter(d => d <= this.currentDate);
 
     this.compareLabels = dates.map(d => MONTHS_SHORT[parseInt(d.slice(5, 7), 10) - 1]);
+    // The compare chart deliberately includes the year before the simulation, so a
+    // student has price history to choose from. Mark where their own year starts, or
+    // the earlier months read as part of their results.
+    this.compareStartIndex = dates.findIndex(d => d >= SIM_YEAR_START);
     // Normalize each asset to % change from its first visible point — raw prices sit
     // at different levels ($44–$116), which flattens every line on a shared $ axis.
     this.compareSeries = this.dataService.assets.map(a => {
@@ -444,9 +452,14 @@ export class InvestingComponent implements OnInit, OnDestroy, AfterViewInit {
       };
     });
 
+    // Your own money only starts at the simulation, so this chart drops the earlier
+    // months rather than opening with a year of flat $0. Prior history is useful for
+    // comparing prices; it is noise for a portfolio the student did not own yet.
+    const portfolioDates = dates.filter(d => d >= SIM_YEAR_START);
+    this.portfolioLabels = portfolioDates.map(d => MONTHS_SHORT[parseInt(d.slice(5, 7), 10) - 1]);
     this.portfolioSeries = [{
       label: 'Portfolio Value',
-      data: dates.map(d => this.holdingsService.getInvestmentsValueAtDate(d))
+      data: portfolioDates.map(d => this.holdingsService.getInvestmentsValueAtDate(d))
     }];
   }
 

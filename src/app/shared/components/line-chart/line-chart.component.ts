@@ -148,6 +148,10 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() height = 280;
   @Input() valueFormat: 'currency' | 'percent' = 'currency';
   @Input() ariaLabel = '';
+  /** Draw a vertical marker at this label index (e.g. where the student's year
+   *  begins on a chart that also shows earlier history). Negative or unset hides it. */
+  @Input() markerIndex?: number;
+  @Input() markerLabel = '';
 
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -169,6 +173,46 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.viewReady = true;
     this.render();
   }
+
+  /**
+   * Draws a dashed vertical line with a small caption at `markerIndex`, so a chart
+   * that includes history from before the simulation can show where the student's
+   * own year begins. Reads the inputs at draw time, so chart.update() is enough to
+   * move it. Registered per-chart rather than globally.
+   */
+  private readonly startMarker = {
+    id: 'startMarker',
+    afterDatasetsDraw: (chart: any) => {
+      const i = this.markerIndex;
+      if (i === undefined || i === null || i < 0 || !chart.chartArea) { return; }
+      const x = chart.scales?.['x']?.getPixelForValue(i);
+      if (x === undefined || Number.isNaN(x)) { return; }
+      const { top, bottom, right, left } = chart.chartArea;
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.beginPath();
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(54, 235, 255, 0.85)';
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, bottom);
+      ctx.stroke();
+      if (this.markerLabel) {
+        ctx.setLineDash([]);
+        ctx.font = '600 11px Montserrat, Helvetica, Arial, sans-serif';
+        const pad = 6;
+        const w = ctx.measureText(this.markerLabel).width;
+        // Flip to the left of the line when the caption would overflow the plot.
+        let bx = x + 6;
+        if (bx + w + pad * 2 > right) { bx = Math.max(left, x - w - pad * 2 - 6); }
+        ctx.fillStyle = 'rgba(54, 235, 255, 0.92)';
+        ctx.fillRect(bx, top + 4, w + pad * 2, 18);
+        ctx.fillStyle = '#06122a';
+        ctx.fillText(this.markerLabel, bx + pad, top + 17);
+      }
+      ctx.restore();
+    }
+  };
 
   ngOnChanges(): void {
     if (!this.viewReady) {
@@ -262,6 +306,7 @@ export class LineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     this.chart = new Chart(this.canvasRef.nativeElement, {
       type: 'line',
+      plugins: [this.startMarker],
       data: { labels: this.labels, datasets },
       options: {
         responsive: true,
